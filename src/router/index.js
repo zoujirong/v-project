@@ -55,6 +55,19 @@ export const constantRouterMap = [
         meta: { title: '订单管理', icon: 'dashboard', noCache: true }
       }
     ]
+  },
+  {
+   path:'/banner',
+   redirct:'/banner/index',
+   component:Layout,
+   children:[
+     {
+       path:'index',
+       name:'bannerlist',
+       component:_import('banner/index'),
+       meta:{title:'推荐位管理',icon:'form',noCache:true}
+     }
+   ]
   }
 ]
 
