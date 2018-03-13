@@ -1,6 +1,7 @@
 <template>
   <div class="dashboard-container">
-    <component :is="currentRole"></component>
+    这里随便放点啥
+    <!--<component :is="currentRole"></component>-->
   </div>
 </template>
 

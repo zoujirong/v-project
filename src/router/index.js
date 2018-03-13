@@ -44,15 +44,17 @@ export const constantRouterMap = [
     }]
   },
   {
-    path: '/documentation',
+    path: '/order',
+    redirect: '/order/index',
     component: Layout,
-    redirect: '/documentation/index',
-    children: [{
-      path: 'index',
-      component: _import('documentation/index'),
-      name: 'documentation',
-      meta: { title: 'documentation', icon: 'documentation', noCache: true }
-    }]
+    children: [
+      {
+        path: 'index',
+        name: 'orderList',
+        component: _import('order/index'),
+        meta: { title: '订单管理', icon: 'dashboard', noCache: true }
+      }
+    ]
   }
 ]
 
@@ -61,8 +63,11 @@ export default new Router({
   scrollBehavior: () => ({ y: 0 }),
   routes: constantRouterMap
 })
-
 export const asyncRouterMap = [
+  { path: '*', redirect: '/404', hidden: true }
+];
+
+/* export const asyncRouterMap = [
   {
     path: '/permission',
     component: Layout,
@@ -246,4 +251,4 @@ export const asyncRouterMap = [
   },
 
   { path: '*', redirect: '/404', hidden: true }
-]
+] */
