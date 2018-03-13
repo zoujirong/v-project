@@ -1,7 +1,7 @@
 <template>
     <div class="app-container">
         <div class="btn-top">
-            <button class="el-button el-button--primary el-button--medium">新增推荐位</button>
+            <button class="el-button el-button--primary el-button--medium" @click="addShow=true">新增推荐位</button>
         </div>
         <div class="el-table el-table--fit el-table--border el-table--enable-row-hover el-table--enable-row-transition el-table--medium">
             <div class="el-table__header-wrapper">
@@ -88,12 +88,78 @@
                 </table>
             </div>
         </div>
+        <!-- 弹窗部分 -->
+        <div class="vue-image-crop-upload" v-show="addShow">
+            <div class="vicp-wrap">
+                <div class="vicp-close" @click="addShow = false">
+                    <i class="vicp-icon4"></i>
+                </div>
+                <div class="bannerform">
+                    <form action="">
+                        <div class="el-form-item postInfo-container-item el-tooltip item el-form-item--medium">
+                            <label for="title" class="el-form-item__label">推荐位名称</label>
+                            <div class="el-form-item__content">
+                                <el-input placeholder="请输入推荐位名称" v-model="title" clearable></el-input>
+                            </div>
+                        </div>
+                        <div class="el-form-item postInfo-container-item el-tooltip item el-form-item--medium updatapic">
+                            <label for="title" class="el-form-item__label">图片</label>
+                            <div class="el-form-item__content updata">
+                                <input type="file">
+                                <button class="el-button el-button--primary el-button--medium">上传图片</button>
+                            </div>
+                        </div>
+                        <div class="el-form-item postInfo-container-item el-tooltip item el-form-item--medium">
+                            <label for="title" class="el-form-item__label">对应跳转的课程id</label>
+                            <div class="el-form-item__content">
+                                <el-input placeholder="请输入对应跳转的课程id" v-model="courseId" clearable></el-input>
+                            </div>
+                        </div>
+                        <div class="el-form-item postInfo-container-item el-tooltip item el-form-item--medium">
+                            <label for="title" class="el-form-item__label">开始时间</label>
+                            <div class="el-form-item__content block">
+                                <el-date-picker v-model="startDate" type="datetime" placeholder="选择日期"  :picker-options="pickr"></el-date-picker>
+                            </div>
+                        </div>
+                        <div class="el-form-item postInfo-container-item el-tooltip item el-form-item--medium">
+                            <label for="title" class="el-form-item__label">结束时间</label>
+                            <div class="el-form-item__content demo-input-suffix">
+                                <el-date-picker v-model="endDate" type="datetime" placeholder="选择日期" :picker-options="pickr"></el-date-picker>
+                            </div>
+                        </div>
+                        <button class="el-button el-button--primary el-button--medium" @click="submit">提交</button>
+                    </form>
+                </div>
+            </div>
+        </div>
         
     </div>
 </template>
 <script>
 export default {
-  
+    data(){
+        return {
+            addShow:false,
+            title: '',
+            courseId:'',
+            startDate:'',
+            endDate:'',
+            pickr:{
+                disabledDate(time) {
+                    return Date.now() > time.getTime() ;
+                }
+            }
+        }
+    },
+    methods:{
+        submit(){
+            this.title = '';
+            this.courseId = '';
+            this.startDate = '';
+            this.endDate = ''
+            this.addShow = false;
+        }
+    }
 }
 </script>
 <style>
@@ -109,5 +175,88 @@ export default {
   .el-table_1_column_14{width: 180px}
   .el-table_1_column_15{width: 180px}
   .el-table_1_column_16{width: 260px}
+  .el-table_1_column_9 img{
+      width: 100%;
+      height: 100%
+  }
+  .vue-image-crop-upload .vicp-wrap{
+    -webkit-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.23);
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.23);
+    position: fixed;
+    display: block;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    z-index: 1000;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    width: 600px;
+    height: 410px;
+    padding: 25px;
+    background-color: #fff;
+    border-radius: 2px;
+    -webkit-animation: vicp-data-v-50443b38 0.12s ease-in;
+    animation: vicp-data-v-50443b38 0.12s ease-in;
+}
+.vue-image-crop-upload{
+    position: fixed;
+    display: block;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    z-index: 1000;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.65);
+    -webkit-tap-highlight-color: transparent;
+    -moz-tap-highlight-color: transparent;
+}
+.vue-image-crop-upload .vicp-wrap .vicp-close{
+    position: absolute;
+    right: -30px;
+    top: -30px;
+}
+.vue-image-crop-upload .vicp-wrap .vicp-close .vicp-icon4{
+    position: relative;
+    display: block;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    -webkit-transition: -webkit-transform 0.18s;
+    transition: -webkit-transform 0.18s;
+    transition: transform 0.18s;
+    transition: transform 0.18s, -webkit-transform 0.18s;
+    -webkit-transform: rotate(0);
+    transform: rotate(0);
+}
+.vue-image-crop-upload .vicp-wrap .vicp-close .vicp-icon4::after, .vue-image-crop-upload .vicp-wrap .vicp-close .vicp-icon4::before {
+    -webkit-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.23);
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.23);
+    content: '';
+    position: absolute;
+    top: 12px;
+    left: 4px;
+    width: 20px;
+    height: 3px;
+    -webkit-transform: rotate(45deg);
+    transform: rotate(45deg);
+    background-color: #fff;
+}
+.vue-image-crop-upload .vicp-wrap .vicp-close .vicp-icon4::after {
+    -webkit-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+}
+.table__header{
+    width: 100%
+}
+.updatapic{position: relative}
+.updata input{opacity: 0;position: absolute;top: 0;left: 82px;width: 98px;height: 36px}
+.updata button{margin-left: 42px;}
+.el-form-item__content{float: left}
 </style>
 
