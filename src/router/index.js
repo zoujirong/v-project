@@ -46,6 +46,19 @@ export const constantRouterMap = [
 		]
 	},
 	{
+		path: '/course',
+		redirect: '/course/index',
+		component: Layout,
+		children: [
+			{
+				path: 'index',
+				name: 'courseList',
+				component: _import('course/index'),
+				meta: { title: '课程管理', icon: 'dashboard', noCache: true }
+			}
+		]
+	},
+	{
 		path: '/order',
 		redirect: '/order/index',
 		component: Layout,
@@ -68,6 +81,19 @@ export const constantRouterMap = [
 				name: 'category',
 				component: _import('category/index'),
 				meta: { title: '类目管理', icon: 'dashboard', noCache: true }
+			}
+		]
+	},
+	{
+		path: '/member',
+		redirect: '/member/index',
+		component: Layout,
+		children: [
+			{
+				path: 'index',
+				name: 'member',
+				component: _import('member/index'),
+				meta: { title: '会员管理', icon: 'dashboard', noCache: true }
 			}
 		]
 	}

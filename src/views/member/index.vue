@@ -1,40 +1,67 @@
 <template>
     <div class="app-container calendar-list-container">
-      <div class='category-nav'>
-        <el-button type="success" @click="dialogTableVisible = true">新增类目</el-button>
-      </div>
+        <div class='member-nav'>
+            会员：<el-input v-model="input1" placeholder="输入课程名称查询" clearable  size="small"></el-input>
+            &nbsp;
+            最近登录时间&nbsp;
+            <el-date-picker
+                v-model="value1"
+                type="datetimerange"
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期">
+            </el-date-picker>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                
+
+            <el-button type="primary">查询</el-button>&nbsp;&nbsp;
+            <el-button>重置</el-button>
+        </div>
         <el-table :data="list" v-loading.body="listLoading" border fit highlight-current-row style="width: 100%">
 
-            <el-table-column align="center" label="类目ID" width="150px">
+            <el-table-column align="center" label="序号" width="120px">
                 <template slot-scope="scope">
                 <span>{{scope.row.id}}</span>
                 </template>
             </el-table-column>
 
-            <el-table-column width="260px" align="center" label="类目名称">
+            <el-table-column width="220px" align="center" label="微信昵称">
                 <template slot-scope="scope">
                 <span>{{scope.row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}')}}</span>
                 </template>
             </el-table-column>
-
-            <el-table-column align="center" label="操作管理" width="260px">
+        
+            <el-table-column align="center" label="手机号码" width="200px">
                 <template slot-scope="scope">
                 <span>编辑课程</span>
                 </template>
-                <template slot-scope="scope">
-                <span>删除</span>
-                </template>
             </el-table-column>
-
-            <el-table-column align="center" label="编辑课程" width="" class-name="small-padding fixed-width">
+            <el-table-column align="center" label="最近登录时间" width="" class-name="small-padding fixed-width">
               <template slot-scope="scope">
-                <el-button type="primary" size="" @click="handleUpdate(scope.row)">编辑课程</el-button>
+                
               </template>
             </el-table-column>
-
+             <el-table-column align="center" label="首次登录时间" width="" class-name="small-padding fixed-width">
+              <template slot-scope="scope">
+                
+              </template>
+            </el-table-column>
+             <el-table-column align="center" label="报名课程数量" width="" class-name="small-padding fixed-width">
+              <template slot-scope="scope">
+                
+              </template>
+            </el-table-column>
+             <el-table-column align="center" label="付费课程数" width="" class-name="small-padding fixed-width">
+              <template slot-scope="scope">
+                
+              </template>
+            </el-table-column>
+             <el-table-column align="center" label="操作" width="" class-name="small-padding fixed-width">
+              <template slot-scope="scope">
+                <el-button type="primary" @click="dialogTableVisible = true">【查看报名课程】</el-button>
+              </template>
+            </el-table-column>
         </el-table>
-
-        <!-- 新增类目弹窗 -->
         <el-dialog title="查看报名课程" :visible.sync="dialogTableVisible">
             <el-table >
                 <el-table-column property="date" label="序号" width="150">
@@ -61,7 +88,7 @@
 import { fetchList } from '@/api/article'
 
 export default {
-  name: 'category',
+  name: 'member',
   data() {
     return {
       list: null,
@@ -70,8 +97,10 @@ export default {
         page: 1,
         limit: 10
       },
-      dialogTableVisible: false,
-
+     dialogTableVisible: false,
+        input1:'',
+        value1:'',
+        input3:''
     }
   },
   filters: {
@@ -131,6 +160,6 @@ export default {
   right: 15px;
   top: 10px;
 }
-.category-nav{margin-bottom:15px}
+.el-input{width: auto}
+.member-nav{margin-bottom: 15px}
 </style>
-
