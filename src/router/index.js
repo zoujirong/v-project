@@ -44,6 +44,19 @@ export const constantRouterMap = [
     }]
   },
   {
+    path: '/course',
+    redirect: '/course/index',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'courseList',
+        component: _import('course/index'),
+        meta: { title: '课程管理', icon: 'dashboard', noCache: true }
+      }
+    ]
+  },
+  {
     path: '/order',
     redirect: '/order/index',
     component: Layout,
