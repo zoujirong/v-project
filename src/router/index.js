@@ -1,17 +1,17 @@
-import Vue from 'vue';
-import Router from 'vue-router';
-const _import = require('./_import_' + process.env.NODE_ENV);
+import Vue from "vue";
+import Router from "vue-router";
+const _import = require("./_import_" + process.env.NODE_ENV);
 // in development-env not use lazy-loading, because lazy-loading too many pages will cause webpack hot update too slow. so only in production use lazy-loading;
 // detail: https://panjiachen.github.io/vue-element-admin-site/#/lazy-loading
 
 Vue.use(Router);
 
 /* Layout */
-import Layout from '../views/layout/Layout';
+import Layout from "../views/layout/Layout";
 
 /** note: submenu only apppear when children.length>=1
-*   detail see  https://panjiachen.github.io/vue-element-admin-site/#/router-and-nav?id=sidebar
-**/
+ *   detail see  https://panjiachen.github.io/vue-element-admin-site/#/router-and-nav?id=sidebar
+ **/
 
 /**
 * hidden: true                   if `hidden:true` will not show in the sidebar(default is false)
@@ -109,7 +109,8 @@ export const constantRouterMap = [
 				meta: { title: '推荐位管理', icon: 'form', noCache: true }
 			}
 		]
-	},{
+  },
+  {
     path:'/marketing',
     redirect:'/marketing/index',
     component:Layout,
@@ -138,12 +139,13 @@ export const constantRouterMap = [
     hidden: true
   }
 ];
+
 export default new Router({
-	// mode: 'history', // require service support
-	scrollBehavior: () => ({ y: 0 }),
-	routes: constantRouterMap
+  // mode: 'history', // require service support
+  scrollBehavior: () => ({ y: 0 }),
+  routes: constantRouterMap
 });
-export const asyncRouterMap = [ { path: '*', redirect: '/404', hidden: true } ];
+export const asyncRouterMap = [{ path: "*", redirect: "/404", hidden: true }];
 
 /* export const asyncRouterMap = [
   {
