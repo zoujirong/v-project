@@ -1,24 +1,34 @@
 <template>
     <div class="app-container">
-        <el-form inline>
-            <el-form-item label="课程">
-                <el-input placeholder="输入课程id或课程名称"></el-input>
+        <el-form inline :model="searchParam" ref="searchForm">
+            <el-form-item label="课程" prop="courseId">
+                <el-input placeholder="输入课程id或课程名称" v-model="searchParam.courseId"></el-input>
             </el-form-item>
-            <el-form-item label="类目">
-                <el-select placeholder="选择类目" v-model="cateId">
+            <el-form-item label="类目" prop="cateId">
+                <el-select placeholder="选择类目" v-model="searchParam.cateId">
                     <el-option value="">全部</el-option>
                 </el-select>
             </el-form-item>
-            <el-button type="primary">查询</el-button>
-            <el-button>重置</el-button>
+            <el-button type="primary" @click="getList">查询</el-button>
+            <el-button @click="reset">重置</el-button>
         </el-form>
+        <router-link :to="{name: 'addCourse'}">
+            <el-button type="primary">发布课程</el-button>
+        </router-link>
         <TablePager :data="data" :columns="columns" :pagination="pagination">
             <template slot="price" slot-scope="{row}">
                 <span v-if="row.price == 0">免费</span>
                 <span v-else>{{row.price}}</span>
             </template>
-            <template slot="operate" slot-scope="{row}">
-                <el-button type="primary" @click="recommend(row)">设为推荐</el-button>
+            <template slot="operate" slot-scope="{row, index}">
+                <div class="op-btn">
+                    <el-button type="text" @click="recommend(row, index)">【编辑课程】</el-button>
+                    <el-button type="text" @click="recommend(row)">【编辑课时】</el-button>
+                    <el-button type="text" @click="recommend(row)">【设置营销方式】</el-button>
+                    <el-button type="text" @click="recommend(row)">【课程下架】</el-button>
+                    <el-button type="text" @click="recommend(row)">【管理学员】</el-button>
+                    <el-button type="text" @click="recommend(row)">【设为推荐】</el-button>
+                </div>
             </template>
         </TablePager>
     </div>
@@ -29,7 +39,10 @@ import TablePager from '@/components/TablePager';
 export default {
     data() {
         return {
-            cateId: '',
+            searchParam: {
+                courseId: '',
+                cateId: ''
+            },
             pagination: {
                 currentPage: 1,
                 total: 400,
@@ -56,9 +69,24 @@ export default {
         TablePager
     },
     methods: {
-        recommend(row) {
-            console.log('你点击了', row);
+        getList() {
+            let form = this.$refs.searchForm;
+            console.log(this.searchParam);
+        },
+        reset() {
+            let form = this.$refs.searchForm;
+            form.resetFields();
+            this.getList();
+        },
+        recommend(row, index) {
+            console.log('你点击了', row, index);
         }
     }
 }
 </script>
+<style scoped>
+    .op-btn .el-button {
+        padding: 0;
+        margin: 0;
+    }
+</style>

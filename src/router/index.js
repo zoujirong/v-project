@@ -44,20 +44,36 @@ export const constantRouterMap = [
 				meta: { title: 'dashboard', icon: 'dashboard', noCache: true }
 			}
 		]
-	},
+  },
 	{
 		path: '/course',
 		redirect: '/course/index',
-		component: Layout,
+    component: Layout,
 		children: [
 			{
 				path: 'index',
 				name: 'courseList',
 				component: _import('course/index'),
-				meta: { title: '课程管理', icon: 'dashboard', noCache: true }
-			}
+        meta: { title: '课程管理', icon: 'dashboard', noCache: true }
+      }
 		]
 	},
+  {
+    path: '/course',
+    redirect: '/course/add',
+    hidden: true,
+    name: 'course',
+    component: Layout,
+    children: [
+      {
+        path: 'add',
+        name: 'addCourse',
+        component: _import('course/add'),
+				meta: { title: '发布课程', noCache: true }
+      }
+    ],
+    meta: { title: '课程管理', icon: 'dashboard', noCache: true }
+  },
 	{
 		path: '/order',
 		redirect: '/order/index',

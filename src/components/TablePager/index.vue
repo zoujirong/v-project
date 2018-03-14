@@ -7,8 +7,8 @@
         >
             <template v-for="column in columns">
                 <el-table-column :label="column.title">
-                    <template slot-scope="{row}">
-                        <slot v-if="column.slot" :name="column.slot" :row="row"></slot>
+                    <template slot-scope="{row, $index: index}">
+                        <slot v-if="column.slot" :name="column.slot" :row="row" :index="index"></slot>
                         <span v-else>{{row[column.key]}}</span>
                     </template>
                 </el-table-column>
