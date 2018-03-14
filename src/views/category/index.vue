@@ -34,25 +34,14 @@
 
         </el-table>
 
-        <!-- 新增类目弹窗 -->
-        <el-dialog title="查看报名课程" :visible.sync="dialogTableVisible">
-            <el-table >
-                <el-table-column property="date" label="序号" width="150">
-                    <template slot-scope="scope">
-                    <span>{{}}</span>
-                    </template>
-                </el-table-column>
-                <el-table-column property="name" label="课程名称" width="200">
-                    <template slot-scope="scope">
-                    <span>{{}}</span>
-                    </template>
-                </el-table-column>
-                <el-table-column property="address" label="学员行为">
-                    <template slot-scope="scope">
-                    <span>{{}}</span>
-                    </template>
-                </el-table-column>
-            </el-table>
+<!-- 新增类目弹窗 -->
+        <el-dialog title="新增类目" :visible.sync="dialogTableVisible" width='35%' ref='dataForm'>
+            <div class=''>
+              类目名称：<el-input v-model="input1" placeholder="输入课程名称查询" clearable  size="small"></el-input>
+<br><br>
+              <el-button type="primary" @click="updateData">保存</el-button>&nbsp;&nbsp;
+            <el-button @click="dialogTableVisible = false">返回</el-button>
+            </div>
         </el-dialog>
     </div>
 </template>
@@ -71,6 +60,8 @@ export default {
         limit: 10
       },
       dialogTableVisible: false,
+      temp:{},
+      input1:''
 
     }
   },
@@ -118,11 +109,26 @@ export default {
         type: 'success'
       })
     },
+    resetTemp(){
+      this.temp ={}
+    },
+    handleCreate(){
+      this.resetTemp()
+
+    },
+    updateData(){
+      this.$refs['dataForm'].validate((valid) =>{
+        if(valid){
+          
+        }
+      })
+    }
   }
 }
 </script>
 
 <style scoped>
+.el-input{width: auto}
 .edit-input {
   padding-right: 100px;
 }
