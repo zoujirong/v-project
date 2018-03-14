@@ -109,7 +109,34 @@ export const constantRouterMap = [
 				meta: { title: '推荐位管理', icon: 'form', noCache: true }
 			}
 		]
-	}
+	},{
+    path:'/marketing',
+    redirect:'/marketing/index',
+    component:Layout,
+    children:[
+      {
+        path:'index',
+        name:'marketphone',
+        component:_import('marketing/index'),
+        meta:{title:'营销管理',icon:'message',noCache: true}
+      }
+    ]
+  },
+  {
+    path:'/marketlist',
+    component:Layout,
+    redirect:'/marketing/marketlist',
+    name:'marketlist',
+    children:[
+      {
+        path:'marketlist',
+        name:'marketlist',
+        component:_import('marketing/marketlist'),
+        meta:{title:'营销管理',icon:'message',noCache: true}
+      }
+    ],
+    hidden: true
+  }
 ];
 export default new Router({
 	// mode: 'history', // require service support
