@@ -10,6 +10,8 @@ import '@/styles/index.scss' // global css
 import App from './App'
 import router from './router'
 import store from './store'
+import Cookies from 'js-cookie'
+Cookies.set('language', 'zh')
 
 import i18n from './lang' // Internationalization
 import './icons' // icon
