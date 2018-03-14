@@ -1,18 +1,12 @@
 <template>
-    <div class="app-container calendar-list-container">
-        <div class='member-nav'>
-            会员：<el-input v-model="input1" placeholder="输入课程名称查询" clearable  size="small"></el-input>
-            &nbsp;
-            最近登录时间&nbsp;
-            <el-date-picker
-                v-model="value1"
-                type="datetimerange"
-                range-separator="至"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期">
-            </el-date-picker>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                
+  <div class="app-container calendar-list-container">
+    <div class='member-nav'>
+      会员：
+      <el-input v-model="input1" placeholder="输入课程名称查询" clearable size="small"></el-input>
+      &nbsp; 最近登录时间&nbsp;
+      <el-date-picker v-model="value1" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
+      </el-date-picker>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
             <el-button type="primary">查询</el-button>&nbsp;&nbsp;
             <el-button>重置</el-button>
@@ -68,7 +62,7 @@
 import { fetchList } from '@/api/article'
 import TablePager from '@/components/TablePager';
 export default {
-  name: 'member',
+  name: "member",
   data() {
     return {
       listLoading: true,
@@ -125,7 +119,7 @@ export default {
   
    
   }
-}
+};
 </script>
 
 <style scoped>

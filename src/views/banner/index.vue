@@ -5,28 +5,15 @@
         </div>
         <!-- 表格部分 -->
         <template>
-            <el-table :data="tableData" border style="width: 100%">
-                <el-table-column type="index" :index="indexMethod" label="序号" width="180"></el-table-column>
-                <el-table-column prop="title" label="推荐位名称" width="180"></el-table-column>
-                <el-table-column prop="url" label="图片"></el-table-column>
-                <el-table-column prop="courseId" label="课程id"></el-table-column>
-                <el-table-column prop="startDate" label="课程名称"></el-table-column>
-                <el-table-column prop="startDate" label="开始时间"></el-table-column>
-                <el-table-column prop="endDate" label="结束时间"></el-table-column>
-                <el-table-column prop="startDate" label="创建时间"></el-table-column>
-                <el-table-column prop="startDate" label="修改时间"></el-table-column>
-                <el-table-column prop="" label="操作">
-                    <template slot-scope="scope">
-                        <el-button type="text" size="small">编辑</el-button>
-                        <el-button type="text" size="small">上移</el-button>
-                        <el-button type="text" size="small">下移</el-button>
-                        <el-button @click.native.prevent="deleteRow(scope.$index, tableData)" type="text" size="small"> 删除 </el-button>
-                   </template>
-                </el-table-column>
-                
-            </el-table>
-       </template>
-         
+            <TablePager :data="tableData" :columns="columns" :pagination="pagination">
+                <template slot="operate" slot-scope="{row}">
+                    <el-button type="text" size="small">编辑</el-button>
+                    <el-button type="text" size="small" @click="up(row.$index, tableData)">上移</el-button>
+                    <el-button type="text" size="small" @click="down(row.$index, tableData)">下移</el-button>
+                    <el-button @click.native.prevent="deleteRow(row.$index, tableData)" type="text" size="small"> 删除 </el-button>
+                </template>
+           </TablePager>
+       </template>   
         <!-- 弹窗部分 -->
         <div class="vue-image-crop-upload" v-show="addShow">
             <div class="vicp-wrap">
@@ -34,42 +21,27 @@
                     <i class="vicp-icon4"></i>
                 </div>
                 <div class="bannerform">
-                    <form action="">
-                        <div class="el-form-item postInfo-container-item el-tooltip item el-form-item--medium">
-                            <label for="bannerList.title" class="el-form-item__label">推荐位名称</label>
-                            <div class="el-form-item__content">
-                                <el-input placeholder="请输入推荐位名称" v-model="bannerList.title" clearable></el-input>
-                            </div>
-                        </div>
-                        <div class="el-form-item postInfo-container-item el-tooltip item el-form-item--medium updatapic">
-                            <label for="title" class="el-form-item__label">图片</label>
-                            <div class="el-form-item__content updata">
-                                <el-upload class="upload-demo" action="https://jsonplaceholder.typicode.com/posts/" :limit='1' :on-preview="handlePreview" :on-remove="handleRemove" :file-list="fileList2" list-type="picture">
-                                    <el-button size="small" type="primary">点击上传</el-button>
-                                    <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
-                                </el-upload>
-                            </div>
-                        </div>
-                        <div class="el-form-item postInfo-container-item el-tooltip item el-form-item--medium">
-                            <label for="title" class="el-form-item__label">对应跳转的课程id</label>
-                            <div class="el-form-item__content">
-                                <el-input placeholder="请输入对应跳转的课程id" v-model="bannerList.courseId" clearable></el-input>
-                            </div>
-                        </div>
-                        <div class="el-form-item postInfo-container-item el-tooltip item el-form-item--medium">
-                            <label for="title" class="el-form-item__label">开始时间</label>
-                            <div class="el-form-item__content block">
-                                <el-date-picker v-model="bannerList.startDate" type="datetime" placeholder="选择日期"  :picker-options="pickr"></el-date-picker>
-                            </div>
-                        </div>
-                        <div class="el-form-item postInfo-container-item el-tooltip item el-form-item--medium">
-                            <label for="title" class="el-form-item__label">结束时间</label>
-                            <div class="el-form-item__content demo-input-suffix">
-                                <el-date-picker v-model="bannerList.endDate" type="datetime" placeholder="选择日期" :picker-options="pickr"></el-date-picker>
-                            </div>
-                        </div>
+                    <el-form :model="bannerList" :rules="rules" ref="bannerList" label-width="100px" class="demo-ruleForm">
+                        <el-form-item label="推荐位名称" prop='title'>
+                            <el-input v-model="bannerList.title"></el-input>
+                        </el-form-item>
+                        <el-form-item label="图片">
+                            <el-upload class="upload-demo" action="https://jsonplaceholder.typicode.com/posts/" :limit='1' :on-preview="handlePreview" :on-remove="handleRemove" :file-list="fileList2" list-type="picture">
+                                <el-button size="small" type="primary">点击上传</el-button>
+                                <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+                            </el-upload>
+                        </el-form-item>
+                        <el-form-item label="对应跳转的课程id" prop='courseId'>
+                            <el-input v-model.number="bannerList.courseId"></el-input>
+                        </el-form-item>
+                        <el-form-item label="开始时间" prop='startDate'>
+                            <el-date-picker v-model="bannerList.startDate" type="datetime" placeholder="选择日期"  :picker-options="pickr"></el-date-picker>
+                        </el-form-item>
+                        <el-form-item label="结束时间" prop='endDate'>
+                            <el-date-picker v-model="bannerList.endDate" type="datetime" placeholder="选择日期" :picker-options="pickr"></el-date-picker>
+                        </el-form-item>
                         <button class="el-button el-button--primary el-button--medium" @click="submit">提交</button>
-                    </form>
+                    </el-form>
                 </div>
             </div>
         </div>
@@ -77,6 +49,7 @@
     </div>
 </template>
 <script>
+import TablePager from '@/components/TablePager';
 export default {
     data(){
         return {
@@ -87,28 +60,64 @@ export default {
               courseId:'',
               startDate:'',
               endDate:'' ,
-              nowDate:'',
+              nowDate:new Date(),
               creatDate:''
             },
+            pagination: {
+                currentPage: 1,
+                total: 400,
+                pageSize: 100
+            },
+            columns: [
+                {title: '序号', key: 'index'},
+                {title: '推荐位名称', key: 'title'},
+                {title: '图片', key: 'url'},
+                {title: '课程id', key: 'courseId'},
+                {title: '课程名称', key: 'status'},
+                {title: '开始时间', key: 'startDate'},
+                {title: '结束时间', slot: 'endDate'},
+                {title: '创建时间', key: 'nowDate'},
+                {title: '修改时间', key: 'creatDate'},
+                {title: '操作', slot: 'operate'}
+            ],
             pickr:{
                 disabledDate(time) {
                     return Date.now() > time.getTime() ;
                 }
             },
             fileList2:[],
-            tableData:[]
+            tableData:[],
+            rules:{
+                title: [
+                  { required: true, message: '请输入推荐位名称', trigger: 'blur' }
+                ],
+                url:[
+                    {required: true,message: '请上传图片', trigger: 'blur'}
+                ],
+                courseId:[
+                    {required: true,message: '请输入课程id', trigger: 'blur'},
+                    { type: 'number', message: '课程id必须为数字值'}
+                ],
+                startDate:[
+                    {required: true,message: '请选择开始时间', trigger: 'blur'}
+                ],
+                endDate:[
+                    {required: true,message: '请选择结束时间', trigger: 'blur'}
+                ]
+            }
         }
+    },
+    components: {
+        TablePager
     },
     methods:{
         submit(e){
             e.preventDefault();
             if(this.bannerList.title != '' && this.bannerList.courseId != '' && this.bannerList.startDate != '' && this.bannerList.endDate !=''){
-              this.tableData.push(this.bannerList)
+              this.tableData.push(this.bannerList);
             }
-           this.bannerList.title = '';
-           this.bannerList.courseId = '';
-           this.bannerList.startDate = '';
-           this.bannerList.endDate = ''
+            this.$refs[this.bannerList].resetFields();
+            console.log(this.tableData)
             this.addShow = false;
         },
         handleRemove(file, fileList) {
@@ -122,7 +131,31 @@ export default {
         },
         indexMethod(index) {
         return index + 1;
-      }
+        },
+        up(i) {
+            console.log(i)
+            var options = this.tableData;
+            if (i === 0) {
+                layer.msg('第一个不能上移哦');
+                return;
+            }
+            var prev = options.slice(0, i - 1);
+            var curr = options.slice(i - 1, i + 1).reverse();
+            var tail = options.slice(i + 1);
+            this.tableData = prev.concat(curr).concat(tail);
+        },
+        down(i) {
+            console.log(i)
+            var options = this.tableData;
+            if (i === options.length - 1) {
+                layer.msg('最后一个不能下移哦');
+                return;
+            }
+            var prev = options.slice(0, i);
+            var curr = options.slice(i, i + 2).reverse();
+            var tail = options.slice(i + 2);
+            this.tableDatan = prev.concat(curr).concat(tail);
+        },
     }
 }
 </script>
@@ -144,7 +177,7 @@ export default {
     right: 0;
     margin: auto;
     width: 600px;
-    height: 510px;
+    height: 550px;
     padding: 25px;
     background-color: #fff;
     border-radius: 2px;
@@ -209,5 +242,6 @@ export default {
 .updata input{opacity: 0;position: absolute;top: 0;left: 82px;width: 98px;height: 36px}
 .updata button{margin-left: 42px;}
 .el-form-item__content{float: left}
+.el-form-item__label{width: 140px !important}
 </style>
 
