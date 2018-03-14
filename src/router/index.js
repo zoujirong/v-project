@@ -28,109 +28,131 @@ import Layout from "../views/layout/Layout";
   }
 **/
 export const constantRouterMap = [
-  { path: "/login", component: _import("login/index"), hidden: true },
+	{ path: '/login', component: _import('login/index'), hidden: true },
+	{ path: '/authredirect', component: _import('login/authredirect'), hidden: true },
+	{ path: '/404', component: _import('errorPage/404'), hidden: true },
+	{ path: '/401', component: _import('errorPage/401'), hidden: true },
+	{
+		path: '',
+		component: Layout,
+		redirect: 'dashboard',
+		children: [
+			{
+				path: 'dashboard',
+				component: _import('dashboard/index'),
+				name: 'dashboard',
+				meta: { title: 'dashboard', icon: 'dashboard', noCache: true }
+			}
+		]
+  },
+	{
+		path: '/course',
+		redirect: '/course/index',
+    component: Layout,
+		children: [
+			{
+				path: 'index',
+				name: 'courseList',
+				component: _import('course/index'),
+        meta: { title: '课程管理', icon: 'dashboard', noCache: true }
+      }
+		]
+	},
   {
-    path: "/authredirect",
-    component: _import("login/authredirect"),
+    path: '/course',
+    redirect: '/course/add',
+    hidden: true,
+    name: 'course',
+    component: Layout,
+    children: [
+      {
+        path: 'add',
+        name: 'addCourse',
+        component: _import('course/add'),
+				meta: { title: '发布课程', noCache: true }
+      }
+    ],
+    meta: { title: '课程管理', icon: 'dashboard', noCache: true }
+  },
+	{
+		path: '/order',
+		redirect: '/order/index',
+		component: Layout,
+		children: [
+			{
+				path: 'index',
+				name: 'orderList',
+				component: _import('order/index'),
+				meta: { title: '订单管理', icon: 'dashboard', noCache: true }
+			}
+		]
+	},
+	{
+		path: '/category',
+		redirect: '/category/index',
+		component: Layout,
+		children: [
+			{
+				path: 'index',
+				name: 'category',
+				component: _import('category/index'),
+				meta: { title: '类目管理', icon: 'dashboard', noCache: true }
+			}
+		]
+	},
+	{
+		path: '/member',
+		redirect: '/member/index',
+		component: Layout,
+		children: [
+			{
+				path: 'index',
+				name: 'member',
+				component: _import('member/index'),
+				meta: { title: '会员管理', icon: 'dashboard', noCache: true }
+			}
+		]
+	},
+	{
+		path: '/banner',
+		redirct: '/banner/index',
+		component: Layout,
+		children: [
+			{
+				path: 'index',
+				name: 'bannerlist',
+				component: _import('banner/index'),
+				meta: { title: '推荐位管理', icon: 'form', noCache: true }
+			}
+		]
+  },
+  {
+    path:'/marketing',
+    redirect:'/marketing/index',
+    component:Layout,
+    children:[
+      {
+        path:'index',
+        name:'marketphone',
+        component:_import('marketing/index'),
+        meta:{title:'营销管理',icon:'message',noCache: true}
+      }
+    ]
+  },
+  {
+    path:'/marketlist',
+    component:Layout,
+    redirect:'/marketing/marketlist',
+    name:'marketlist',
+    children:[
+      {
+        path:'marketlist',
+        name:'marketlist',
+        component:_import('marketing/marketlist'),
+        meta:{title:'营销管理',icon:'message',noCache: true}
+      }
+    ],
     hidden: true
-  },
-  {
-    path: "/authredirect",
-    component: _import("login/authredirect"),
-    hidden: true
-  },
-  { path: "/404", component: _import("errorPage/404"), hidden: true },
-  { path: "/401", component: _import("errorPage/401"), hidden: true },
-  {
-    path: "",
-    component: Layout,
-    redirect: "dashboard",
-    children: [
-      {
-        path: "dashboard",
-        component: _import("dashboard/index"),
-        name: "dashboard",
-        meta: { title: "dashboard", icon: "dashboard", noCache: true }
-      }
-    ]
-  },
-  {
-    path: "/course",
-    redirect: "/course/index",
-    component: Layout,
-    children: [
-      {
-        path: "index",
-        name: "courseList",
-        component: _import("course/index"),
-        meta: { title: "课程管理", icon: "dashboard", noCache: true }
-      }
-    ]
-  },
-  {
-    path: "/teacher",
-    redirect: "/teacher/index",
-    component: Layout,
-    children: [
-      {
-        path: "index",
-        name: "teacherList",
-        component: _import("teacher/index"),
-        meta: { title: "讲师管理", icon: "dashboard", noCache: true }
-      }
-    ]
-  },
-  {
-    path: "/category",
-    redirect: "/category/index",
-    component: Layout,
-    children: [
-      {
-        path: "index",
-        name: "category",
-        component: _import("category/index"),
-        meta: { title: "类目管理", icon: "dashboard", noCache: true }
-      }
-    ]
-  },
-  {
-    path: "/order",
-    redirect: "/order/index",
-    component: Layout,
-    children: [
-      {
-        path: "index",
-        name: "orderList",
-        component: _import("order/index"),
-        meta: { title: "订单管理", icon: "dashboard", noCache: true }
-      }
-    ]
-  },
-  {
-    path: "/member",
-    redirect: "/member/index",
-    component: Layout,
-    children: [
-      {
-        path: "index",
-        name: "member",
-        component: _import("member/index"),
-        meta: { title: "会员管理", icon: "dashboard", noCache: true }
-      }
-    ]
-  },
-  {
-    path: "/banner",
-    redirct: "/banner/index",
-    component: Layout,
-    children: [
-      {
-        path: "index",
-        name: "bannerlist",
-        component: _import("banner/index"),
-        meta: { title: "推荐位管理", icon: "form", noCache: true }
-      }
-    ]
   }
 ];
 

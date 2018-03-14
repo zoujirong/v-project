@@ -11,7 +11,7 @@
         <screenfull class="screenfull right-menu-item"></screenfull>
       </el-tooltip>
 
-      <lang-select class="international right-menu-item"></lang-select>
+      <!-- <lang-select class="international right-menu-item"></lang-select> -->
 
       <el-tooltip effect="dark" :content="$t('navbar.theme')" placement="bottom">
         <theme-picker class="theme-switch right-menu-item"></theme-picker>
@@ -23,7 +23,7 @@
           <i class="el-icon-caret-bottom"></i>
         </div>
         <el-dropdown-menu slot="dropdown">
-          <router-link to="/">
+          <!-- <router-link to="/">
             <el-dropdown-item>
               {{$t('navbar.dashboard')}}
             </el-dropdown-item>
@@ -32,8 +32,8 @@
             <el-dropdown-item>
               {{$t('navbar.github')}}
             </el-dropdown-item>
-          </a>
-          <el-dropdown-item divided>
+          </a> -->
+          <el-dropdown-item><!-- divided -->
             <span @click="logout" style="display:block;">{{$t('navbar.logOut')}}</span>
           </el-dropdown-item>
         </el-dropdown-menu>

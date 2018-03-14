@@ -3,126 +3,139 @@
       <div class='category-nav'>
         <el-button type="success" @click="dialogTableVisible = true">新增类目</el-button>
       </div>
-        <el-table :data="list" v-loading.body="listLoading" border fit highlight-current-row style="width: 100%">
+      <TablePager :data="data" :pagination="pagination" :columns="columns1">
+            <template slot="handle" slot-scope="{row}">
+                <el-button type='text' v-if='row.handle==0' @click="dialogTableVisible1 =true">编辑课程</el-button>
+                <el-button type='text' v-else @click="dialogTableVisible = true">编辑类目名称</el-button>
+            </template>
+            <template slot="del" slot-scope="{row}">
+                <span @click="del(row)">删除</span>
+            </template>
+      </TablePager>
+       
 
-            <el-table-column align="center" label="类目ID" width="150px">
-                <template slot-scope="scope">
-                <span>{{scope.row.id}}</span>
-                </template>
-            </el-table-column>
+<!-- 新增类目弹窗 -->
+        <el-dialog title="新增类目" :visible.sync="dialogTableVisible" width='35%' ref='dataForm'>
+            <div class=''>
+              类目名称：<el-input v-model="temp.categoryName" placeholder="" clearable  size="small"></el-input>
+<br><br>
+              <el-button type="primary" @click="updateData">保存</el-button>&nbsp;&nbsp;
+            <el-button @click="dialogTableVisible = false">返回</el-button>
+            </div>
+        </el-dialog>
 
-            <el-table-column width="260px" align="center" label="类目名称">
-                <template slot-scope="scope">
-                <span>{{scope.row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}')}}</span>
-                </template>
-            </el-table-column>
-
-            <el-table-column align="center" label="操作管理" width="260px">
-                <template slot-scope="scope">
-                <span>编辑课程</span>
-                </template>
-                <template slot-scope="scope">
-                <span>删除</span>
-                </template>
-            </el-table-column>
-
-            <el-table-column align="center" label="编辑课程" width="" class-name="small-padding fixed-width">
-              <template slot-scope="scope">
-                <el-button type="primary" size="" @click="handleUpdate(scope.row)">编辑课程</el-button>
-              </template>
-            </el-table-column>
-
-        </el-table>
-
-        <!-- 新增类目弹窗 -->
-        <el-dialog title="查看报名课程" :visible.sync="dialogTableVisible">
-            <el-table >
-                <el-table-column property="date" label="序号" width="150">
-                    <template slot-scope="scope">
-                    <span>{{}}</span>
-                    </template>
-                </el-table-column>
-                <el-table-column property="name" label="课程名称" width="200">
-                    <template slot-scope="scope">
-                    <span>{{}}</span>
-                    </template>
-                </el-table-column>
-                <el-table-column property="address" label="学员行为">
-                    <template slot-scope="scope">
-                    <span>{{}}</span>
-                    </template>
-                </el-table-column>
-            </el-table>
+<!-- 编辑课程弹窗 -->
+        <el-dialog title="编辑课程" :visible.sync="dialogTableVisible1" width='35%' ref='dataForm'>
+            <div class=''>
+              类目名称：<el-input v-model="input1" placeholder="课程名或课程id进行查询" clearable  size="small"></el-input>
+<br><br>
+            <el-button type="primary">查询</el-button>&nbsp;&nbsp;
+            <el-button>重置</el-button>
+            </div>
+            <TablePager :data='courses' :columns="columns2"  :pagination="pagination">
+              <template slot="sort" slot-scope="{row}">
+                <span>
+                  <el-button  v-if="row.sort == 'start'" type="text">下移 删除</el-button> 
+                  <el-button  v-else-if="row.sort == 'end'" type="text">上移 删除</el-button> 
+                  <el-button v-else type="text">上移 下移 删除</el-button> 
+                  </span>
+            </template>
+            </TablePager>
         </el-dialog>
     </div>
 </template>
 
 <script>
 import { fetchList } from '@/api/article'
-
+import TablePager from '@/components/TablePager';
 export default {
   name: 'category',
   data() {
     return {
-      list: null,
       listLoading: true,
       listQuery: {
         page: 1,
         limit: 10
       },
       dialogTableVisible: false,
-
+      dialogTableVisible1: false,
+      temp:{
+        categoryId:'',
+        categoryName: '',
+        handle: '编辑课程',
+        del:'删除'
+      },
+      input1:'',
+      pagination: {
+        currentPage: 1,
+        total: 100,
+        pageSize: 10
+      },
+      columns1: [
+                {title: '类目ID', key: 'categoryId'},
+                {title: '类目名称', key: 'categoryName'},
+                {title: '操作管理', slot: 'handle'},
+                {title: '', slot: 'del'},
+            ],
+      data: [
+          {categoryId: 1, categoryName: '推荐课程',handle:'0' },
+          {categoryId: 2, categoryName: '交互设计',handle:'1'}
+      ],
+      columns2:[
+        {title:'位置',key:'position'},
+        {title:'课程id',key:'courseId'},
+        {title:'课程名称',key:'courseName'},
+        {title:'排序',slot:'sort'},
+      ],
+      courses:[
+        {position:'1',courseId:'25',courseName:'设计质量',sort:'start'},
+        {position:'1',courseId:'25',courseName:'设计质量',sort:''},
+        {position:'2',courseId:'13',courseName:'工业设计',sort:'end'}
+      ],
     }
+  },
+  components:{
+    TablePager
   },
   filters: {
-    statusFilter(status) {
-      const statusMap = {
-        published: 'success',
-        draft: 'info',
-        deleted: 'danger'
-      }
-      return statusMap[status]
-    }
+  
   },
   created() {
-    this.getList()
   },
   methods: {
-    getList() {
-      this.listLoading = true
-      fetchList(this.listQuery).then(response => {
-        const items = response.data.items
-        this.list = items.map(v => {
-          this.$set(v, 'edit', false) // https://vuejs.org/v2/guide/reactivity.html
-
-          v.originalTitle = v.title //  will be used when user click the cancel botton
-
-          return v
-        })
-        this.listLoading = false
-      })
+    resetTemp(){
+      this.temp={
+        categoryId:'',
+        categoryName: '',
+        handle: '编辑课程',
+        del:'删除'
+      }
     },
-    cancelEdit(row) {
-      row.title = row.originalTitle
-      row.edit = false
-      this.$message({
-        message: 'The title has been restored to the original value',
-        type: 'warning'
-      })
+    handleCreate(){
+      this.resetTemp();
+      this.dialogStatus = 'create',
+      this.dialogTableVisible = true
+      // this.$refs['dataForm'].
     },
-    confirmEdit(row) {
-      row.edit = false
-      row.originalTitle = row.title
-      this.$message({
-        message: 'The title has been edited',
-        type: 'success'
-      })
+    updateData(){
+      this.data.unshift(this.temp)
+      this.dialogTableVisible = false;
     },
+    del(row){
+      this.data.splice(0,1);
+      this.$notify({
+              title: '成功',
+              message: '删除成功',
+              type: 'success',
+              duration: 2000
+            })
+    }
   }
 }
 </script>
 
 <style scoped>
+.el-input{width: auto}
 .edit-input {
   padding-right: 100px;
 }
