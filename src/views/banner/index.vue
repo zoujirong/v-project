@@ -3,91 +3,17 @@
         <div class="btn-top">
             <button class="el-button el-button--primary el-button--medium" @click="addShow=true">新增推荐位</button>
         </div>
-        <div class="el-table el-table--fit el-table--border el-table--enable-row-hover el-table--enable-row-transition el-table--medium">
-            <div class="el-table__header-wrapper">
-                <table cellspacing="0" cellpadding="0" border="0" class="el-table__header">
-                    <thead class="has-gutter">
-                        <tr>
-                            <th colspan="1" rowspan="1" class="el-table_1_column_7  is-center   is-leaf">
-                                <div class="cell">序号</div>
-                            </th>
-                            <th colspan="1" rowspan="1" class="el-table_1_column_8  is-center   is-leaf">
-                                <div class="cell">推荐位名称</div>
-                            </th>
-                            <th colspan="1" rowspan="1" class="el-table_1_column_9  is-center   is-leaf">
-                                <div class="cell">图片</div>
-                            </th>
-                            <th colspan="1" rowspan="1" class="el-table_1_column_10  is-center   is-leaf">
-                                <div class="cell">课程id</div>
-                            </th>
-                            <th colspan="1" rowspan="1" class="el-table_1_column_11  is-center   is-leaf">
-                                <div class="cell">课程名称</div>
-                            </th>
-                            <th colspan="1" rowspan="1" class="el-table_1_column_12  is-center   is-leaf">
-                                <div class="cell">开始时间</div>
-                            </th>
-                            <th colspan="1" rowspan="1" class="el-table_1_column_13  is-center   is-leaf">
-                                <div class="cell">结束时间</div>
-                            </th>
-                            <th colspan="1" rowspan="1" class="el-table_1_column_14  is-center   is-leaf">
-                                <div class="cell">创建时间</div>
-                            </th>
-                            <th colspan="1" rowspan="1" class="el-table_1_column_15  is-center   is-leaf">
-                                <div class="cell">修改时间</div>
-                            </th>
-                            <th colspan="1" rowspan="1" class="el-table_1_column_16  is-center   is-leaf">
-                                <div class="cell">操作</div>
-                            </th>
-                            <th class="gutter" style="width: 0px;"></th>
-                        </tr>
-                    </thead>
-            </table>
-            </div>
-            <!-- 表格内容部分 -->
-            <div class="el-table el-table__body-wrapper is-scroll-left">
-                <table cellspacing="0" cellpadding="0" border="0" class="el-table__body">
-                    <tbody>
-                        <tr class="el-table__row">
-                            <td class="el-table_1_column_7 is-center ">
-                                <div class="cell">0</div>
-                            </td>
-                            <td class="el-table_1_column_8 is-center ">
-                                <div class="cell">0</div>
-                            </td>
-                            <td class="el-table_1_column_9 is-center ">
-                                <div class="cell">0</div>
-                            </td>
-                            <td class="el-table_1_column_10 is-center ">
-                                <div class="cell">0</div>
-                            </td>
-                            <td class="el-table_1_column_11 is-center ">
-                                <div class="cell">0</div>
-                            </td>
-                            <td class="el-table_1_column_12 is-center ">
-                                <div class="cell">0</div>
-                            </td>
-                            <td class="el-table_1_column_13 is-center ">
-                                <div class="cell">0</div>
-                            </td>
-                            <td class="el-table_1_column_14 is-center ">
-                                <div class="cell">0</div>
-                            </td>
-                            <td class="el-table_1_column_15 is-center ">
-                                <div class="cell">0</div>
-                            </td>
-                            <td class="el-table_1_column_16 is-center ">
-                                <div class="cell operation">
-                                    <a href="javascript:;">编辑</a>
-                                    <a href="javascript:;">下移</a>
-                                    <a href="javascript:;">上移</a>
-                                    <a href="javascript:;">删除</a>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+        <!-- 表格部分 -->
+        <template>
+            <TablePager :data="tableData" :columns="columns" :pagination="pagination">
+                <template slot="operate" slot-scope="{row}">
+                    <el-button type="text" size="small">编辑</el-button>
+                    <el-button type="text" size="small" @click="up(row.$index, tableData)">上移</el-button>
+                    <el-button type="text" size="small" @click="down(row.$index, tableData)">下移</el-button>
+                    <el-button @click.native.prevent="deleteRow(row.$index, tableData)" type="text" size="small"> 删除 </el-button>
+                </template>
+           </TablePager>
+       </template>   
         <!-- 弹窗部分 -->
         <div class="vue-image-crop-upload" v-show="addShow">
             <div class="vicp-wrap">
@@ -95,40 +21,27 @@
                     <i class="vicp-icon4"></i>
                 </div>
                 <div class="bannerform">
-                    <form action="">
-                        <div class="el-form-item postInfo-container-item el-tooltip item el-form-item--medium">
-                            <label for="title" class="el-form-item__label">推荐位名称</label>
-                            <div class="el-form-item__content">
-                                <el-input placeholder="请输入推荐位名称" v-model="title" clearable></el-input>
-                            </div>
-                        </div>
-                        <div class="el-form-item postInfo-container-item el-tooltip item el-form-item--medium updatapic">
-                            <label for="title" class="el-form-item__label">图片</label>
-                            <div class="el-form-item__content updata">
-                                <input type="file">
-                                <button class="el-button el-button--primary el-button--medium">上传图片</button>
-                            </div>
-                        </div>
-                        <div class="el-form-item postInfo-container-item el-tooltip item el-form-item--medium">
-                            <label for="title" class="el-form-item__label">对应跳转的课程id</label>
-                            <div class="el-form-item__content">
-                                <el-input placeholder="请输入对应跳转的课程id" v-model="courseId" clearable></el-input>
-                            </div>
-                        </div>
-                        <div class="el-form-item postInfo-container-item el-tooltip item el-form-item--medium">
-                            <label for="title" class="el-form-item__label">开始时间</label>
-                            <div class="el-form-item__content block">
-                                <el-date-picker v-model="startDate" type="datetime" placeholder="选择日期"  :picker-options="pickr"></el-date-picker>
-                            </div>
-                        </div>
-                        <div class="el-form-item postInfo-container-item el-tooltip item el-form-item--medium">
-                            <label for="title" class="el-form-item__label">结束时间</label>
-                            <div class="el-form-item__content demo-input-suffix">
-                                <el-date-picker v-model="endDate" type="datetime" placeholder="选择日期" :picker-options="pickr"></el-date-picker>
-                            </div>
-                        </div>
+                    <el-form :model="bannerList" :rules="rules" ref="bannerList" label-width="100px" class="demo-ruleForm">
+                        <el-form-item label="推荐位名称" prop='title'>
+                            <el-input v-model="bannerList.title"></el-input>
+                        </el-form-item>
+                        <el-form-item label="图片">
+                            <el-upload class="upload-demo" action="https://jsonplaceholder.typicode.com/posts/" :limit='1' :on-preview="handlePreview" :on-remove="handleRemove" :file-list="fileList2" list-type="picture">
+                                <el-button size="small" type="primary">点击上传</el-button>
+                                <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+                            </el-upload>
+                        </el-form-item>
+                        <el-form-item label="对应跳转的课程id" prop='courseId'>
+                            <el-input v-model.number="bannerList.courseId"></el-input>
+                        </el-form-item>
+                        <el-form-item label="开始时间" prop='startDate'>
+                            <el-date-picker v-model="bannerList.startDate" type="datetime" placeholder="选择日期"  :picker-options="pickr"></el-date-picker>
+                        </el-form-item>
+                        <el-form-item label="结束时间" prop='endDate'>
+                            <el-date-picker v-model="bannerList.endDate" type="datetime" placeholder="选择日期" :picker-options="pickr"></el-date-picker>
+                        </el-form-item>
                         <button class="el-button el-button--primary el-button--medium" @click="submit">提交</button>
-                    </form>
+                    </el-form>
                 </div>
             </div>
         </div>
@@ -136,49 +49,120 @@
     </div>
 </template>
 <script>
+import TablePager from '@/components/TablePager';
 export default {
     data(){
         return {
             addShow:false,
-            title: '',
-            courseId:'',
-            startDate:'',
-            endDate:'',
+            bannerList:{
+              title: '',
+              url:'',
+              courseId:'',
+              startDate:'',
+              endDate:'' ,
+              nowDate:new Date(),
+              creatDate:''
+            },
+            pagination: {
+                currentPage: 1,
+                total: 400,
+                pageSize: 100
+            },
+            columns: [
+                {title: '序号', key: 'index'},
+                {title: '推荐位名称', key: 'title'},
+                {title: '图片', key: 'url'},
+                {title: '课程id', key: 'courseId'},
+                {title: '课程名称', key: 'status'},
+                {title: '开始时间', key: 'startDate'},
+                {title: '结束时间', slot: 'endDate'},
+                {title: '创建时间', key: 'nowDate'},
+                {title: '修改时间', key: 'creatDate'},
+                {title: '操作', slot: 'operate'}
+            ],
             pickr:{
                 disabledDate(time) {
                     return Date.now() > time.getTime() ;
                 }
+            },
+            fileList2:[],
+            tableData:[],
+            rules:{
+                title: [
+                  { required: true, message: '请输入推荐位名称', trigger: 'blur' }
+                ],
+                url:[
+                    {required: true,message: '请上传图片', trigger: 'blur'}
+                ],
+                courseId:[
+                    {required: true,message: '请输入课程id', trigger: 'blur'},
+                    { type: 'number', message: '课程id必须为数字值'}
+                ],
+                startDate:[
+                    {required: true,message: '请选择开始时间', trigger: 'blur'}
+                ],
+                endDate:[
+                    {required: true,message: '请选择结束时间', trigger: 'blur'}
+                ]
             }
         }
     },
+    components: {
+        TablePager
+    },
     methods:{
-        submit(){
-            this.title = '';
-            this.courseId = '';
-            this.startDate = '';
-            this.endDate = ''
+        submit(e){
+            e.preventDefault();
+            if(this.bannerList.title != '' && this.bannerList.courseId != '' && this.bannerList.startDate != '' && this.bannerList.endDate !=''){
+              this.tableData.push(this.bannerList);
+            }
+            this.$refs[this.bannerList].resetFields();
+            console.log(this.tableData)
             this.addShow = false;
-        }
+        },
+        handleRemove(file, fileList) {
+            console.log(file, fileList);
+        },
+        handlePreview(file) {
+            console.log(file);
+        },
+        deleteRow(index, rows){
+            rows.splice(index, 1);
+        },
+        indexMethod(index) {
+        return index + 1;
+        },
+        up(i) {
+            console.log(i)
+            var options = this.tableData;
+            if (i === 0) {
+                layer.msg('第一个不能上移哦');
+                return;
+            }
+            var prev = options.slice(0, i - 1);
+            var curr = options.slice(i - 1, i + 1).reverse();
+            var tail = options.slice(i + 1);
+            this.tableData = prev.concat(curr).concat(tail);
+        },
+        down(i) {
+            console.log(i)
+            var options = this.tableData;
+            if (i === options.length - 1) {
+                layer.msg('最后一个不能下移哦');
+                return;
+            }
+            var prev = options.slice(0, i);
+            var curr = options.slice(i, i + 2).reverse();
+            var tail = options.slice(i + 2);
+            this.tableDatan = prev.concat(curr).concat(tail);
+        },
     }
 }
 </script>
 <style>
   .operation a{padding: 0 10px}
   .btn-top{margin-bottom: 30px;padding-top: 10px}
-  .el-table_1_column_7{width: 80px}
-  .el-table_1_column_8{width: 120px}
-  .el-table_1_column_9{width: 200px}
-  .el-table_1_column_10{width: 80px}
-  .el-table_1_column_11{width: 200px}
-  .el-table_1_column_12{width: 180px}
-  .el-table_1_column_13{width: 180px}
-  .el-table_1_column_14{width: 180px}
-  .el-table_1_column_15{width: 180px}
-  .el-table_1_column_16{width: 260px}
-  .el-table_1_column_9 img{
-      width: 100%;
-      height: 100%
-  }
+  .el-table th.is-leaf,.el-table tr{text-align: center}
   .vue-image-crop-upload .vicp-wrap{
     -webkit-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.23);
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.23);
@@ -193,7 +177,7 @@ export default {
     right: 0;
     margin: auto;
     width: 600px;
-    height: 410px;
+    height: 550px;
     padding: 25px;
     background-color: #fff;
     border-radius: 2px;
@@ -258,5 +242,6 @@ export default {
 .updata input{opacity: 0;position: absolute;top: 0;left: 82px;width: 98px;height: 36px}
 .updata button{margin-left: 42px;}
 .el-form-item__content{float: left}
+.el-form-item__label{width: 140px !important}
 </style>
 

@@ -1,82 +1,56 @@
 <template>
-    <div class="app-container calendar-list-container">
-        <div class='member-nav'>
-            会员：<el-input v-model="input1" placeholder="输入课程名称查询" clearable  size="small"></el-input>
-            &nbsp;
-            最近登录时间&nbsp;
-            <el-date-picker
-                v-model="value1"
-                type="datetimerange"
-                range-separator="至"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期">
-            </el-date-picker>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                
+  <div class="app-container calendar-list-container">
+    <div class='member-nav'>
+      会员：
+      <el-input v-model="input1" placeholder="输入课程名称查询" clearable size="small"></el-input>
+      &nbsp; 最近登录时间&nbsp;
+      <el-date-picker v-model="value1" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
+      </el-date-picker>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
             <el-button type="primary">查询</el-button>&nbsp;&nbsp;
             <el-button>重置</el-button>
         </div>
-        <el-table :data="list" v-loading.body="listLoading" border fit highlight-current-row style="width: 100%">
 
-            <el-table-column align="center" label="序号" width="120px">
-                <template slot-scope="scope">
-                <span>{{scope.row.id}}</span>
-                </template>
-            </el-table-column>
-
-            <el-table-column width="220px" align="center" label="微信昵称">
-                <template slot-scope="scope">
-                <span>{{scope.row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}')}}</span>
-                </template>
-            </el-table-column>
-        
-            <el-table-column align="center" label="手机号码" width="200px">
-                <template slot-scope="scope">
-                <span>编辑课程</span>
-                </template>
-            </el-table-column>
-            <el-table-column align="center" label="最近登录时间" width="" class-name="small-padding fixed-width">
-              <template slot-scope="scope">
-                
-              </template>
-            </el-table-column>
-             <el-table-column align="center" label="首次登录时间" width="" class-name="small-padding fixed-width">
-              <template slot-scope="scope">
-                
-              </template>
-            </el-table-column>
-             <el-table-column align="center" label="报名课程数量" width="" class-name="small-padding fixed-width">
-              <template slot-scope="scope">
-                
-              </template>
-            </el-table-column>
-             <el-table-column align="center" label="付费课程数" width="" class-name="small-padding fixed-width">
-              <template slot-scope="scope">
-                
-              </template>
-            </el-table-column>
-             <el-table-column align="center" label="操作" width="" class-name="small-padding fixed-width">
-              <template slot-scope="scope">
-                <el-button type="primary" @click="dialogTableVisible = true">【查看报名课程】</el-button>
-              </template>
-            </el-table-column>
-        </el-table>
+        <TablePager :data="list" :pagination="pagination" :columns="columns">  
+          <template slot="handle" slot-scope="{row}">
+                <span  @click="dialogTableVisible = true">【查看报名课程】</span>
+            </template> 
+        </TablePager>
+       
+<!-- 查看报名课程弹框 -->
         <el-dialog title="查看报名课程" :visible.sync="dialogTableVisible">
-            <el-table >
-                <el-table-column property="date" label="序号" width="150">
+          <div>
+              <el-input v-model="input3" placeholder="输入课程名称查询"></el-input>
+              &nbsp;&nbsp;
+              <template>
+                <el-select v-model="value2" placeholder="免费报名">
+                  <el-option
+                    v-for="item in options"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                  </el-option>
+                </el-select>
+              </template>
+              &nbsp;&nbsp;&nbsp;&nbsp;
+              <el-button type="primary">查询</el-button>&nbsp;&nbsp;
+              <el-button>重置</el-button>
+          </div>
+            <el-table :data="list">
+                <el-table-column label="序号" width="150">
                     <template slot-scope="scope">
-                    <span>{{}}</span>
+                    <span>{{scope.row.id}}</span>
                     </template>
                 </el-table-column>
-                <el-table-column property="name" label="课程名称" width="200">
+                <el-table-column label="课程名称" width="200">
                     <template slot-scope="scope">
-                    <span>{{}}</span>
+                    <span>2</span>
                     </template>
                 </el-table-column>
-                <el-table-column property="address" label="学员行为">
+                <el-table-column label="学员行为">
                     <template slot-scope="scope">
-                    <span>{{}}</span>
+                    <span>3</span>
                     </template>
                 </el-table-column>
             </el-table>
@@ -86,69 +60,66 @@
 
 <script>
 import { fetchList } from '@/api/article'
-
+import TablePager from '@/components/TablePager';
 export default {
-  name: 'member',
+  name: "member",
   data() {
     return {
-      list: null,
       listLoading: true,
       listQuery: {
         page: 1,
         limit: 10
       },
-     dialogTableVisible: false,
-        input1:'',
-        value1:'',
-        input3:''
+      dialogTableVisible: false,
+      input1:'',
+      value1:'',
+      value2:'',
+      input3:'',
+      options: [
+        {
+        value: '选项1',
+        label: '免费报名'
+        },
+        {
+          value: '选项2',
+          label: '购买'
+        }, 
+        {
+          value: '选项3',
+          label: '验证购买'
+        }
+        ],
+        pagination: {
+        currentPage: 1,
+        total: 100,
+        pageSize: 10
+      },
+      columns: [
+                {title: '序号', key: 'memberId'},
+                {title: '微信昵称', key: 'nick'},
+                {title: '手机号码', key: 'phoneNumber'},
+                {title: '最近登录时间', key: 'logged'},
+                {title: '首次登录时间', key: 'firstLogin'},
+                {title: '报名课程数量', key: 'enterNumber'},
+                {title: '付费课程数', key: 'palyNumber'},
+                {title: '操作', slot: 'handle'},
+            ],
+      list: [
+          {memberId: 1, nick: '红领巾', phoneNumber: '16546451284',logged:'2018.01.19',firstLogin:'2018.01.19', enterNumber:'1',palyNumber:'1'}
+      ]
     }
   },
+  components:{TablePager},
   filters: {
-    statusFilter(status) {
-      const statusMap = {
-        published: 'success',
-        draft: 'info',
-        deleted: 'danger'
-      }
-      return statusMap[status]
-    }
+ 
   },
   created() {
-    this.getList()
   },
   methods: {
-    getList() {
-      this.listLoading = true
-      fetchList(this.listQuery).then(response => {
-        const items = response.data.items
-        this.list = items.map(v => {
-          this.$set(v, 'edit', false) // https://vuejs.org/v2/guide/reactivity.html
-
-          v.originalTitle = v.title //  will be used when user click the cancel botton
-
-          return v
-        })
-        this.listLoading = false
-      })
-    },
-    cancelEdit(row) {
-      row.title = row.originalTitle
-      row.edit = false
-      this.$message({
-        message: 'The title has been restored to the original value',
-        type: 'warning'
-      })
-    },
-    confirmEdit(row) {
-      row.edit = false
-      row.originalTitle = row.title
-      this.$message({
-        message: 'The title has been edited',
-        type: 'success'
-      })
-    },
+  
+   
   }
-}
+};
 </script>
 
 <style scoped>
@@ -162,4 +133,7 @@ export default {
 }
 .el-input{width: auto}
 .member-nav{margin-bottom: 15px}
+.el-dialog__wrapper .el-dialog__header{background: #409EFF;}
+.el-dialog__wrapper .el-dialog__title{color:#fff}
+.el-dialog__wrapper .el-dialog__headerbtn .el-dialog__close{color:#fff}
 </style>
