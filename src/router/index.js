@@ -1,13 +1,13 @@
-import Vue from "vue";
-import Router from "vue-router";
-const _import = require("./_import_" + process.env.NODE_ENV);
+import Vue from 'vue';
+import Router from 'vue-router';
+const _import = require('./_import_' + process.env.NODE_ENV);
 // in development-env not use lazy-loading, because lazy-loading too many pages will cause webpack hot update too slow. so only in production use lazy-loading;
 // detail: https://panjiachen.github.io/vue-element-admin-site/#/lazy-loading
 
 Vue.use(Router);
 
 /* Layout */
-import Layout from "../views/layout/Layout";
+import Layout from '../views/layout/Layout';
 
 /** note: submenu only apppear when children.length>=1
  *   detail see  https://panjiachen.github.io/vue-element-admin-site/#/router-and-nav?id=sidebar
@@ -28,159 +28,159 @@ import Layout from "../views/layout/Layout";
   }
 **/
 export const constantRouterMap = [
-  { path: "/login", component: _import("login/index"), hidden: true },
+  { path: '/login', component: _import('login/index'), hidden: true },
   {
-    path: "/authredirect",
-    component: _import("login/authredirect"),
+    path: '/authredirect',
+    component: _import('login/authredirect'),
     hidden: true
   },
-  { path: "/404", component: _import("errorPage/404"), hidden: true },
-  { path: "/401", component: _import("errorPage/401"), hidden: true },
+  { path: '/404', component: _import('errorPage/404'), hidden: true },
+  { path: '/401', component: _import('errorPage/401'), hidden: true },
   {
-    path: "",
+    path: '',
     component: Layout,
-    redirect: "dashboard",
+    redirect: 'dashboard',
     children: [
       {
-        path: "dashboard",
-        component: _import("dashboard/index"),
-        name: "dashboard",
-        meta: { title: "dashboard", icon: "dashboard", noCache: true }
+        path: 'dashboard',
+        component: _import('dashboard/index'),
+        name: 'dashboard',
+        meta: { title: 'dashboard', icon: 'dashboard', noCache: true }
       }
     ]
   },
   {
-    path: "/course",
-    redirect: "/course/index",
+    path: '/course',
+    redirect: '/course/index',
     component: Layout,
     children: [
       {
-        path: "index",
-        name: "courseList",
-        component: _import("course/index"),
-        meta: { title: "课程管理", icon: "dashboard", noCache: true }
+        path: 'index',
+        name: 'courseList',
+        component: _import('course/index'),
+        meta: { title: '课程管理', icon: 'dashboard', noCache: true }
       }
     ]
   },
   {
-    path: "/course",
-    redirect: "/course/add",
+    path: '/course',
+    redirect: '/course/add',
     hidden: true,
-    name: "course",
+    name: 'course',
     component: Layout,
     children: [
       {
-        path: "add",
-        name: "addCourse",
-        component: _import("course/add"),
-        meta: { title: "发布课程", noCache: true }
+        path: 'add',
+        name: 'addCourse',
+        component: _import('course/add'),
+        meta: { title: '发布课程', noCache: true }
       }
     ],
-    meta: { title: "课程管理", icon: "dashboard", noCache: true }
+    meta: { title: '课程管理', icon: 'dashboard', noCache: true }
   },
   {
-    path: "/teacher",
-    redirect: "/teacher/index",
+    path: '/teacher',
+    redirect: '/teacher/index',
     component: Layout,
     children: [
       {
-        path: "index",
-        name: "teacherList",
-        component: _import("teacher/index"),
-        meta: { title: "讲师管理", icon: "dashboard", noCache: true }
+        path: 'index',
+        name: 'teacherList',
+        component: _import('teacher/index'),
+        meta: { title: '讲师管理', icon: 'dashboard', noCache: true }
       }
     ]
   },
   {
-    path: "/category",
-    redirect: "/category/index",
+    path: '/category',
+    redirect: '/category/index',
     component: Layout,
     children: [
       {
-        path: "index",
-        name: "category",
-        component: _import("category/index"),
-        meta: { title: "类目管理", icon: "dashboard", noCache: true }
+        path: 'index',
+        name: 'category',
+        component: _import('category/index'),
+        meta: { title: '类目管理', icon: 'dashboard', noCache: true }
       }
     ]
   },
   {
-    path: "/category",
-    redirect: "/category/getCategoryCourse",
+    path: '/category',
+    redirect: '/category/getCategoryCourse',
     component: Layout,
     children: [
       {
-        path: "getCategoryCourse",
-        name: "getCategoryList",
-        component: _import("category/getCategoryCourse"),
-        meta: { title: "编辑课程", icon: "dashboard", noCache: true }
+        path: 'getCategoryCourse',
+        name: 'getCategoryList',
+        component: _import('category/getCategoryCourse'),
+        meta: { title: '编辑课程', icon: 'dashboard', noCache: true }
       }
     ],
     hidden: true
   },
   {
-    path: "/order",
-    redirect: "/order/index",
+    path: '/order',
+    redirect: '/order/index',
     component: Layout,
     children: [
       {
-        path: "index",
-        name: "orderList",
-        component: _import("order/index"),
-        meta: { title: "订单管理", icon: "dashboard", noCache: true }
+        path: 'index',
+        name: 'orderList',
+        component: _import('order/index'),
+        meta: { title: '订单管理', icon: 'dashboard', noCache: true }
       }
     ]
   },
   {
-    path: "/member",
-    redirect: "/member/index",
+    path: '/member',
+    redirect: '/member/index',
     component: Layout,
     children: [
       {
-        path: "index",
-        name: "member",
-        component: _import("member/index"),
-        meta: { title: "会员管理", icon: "dashboard", noCache: true }
+        path: 'index',
+        name: 'member',
+        component: _import('member/index'),
+        meta: { title: '会员管理', icon: 'dashboard', noCache: true }
       }
     ]
   },
   {
-    path: "/banner",
-    redirct: "/banner/index",
+    path: '/banner',
+    redirct: '/banner/index',
     component: Layout,
     children: [
       {
-        path: "index",
-        name: "bannerlist",
-        component: _import("banner/index"),
-        meta: { title: "推荐位管理", icon: "form", noCache: true }
+        path: 'index',
+        name: 'bannerlist',
+        component: _import('banner/index'),
+        meta: { title: '推荐位管理', icon: 'form', noCache: true }
       }
     ]
   },
   {
-    path: "/marketing",
-    redirect: "/marketing/index",
+    path: '/marketing',
+    redirect: '/marketing/index',
     component: Layout,
     children: [
       {
-        path: "index",
-        name: "marketphone",
-        component: _import("marketing/index"),
-        meta: { title: "营销管理", icon: "message", noCache: true }
+        path: 'index',
+        name: 'marketphone',
+        component: _import('marketing/index'),
+        meta: { title: '营销管理', icon: 'message', noCache: true }
       }
     ]
   },
   {
-    path: "/marketlist",
+    path: '/marketlist',
     component: Layout,
-    redirect: "/marketing/marketlist",
-    name: "marketlist",
+    redirect: '/marketing/marketlist',
+    name: 'marketlist',
     children: [
       {
-        path: "marketlist",
-        name: "marketlist",
-        component: _import("marketing/marketlist"),
-        meta: { title: "营销管理", icon: "message", noCache: true }
+        path: 'marketlists',
+        name: 'marketlists',
+        component: _import('marketing/marketlist'),
+        meta: { title: '营销管理', icon: 'message', noCache: true }
       }
     ],
     hidden: true
@@ -192,7 +192,7 @@ export default new Router({
   scrollBehavior: () => ({ y: 0 }),
   routes: constantRouterMap
 });
-export const asyncRouterMap = [{ path: "*", redirect: "/404", hidden: true }];
+export const asyncRouterMap = [{ path: '*', redirect: '/404', hidden: true }];
 
 /* export const asyncRouterMap = [
   {

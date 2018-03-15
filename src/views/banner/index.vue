@@ -1,22 +1,29 @@
 <template>
   <div class="app-container">
     <div class="btn-top">
-      <button class="el-button el-button--primary el-button--medium" @click="addShow=true">新增推荐位</button>
+      <button class="el-button el-button--primary el-button--medium" @click="addbanner">新增推荐位</button>
     </div>
     <!-- 表格部分 -->
     <template>
       <TablePager :data="tableData" :columns="columns" :pagination="pagination">
-        <template slot='number' type='index' slot-scope="{row,index}">
+        <template slot='number' slot-scope="{row,index}">
           <span>{{index+1}}</span>
+        </template>
+        <template slot='bannerCover' slot-scope="{row,index}">
+          <img :src="tableData[index].bannerCover" alt="" @click="picBig(index)">
         </template>
         <template slot="operate" slot-scope="{row,index}">
           <el-button type="text" size="small" @click="editBanner(index)">编辑</el-button>
-          <el-button type="text" size="small" @click="up(index, row)" v-show="index != 0">上移</el-button>
-          <el-button type="text" size="small" @click="down(index, row)" v-show="(index != tableData.length-1) || index == 0">下移</el-button>
+          <el-button type="text" size="small" @click="up(index)" v-show="index != 0">上移</el-button>
+          <el-button type="text" size="small" @click="down(index)" v-show="(index != tableData.length-1) || index == 0">下移</el-button>
           <el-button @click.native.prevent="deleteRow(index, row)" type="text" size="small"> 删除 </el-button>
         </template>
       </TablePager>
     </template>
+    <!-- 图片放大弹窗 -->
+    <el-dialog :visible.sync="picVisible" width="50%" height="100%">
+      <img :src="tableData[picSrc].bannerCover" alt="">
+    </el-dialog>
     <!-- 弹窗部分 -->
     <el-dialog :visible.sync="addShow" width="30%" center @close="resetForm('banner')">
       <div class="bannerform">
@@ -25,10 +32,8 @@
             <el-input v-model="banner.bannerTitle"></el-input>
           </el-form-item>
           <el-form-item label="图片">
-            <el-upload class="upload-demo" action="https://jsonplaceholder.typicode.com/posts/" :limit='1' :on-preview="handlePreview" :on-remove="handleRemove" :file-list="fileList2" list-type="picture">
-              <el-button size="small" type="primary">点击上传</el-button>
-              <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
-            </el-upload>
+            <upload-image :limit="1" :fileList="banner.bannerCover ? [{url: banner.bannerCover}] : []" @onSuccess="onUploadCover"></upload-image>
+            <!-- <span class="form-tips">要求：图片宽高像素分别为 X * Y</span> -->
           </el-form-item>
           <el-form-item label="对应跳转的课程id" prop='courseId'>
             <el-input v-model.number="banner.courseId"></el-input>
@@ -48,38 +53,50 @@
   </div>
 </template>
 <script>
-import TablePager from "@/components/TablePager";
-import http from "@/api/banner.js";
+import TablePager from '@/components/TablePager';
+import UploadImage from '@/components/UploadImage';
+import {
+  getListBanner,
+  getAddBanner,
+  getEditBanner,
+  getDelBanner,
+  getSetBannerSort
+} from '@/api/banner.js';
+
 export default {
   data() {
     return {
       addShow: false,
-      authorization: "",
+      authorization: '',
       banner: {
-        bannerTitle: "",
-        bannerCover: "",
-        courseId: "",
-        startTime: "",
-        endTime: ""
+        bannerTitle: '',
+        bannerCover: '',
+        courseId: '',
+        startTime: '',
+        endTime: ''
       },
+      type: 1,
+      picSrc: 0,
+      picVisible: false,
+      editList: '',
       creatDate: new Date(),
-      amendDate: "",
+      amendDate: '',
       pagination: {
         currentPage: 1,
         total: 400,
         pageSize: 100
       },
       columns: [
-        { title: "序号", slot: "number" },
-        { title: "推荐位名称", key: "bannerTitle" },
-        { title: "图片", key: "bannerCover" },
-        { title: "课程id", key: "courseId" },
-        { title: "课程名称", key: "courseName" },
-        { title: "开始时间", key: "startTime" },
-        { title: "结束时间", key: "endTime" },
-        { title: "创建时间", key: "createTime" },
-        { title: "修改时间", key: "modifiedTime" },
-        { title: "操作", slot: "operate" }
+        { title: '序号', slot: 'number' },
+        { title: '推荐位名称', key: 'bannerTitle' },
+        { title: '图片', slot: 'bannerCover' },
+        { title: '课程id', key: 'courseId' },
+        { title: '课程名称', key: 'courseName' },
+        { title: '开始时间', key: 'startTime' },
+        { title: '结束时间', key: 'endTime' },
+        { title: '创建时间', key: 'createTime' },
+        { title: '修改时间', key: 'modifiedTime' },
+        { title: '操作', slot: 'operate' }
       ],
       pickr: {
         disabledDate(time) {
@@ -89,64 +106,71 @@ export default {
       fileList2: [],
       tableData: [
         {
-          bannerTitle: "hahahaha",
-          bannerCover: "",
-          courseId: "45",
-          startTime: "2018.2.03",
-          endTime: "2018.2.03"
+          bannerTitle: '123',
+          bannerCover:
+            'https://res.shiguangkey.com//file/201712/23/20171223212038113939692.jpg!mall_course_c',
+          courseId: '123',
+          startTime: '2018.7.03',
+          endTime: '2018.8.03'
         },
         {
-          bannerTitle: "34444",
-          bannerCover: "",
-          courseId: "45",
-          startTime: "2018.2.03",
-          endTime: "2018.2.03"
+          bannerTitle: '456',
+          bannerCover:
+            'https://res.shiguangkey.com//file/201803/12/20180312120835066269015.jpg!mall_index_banner_a',
+          courseId: '456',
+          startTime: '2018.3.03',
+          endTime: '2018.7.03'
         },
         {
-          bannerTitle: "34478787744",
-          bannerCover: "",
-          courseId: "45",
-          startTime: "2018.2.03",
-          endTime: "2018.2.03"
+          bannerTitle: '789',
+          bannerCover:
+            'https://res.shiguangkey.com//file/201710/19/20171019184621781403274.jpg!mall_course_a',
+          courseId: '789',
+          startTime: '2018.4.03',
+          endTime: '2018.5.03'
         }
       ],
       rules: {
         bannerTitle: [
-          { required: true, message: "请输入推荐位名称", trigger: "blur" }
+          { required: true, message: '请输入推荐位名称', trigger: 'blur' }
         ],
         bannerCover: [
-          { required: true, message: "请上传图片", trigger: "blur" }
+          { required: true, message: '请上传图片', trigger: 'blur' }
         ],
         courseId: [
-          { required: true, message: "请输入课程id", trigger: "blur" },
-          { type: "number", message: "课程id必须为数字值" }
+          { required: true, message: '请输入课程id', trigger: 'blur' },
+          { type: 'number', message: '课程id必须为数字值' }
         ],
         startTime: [
-          { required: true, message: "请选择开始时间", trigger: "blur" }
+          { required: true, message: '请选择开始时间', trigger: 'blur' }
         ],
         endTime: [
-          { required: true, message: "请选择结束时间", trigger: "blur" }
+          { required: true, message: '请选择结束时间', trigger: 'blur' }
         ]
       }
     };
   },
   components: {
-    TablePager
+    TablePager,
+    UploadImage
   },
   methods: {
     // 增加bannner部分
     submit(form) {
       this.$refs[form].validate(valid => {
         if (valid) {
-          // http
-          //   .getAddBanner(this.banner)
-          //   .then(res => {
-          //     this.getBannerList();
-          //   })
-          //   .catch(res => {
-          //     console.log(res);
-          //   });
-          this.tableData.push({ ...this.banner });
+          let addtype =
+            this.type == 1
+              ? getAddBanner(this.banner)
+              : getEditBanner(this.banner);
+          console.log(addtype);
+          addtype
+            .then(res => {
+              this.getBannerList();
+            })
+            .catch(res => {
+              console.log(res);
+            });
           console.log(this.tableData);
           this.addShow = false;
         } else {
@@ -154,34 +178,33 @@ export default {
         }
       });
     },
+    addbanner() {
+      this.type = 1;
+      this.addShow = true;
+      console.log(this.type);
+    },
     // 获取banner信息列表
     getBannerList() {
-      http
-        .getListBanner()
+      getListBanner()
         .then(res => {
           this.tableData = res.data;
         })
-        .catch(res => {});
+        .catch(res => {
+          console.log(res);
+        });
     },
     //编辑banner信息
     editBanner(index) {
+      this.type = 2;
+      console.log(this.type);
       this.addShow = true;
-      let list = { ...this.tableData[index] };
-      this.banner = list;
-      // http
-      //   .getEditBanner(this.banner)
-      //   .then(res => {
-      //     this.getBannerList();
-      //   })
-      //   .catch(res => {
-      //     console.log(res);
-      //   });
+      this.editList = this.tableData[index];
+      this.banner = this.editList;
     },
-    //上下移banner
     //删除
-    delBanner() {
-      http
-        .getDelBanner(this.banner.courseId)
+    delBanner(index) {
+      let delCourseId = this.tableData[index].courseId;
+      getDelBanner({ bannerId: delCourseId })
         .then(res => {
           this.getBannerList();
         })
@@ -201,13 +224,21 @@ export default {
     deleteRow(index, rows) {
       rows.splice(index, 1);
     },
+    //上下移banner
     up(index) {
       console.log(index);
       var options = this.tableData;
       var prev = options.slice(0, index - 1);
+      //reverse() 颠倒数组中元素的顺序。
       var curr = options.slice(index - 1, index + 1).reverse();
       var tail = options.slice(index + 1);
       this.tableData = prev.concat(curr).concat(tail);
+      let upCourseId = this.tableData[index].courseId;
+      getSetBannerSort({ upBannerId: upCourseId })
+        .then(res => {})
+        .catch(res => {
+          console.log(res);
+        });
     },
     down(index) {
       console.log(index);
@@ -215,12 +246,31 @@ export default {
       var prev = options.slice(0, index);
       var curr = options.slice(index, index + 2).reverse();
       var tail = options.slice(index + 2);
-      this.tableDatan = prev.concat(curr).concat(tail);
+      this.tableData = prev.concat(curr).concat(tail);
+      let downCourseId = this.tableData[index].courseId;
+      getSetBannerSort({ downBannerId: downCourseId })
+        .then(res => {})
+        .catch(res => {
+          console.log(res);
+        });
+    },
+    //图片放大
+    picBig(index) {
+      this.picSrc = index;
+      this.picVisible = true;
+    },
+    onUploadCover(urls) {
+      console.log(urls);
+      this.banner.bannerCover = urls[0];
     }
   }
 };
 </script>
 <style>
+img {
+  width: 100%;
+  height: 100%;
+}
 .operation a {
   padding: 0 10px;
 }
@@ -235,7 +285,7 @@ export default {
 .updatapic {
   position: relative;
 }
-.updata input {
+/* .updata input {
   opacity: 0;
   position: absolute;
   top: 0;
@@ -245,7 +295,7 @@ export default {
 }
 .updata button {
   margin-left: 42px;
-}
+} */
 .el-form-item__content {
   float: left;
 }
