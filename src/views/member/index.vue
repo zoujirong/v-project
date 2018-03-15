@@ -13,6 +13,7 @@
         </div>
 
         <TablePager :data="list" :pagination="pagination" :columns="columns">  
+          <template slot='memberId' slot-scope="{row,index}"><span>{{index+1}}</span></template>
           <template slot="handle" slot-scope="{row}">
                 <span  @click="dialogTableVisible = true">【查看报名课程】</span>
             </template> 
@@ -59,8 +60,8 @@
 </template>
 
 <script>
-import { fetchList } from '@/api/article'
-import TablePager from '@/components/TablePager';
+import { fetchList } from "@/api/article";
+import TablePager from "@/components/TablePager";
 export default {
   name: "member",
   data() {
@@ -71,54 +72,55 @@ export default {
         limit: 10
       },
       dialogTableVisible: false,
-      input1:'',
-      value1:'',
-      value2:'',
-      input3:'',
+      input1: "",
+      value1: "",
+      value2: "",
+      input3: "",
       options: [
         {
-        value: '选项1',
-        label: '免费报名'
+          value: "选项1",
+          label: "免费报名"
         },
         {
-          value: '选项2',
-          label: '购买'
-        }, 
+          value: "选项2",
+          label: "购买"
+        },
         {
-          value: '选项3',
-          label: '验证购买'
+          value: "选项3",
+          label: "验证购买"
         }
-        ],
-        pagination: {
+      ],
+      pagination: {
         currentPage: 1,
         total: 100,
         pageSize: 10
       },
       columns: [
-                {title: '序号', key: 'memberId'},
-                {title: '微信昵称', key: 'nick'},
-                {title: '手机号码', key: 'phoneNumber'},
-                {title: '最近登录时间', key: 'logged'},
-                {title: '首次登录时间', key: 'firstLogin'},
-                {title: '报名课程数量', key: 'enterNumber'},
-                {title: '付费课程数', key: 'palyNumber'},
-                {title: '操作', slot: 'handle'},
-            ],
+        { title: "序号", slot: "memberId" },
+        { title: "微信昵称", key: "nick" },
+        { title: "手机号码", key: "phoneNumber" },
+        { title: "最近登录时间", key: "logged" },
+        { title: "首次登录时间", key: "firstLogin" },
+        { title: "报名课程数量", key: "enterNumber" },
+        { title: "付费课程数", key: "palyNumber" },
+        { title: "操作", slot: "handle" }
+      ],
       list: [
-          {memberId: 1, nick: '红领巾', phoneNumber: '16546451284',logged:'2018.01.19',firstLogin:'2018.01.19', enterNumber:'1',palyNumber:'1'}
+        {
+          nick: "红领巾",
+          phoneNumber: "16546451284",
+          logged: "2018.01.19",
+          firstLogin: "2018.01.19",
+          enterNumber: "1",
+          palyNumber: "1"
+        }
       ]
-    }
+    };
   },
-  components:{TablePager},
-  filters: {
- 
-  },
-  created() {
-  },
-  methods: {
-  
-   
-  }
+  components: { TablePager },
+  filters: {},
+  created() {},
+  methods: {}
 };
 </script>
 
@@ -131,9 +133,19 @@ export default {
   right: 15px;
   top: 10px;
 }
-.el-input{width: auto}
-.member-nav{margin-bottom: 15px}
-.el-dialog__wrapper .el-dialog__header{background: #409EFF;}
-.el-dialog__wrapper .el-dialog__title{color:#fff}
-.el-dialog__wrapper .el-dialog__headerbtn .el-dialog__close{color:#fff}
+.el-input {
+  width: auto;
+}
+.member-nav {
+  margin-bottom: 25px;
+}
+.el-dialog__wrapper .el-dialog__header {
+  background: #409eff;
+}
+.el-dialog__wrapper .el-dialog__title {
+  color: #fff;
+}
+.el-dialog__wrapper .el-dialog__headerbtn .el-dialog__close {
+  color: #fff;
+}
 </style>

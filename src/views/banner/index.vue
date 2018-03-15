@@ -139,7 +139,7 @@ export default {
       this.$refs[form].validate(valid => {
         if (valid) {
           // http
-          //   .addBanner(this.banner)
+          //   .getAddBanner(this.banner)
           //   .then(res => {
           //     this.getBannerList();
           //   })
@@ -157,7 +157,7 @@ export default {
     // 获取banner信息列表
     getBannerList() {
       http
-        .listBanner()
+        .getListBanner()
         .then(res => {
           this.tableData = res.data;
         })
@@ -168,7 +168,7 @@ export default {
       this.addShow = true;
       this.banner = this.tableData[index];
       http
-        .editBanner(this.banner)
+        .getEditBanner(this.banner)
         .then(res => {
           this.getBannerList();
         })
@@ -180,7 +180,7 @@ export default {
     //删除
     delBanner() {
       http
-        .delBanner(this.banner.courseId)
+        .getDelBanner(this.banner.courseId)
         .then(res => {
           this.getBannerList();
         })

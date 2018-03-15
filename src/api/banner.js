@@ -1,8 +1,16 @@
 import request from "@/utils/request";
-import api from "@/api/api.js";
+import {
+  addBanner,
+  editBanner,
+  listBanner,
+  delBanner,
+  setBannerSort,
+  listMarketCourse,
+  cancelCourseMarketWay
+} from "@/api/api.js";
 
 // banner图列表
-export function listBanner(query) {
+export function getListBanner(query) {
   return request({
     url: listBanner,
     method: "get",
@@ -11,7 +19,7 @@ export function listBanner(query) {
 }
 
 //新增banner图
-export function addBanner(query) {
+export function getAddBanner(query) {
   return request({
     url: addBanner,
     method: "post",
@@ -20,7 +28,7 @@ export function addBanner(query) {
 }
 
 //编辑banner图
-export function editBanner(query) {
+export function getEditBanner(query) {
   return request({
     url: editBanner,
     method: "post",
@@ -29,7 +37,7 @@ export function editBanner(query) {
 }
 
 //删除banner图
-export function delBanner(query) {
+export function getDelBanner(query) {
   return request({
     url: delBanner,
     method: "post",
@@ -38,7 +46,7 @@ export function delBanner(query) {
 }
 
 //排序上下移banner图
-export function setBannerSort(query) {
+export function getSetBannerSort(query) {
   return request({
     url: setBannerSort,
     method: "post",
@@ -47,7 +55,7 @@ export function setBannerSort(query) {
 }
 
 //营销管理获取营销课程列表
-export function listMarketCourse(query) {
+export function getListMarketCourse(query) {
   return request({
     url: listMarketCourse,
     method: "get",
@@ -56,7 +64,7 @@ export function listMarketCourse(query) {
 }
 
 //取消课程营销方式
-export function cancelCourseMarketWay(query) {
+export function getCancelCourseMarketWay(query) {
   return request({
     url: cancelCourseMarketWay,
     method: "post",
