@@ -1,5 +1,6 @@
 import request from "@/utils/request";
-import {
+import api from "./api";
+const {
   addBanner,
   editBanner,
   listBanner,
@@ -7,7 +8,7 @@ import {
   setBannerSort,
   listMarketCourse,
   cancelCourseMarketWay
-} from "@/api/api.js";
+} = api;
 
 // banner图列表
 export function getListBanner(query) {
