@@ -1,66 +1,128 @@
 <template>
-  <div class="app-container">
-    <el-form inline>
+  <div class="app-container calendar-list-container">
+    <div class='member-nav'>
+      讲师：
+      <el-input v-model="input1" placeholder="输入课程名称查询" clearable size="small"></el-input>
 
-      <el-form-item label="讲师">
-        <el-input placeholder="输入老师姓名" v-model="message"> </el-input>
-      </el-form-item>
-
-      <el-button type="primary" v-on:click="search">查询</el-button>
-
-      <el-button v-on:click="reset">重置</el-button>
-
-    </el-form>
-    <TablePager :data="data" :columns="columns" :pagination="pagination">
-      <template slot="price" slot-scope="{row}">
-        <span v-if="row.price == 0">免费</span>
-        <span v-else>{{row.price}}</span>
-      </template>
-      <template slot="operate" slot-scope="{row}">
-        <el-button type="primary" @click="recommend(row)">设为推荐</el-button>
+      <el-button type="primary">查询</el-button>&nbsp;&nbsp;
+      <el-button>重置</el-button>
+    </div>
+    <!-- 新增讲师 -->
+    <div class='category-nav'>
+      <el-button type="success" @click="dialogTableVisible = true">新增讲师</el-button>
+    </div>
+    <TablePager :data="list" :pagination="pagination" :columns="columns">
+      <template slot="handle" slot-scope="{row}">
+        <span @click="dialogTableVisible = true">编辑老师</span>
       </template>
     </TablePager>
+
+    <!-- 编辑老师 -->
+    <!-- <el-dialog title="编辑老师" :visible.sync="dialogTableVisible2" width='35%' ref='dataForm'>
+      <div class=''>
+        类目名称：
+        <el-input v-model="name" placeholder="" clearable size="small"></el-input>
+        <br><br>
+        <el-button type="primary" @click="hold()">保存</el-button>&nbsp;&nbsp;
+        <el-button @click="dialogTableVisible = false">返回</el-button>
+      </div>
+    </el-dialog> -->
+
+    <!-- 新增老师 -->
+    <el-dialog title="新增讲师" :visible.sync="dialogTableVisible" width='35%' ref='dataForm'>
+      <div class=''>
+        讲师名称
+        <el-input v-model="temp.teachName" placeholder="" clearable size="small"></el-input>
+        <br><br> 讲师简介
+        <el-input v-model="temp.brief" type="textarea" :rows="2" placeholder="请输入内容">
+        </el-input>
+        <br><br> 讲师照片
+        <el-input v-model="temp.brief" type="textarea" :rows="2" placeholder="请输入内容">
+        </el-input>
+        <br><br>
+        <el-button type="primary" @click="updateData">保存</el-button>&nbsp;&nbsp;
+        <el-button @click="dialogTableVisible = false">返回</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
+import { fetchList } from "@/api/article";
 import TablePager from "@/components/TablePager";
+import UploadImage from "@/components/UploadImage";
 export default {
+  name: "member",
   data() {
     return {
-      // search: "", //设置一个空字符串
-      message: 1,
+      listLoading: true,
+      listQuery: {
+        page: 1,
+        limit: 10
+      },
+      dialogTableVisible: false,
+      input1: "",
       pagination: {
         currentPage: 1,
-        total: 400,
-        pageSize: 100
+        total: 100,
+        pageSize: 10
+      },
+      temp: {
+        teachName: "",
+        brief: "",
+        teachName: ""
       },
       columns: [
-        { title: "讲师姓名", key: "title" },
+        { title: "讲师名字", key: "teachName" },
         { title: "讲师简介", key: "brief" },
-        { title: "管理操作", slot: "operate" }
+        { title: "管理操作", slot: "handle" }
       ],
-      data: [
-        { title: "你好", brief: "语言留学" },
-        { title: "你好", brief: "语言留学" }
+      list: [
+        {
+          name: "红领巾",
+          brief: "165非法人娃儿分为爱人wear46451284"
+        }
       ]
     };
   },
-  components: {
-    TablePager
-  },
+  components: { TablePager },
+  filters: {},
+  created() {},
   methods: {
-    recommend(row) {
-      console.log("你点击了", row);
-    },
-    search: function() {
-      // this.message = 2;
-      console.log("成功查询");
-    },
-    reset: function() {
-      // this.message = 0;
-      console.log("重置成功");
+    updateData() {
+      this.data.push(this.temp);
+      this.dialogTableVisible = false;
     }
   }
 };
 </script>
+
+<style scoped>
+.edit-input {
+  padding-right: 100px;
+}
+.cancel-btn {
+  position: absolute;
+  right: 15px;
+  top: 10px;
+}
+.el-input {
+  width: auto;
+}
+.member-nav {
+  margin-bottom: 25px;
+}
+.el-dialog__wrapper .el-dialog__header {
+  background: #409eff;
+}
+.el-dialog__wrapper .el-dialog__title {
+  color: #fff;
+}
+.el-dialog__wrapper .el-dialog__headerbtn .el-dialog__close {
+  color: #fff;
+}
+.category-nav,
+.marginBottom {
+  margin-bottom: 20px;
+}
+</style>
