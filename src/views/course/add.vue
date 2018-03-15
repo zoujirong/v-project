@@ -1,8 +1,8 @@
 <template>
     <div class="app-container">
         <el-form ref="editForm" label-suffix="：" label-width="150px" :model="course">
-            <el-form-item label="课程标题" prop="title">
-                <el-input v-model="course.title" :style="{width: '40%'}"></el-input>
+            <el-form-item label="课程标题" prop="courseName">
+                <el-input v-model="course.courseName" :style="{width: '40%'}"></el-input>
             </el-form-item>
             <el-form-item label="课程类型" prop="teachingMethod">
                 <el-radio label="1" v-model="course.teachingMethod">直播课</el-radio>
@@ -20,19 +20,11 @@
                 <el-select v-model="course.mainTeacher" placeholder="请选择主讲老师"></el-select>
             </el-form-item>
             <el-form-item label="课程封面">
-                <upload-image
-                    :limit="1"
-                    :fileList="course.courseCover ? [{url: course.courseCover}] : []"
-                    @onSuccess="onUploadCover"
-                ></upload-image>
+                <upload-image :limit="1" :fileList="course.courseCover ? [{url: course.courseCover}] : []" @onSuccess="onUploadCover"></upload-image>
                 <span class="form-tips">要求：图片宽高像素分别为 X * Y</span>
             </el-form-item>
             <el-form-item label="课程介绍">
-                <upload-image
-                    :limit="1"
-                    :fileList="course.courseDesc ? [{url: course.courseDesc}] : []"
-                    @onSuccess="onUploadDetail"
-                ></upload-image>
+                <upload-image :limit="1" :fileList="course.courseDesc ? [{url: course.courseDesc}] : []" @onSuccess="onUploadDetail"></upload-image>
                 <span class="form-tips">要求：建议图片宽度为**像素，高度不超过**像素</span>
             </el-form-item>
             <el-form-item label="课程价格" prop="coursePrice">
@@ -53,57 +45,58 @@
 <script>
 import UploadImage from '@/components/UploadImage';
 
-    export default {
-        data() {
-            return {
-                chooseImage: false,
-                course: {
-                    title: '',
-                    teachingMethod: '1', //0直播,1录播
-                    categoryId: '1',
-                    tzCourseId: '1',
-                    mainTeacher: '',
-                    courseCover: '',
-                    courseDesc: '',
-                    coursePrice: 0.00,
-                    customerWx: ''
-                }
-            }
-        },
-        components: {UploadImage},
-        methods: {
-            onUploadCover(urls) {
-                console.log('上传封面', urls);
-                this.course.courseCover = urls[0];
-            },
-            onUploadDetail(urls) {
-                this.course.courseDesc = urls[0];
-                console.log('上传详情', urls);
-            },
-            success(response, file, fileList) {
-                console.log(response, file, fileList);
-            },
-            onChange(a) {
-                console.log(a);
-            },
-            submit() {
-                let form = this.$refs.editForm;
-                form.validate((validate) => {
-                    console.log(this.course);
-                });
-            }
-        }
+export default {
+  data() {
+    return {
+      chooseImage: false,
+      course: {
+        courseName: '',
+        teachingMethod: '1', //0直播,1录播
+        categoryId: '1',
+        tzCourseId: '1',
+        mainTeacher: '',
+        courseCover: '',
+        courseDesc: '',
+        coursePrice: 0.0,
+        customerWx: ''
+      }
+    };
+  },
+  components: { UploadImage },
+  methods: {
+    onUploadCover(urls) {
+      console.log('上传封面', urls);
+      this.course.courseCover = urls[0];
+    },
+    onUploadDetail(urls) {
+      this.course.courseDesc = urls[0];
+      console.log('上传详情', urls);
+    },
+    success(response, file, fileList) {
+      console.log(response, file, fileList);
+    },
+    onChange(a) {
+      console.log(a);
+    },
+    submit() {
+      let form = this.$refs.editForm;
+      form.validate(validate => {
+        console.log(this.course);
+      });
     }
+  }
+};
 </script>
 <style scoped>
-    .el-input, .el-select {
-        width: 20%;
-    }
-    .form-tips {
-        color: #bbb;
-        margin-left: 20px;
-    }
-    .inline-block {
-        display: inline-block;
-    }
+.el-input,
+.el-select {
+  width: 20%;
+}
+.form-tips {
+  color: #bbb;
+  margin-left: 20px;
+}
+.inline-block {
+  display: inline-block;
+}
 </style>
