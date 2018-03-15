@@ -1,6 +1,8 @@
 export default {
     login: '/login/login',
     logout: '/login/logout',
+    //课程模块
+    courseList: '/course/listCourse',
     getListCategory: '/category/listCategory',
     addCategory: '/category/addCategory',
     reviseCategory: '/category/editCategory',
