@@ -1,5 +1,5 @@
 <template>
-    <div class="text-center" element-loading-text="获取数据中..." v-loading="loading">
+    <div class="text-center" element-loading-text="加载中..." v-loading="loading">
         <el-table border :data="data" empty-text="没有相关的数据">
             <template v-for="column in columns">
                 <el-table-column :label="column.title">
