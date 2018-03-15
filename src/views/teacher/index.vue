@@ -34,10 +34,11 @@
         讲师名称
         <el-input v-model="temp.teachName" placeholder="" clearable size="small"></el-input>
         <br><br> 讲师简介
-        <el-input v-model="temp.brief" type="textarea" :rows="2" placeholder="请输入内容">
+        <el-input v-model="temp.brief" type="textarea" placeholder="请输入内容">
         </el-input>
         <br><br> 讲师照片
-        <el-input v-model="temp.brief" type="textarea" :rows="2" placeholder="请输入内容">
+
+        <el-input v-model="temp.teachPhoto" type="textarea" placeholder="请输入内容">
         </el-input>
         <br><br>
         <el-button type="primary" @click="updateData">保存</el-button>&nbsp;&nbsp;
@@ -48,11 +49,11 @@
 </template>
 
 <script>
-import { fetchList } from "@/api/article";
-import TablePager from "@/components/TablePager";
-import UploadImage from "@/components/UploadImage";
+import { fetchList } from '@/api/article';
+import TablePager from '@/components/TablePager';
+import UploadImage from '@/components/UploadImage';
 export default {
-  name: "member",
+  name: 'member',
   data() {
     return {
       listLoading: true,
@@ -61,26 +62,26 @@ export default {
         limit: 10
       },
       dialogTableVisible: false,
-      input1: "",
+      input1: '',
       pagination: {
         currentPage: 1,
         total: 100,
         pageSize: 10
       },
       temp: {
-        teachName: "",
-        brief: "",
-        teachName: ""
+        teachName: '',
+        brief: '',
+        teachPhoto: ''
       },
       columns: [
-        { title: "讲师名字", key: "teachName" },
-        { title: "讲师简介", key: "brief" },
-        { title: "管理操作", slot: "handle" }
+        { title: '讲师名字', key: 'teachName' },
+        { title: '讲师简介', key: 'brief' },
+        { title: '管理操作', slot: 'handle' }
       ],
       list: [
         {
-          name: "红领巾",
-          brief: "165非法人娃儿分为爱人wear46451284"
+          name: '红领巾',
+          brief: '165非法人娃儿分为爱人wear46451284'
         }
       ]
     };
