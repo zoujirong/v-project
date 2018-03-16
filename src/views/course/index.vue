@@ -28,14 +28,16 @@
       </template>
       <template slot="operate" slot-scope="{row, index}">
         <div class="op-btn">
-          <router-link :to="{name: 'addCourse', params: {id: row.courseId}}">
+          <router-link :to="{name: 'addCourse', query: {id: row.courseId}}">
             <el-button type="text">【编辑课程】</el-button>
           </router-link>
           <el-button type="text" @click="recommend(row)">【编辑课时】</el-button>
           <el-button type="text" @click="setMarketing(row)" v-if="row.coursePrice!=0">【设置营销方式】</el-button>
           <el-button type="text" @click="shelve(row, index)" v-if="row.unshelve == 0">【课程上架】</el-button>
           <el-button type="text" @click="unShelve(row, index)" v-else>【课程下架】</el-button>
-          <el-button type="text" @click="recommend(row)">【管理学员】</el-button>
+          <router-link :to="{name: 'courseStedent', query: {id: row.courseId}}">
+            <el-button type="text">【管理学员】</el-button>
+          </router-link>
           <el-button type="text" @click="recommend(row)">【设为推荐】</el-button>
         </div>
       </template>

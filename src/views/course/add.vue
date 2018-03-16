@@ -44,12 +44,14 @@
 
 <script>
 import UploadImage from '@/components/UploadImage';
+import { getCourseDetail } from '@/api/course';
 
 export default {
   data() {
     return {
       chooseImage: false,
       course: {
+        courseId: this.$route.query.id,
         courseName: '',
         teachingMethod: '1', //0直播,1录播
         categoryId: '1',
@@ -64,6 +66,9 @@ export default {
   },
   components: { UploadImage },
   methods: {
+    getCourseDetailById() {
+      getCourseDetail(this.course.courseId);
+    },
     onUploadCover(urls) {
       console.log('上传封面', urls);
       this.course.courseCover = urls[0];
@@ -84,7 +89,8 @@ export default {
         console.log(this.course);
       });
     }
-  }
+  },
+  mounted() {}
 };
 </script>
 <style scoped>
