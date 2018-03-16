@@ -10,7 +10,7 @@
     </el-form>
     <!-- 表格部分 -->
     <template>
-      <TablePager :data="tableData" :columns="columns" :pagination="pagination">
+      <TablePager :data="tableData" :columns="columns" :pagination="pagination" :loading=loading>
         <template slot="number" slot-scope="{row,index}">
           <span>{{index+1}}</span>
         </template>
@@ -29,6 +29,7 @@ export default {
   data() {
     return {
       course: '',
+      loading: false,
       pagination: {
         currentPage: 1,
         total: 400,
