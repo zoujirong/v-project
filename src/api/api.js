@@ -3,6 +3,7 @@ export default {
   logout: '/login/logout',
   //课程模块
   courseList: '/course/listCourse',
+  courseShelve: '/course/courseUnshelve',
   getListCategory: '/category/listCategory',
   addCategory: '/category/addCategory',
   reviseCategory: '/category/editCategory',
