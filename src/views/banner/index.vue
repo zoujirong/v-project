@@ -11,9 +11,9 @@
         </template>
         <template slot="operate" slot-scope="{row,index}">
           <el-button type="text" size="small" @click="editBanner(index)">编辑</el-button>
-          <el-button type="text" size="small" @click="up(index, tableData)" v-show="index != 0">上移</el-button>
-          <el-button type="text" size="small" @click="down(index, tableData)" v-show="(index != tableData.length-1) || index == 0">下移</el-button>
-          <el-button @click.native.prevent="deleteRow(index, tableData)" type="text" size="small"> 删除 </el-button>
+          <el-button type="text" size="small" @click="up(index, row)" v-show="index != 0">上移</el-button>
+          <el-button type="text" size="small" @click="down(index, row)" v-show="(index != tableData.length-1) || index == 0">下移</el-button>
+          <el-button @click.native.prevent="deleteRow(index, row)" type="text" size="small"> 删除 </el-button>
         </template>
       </TablePager>
     </template>
@@ -166,15 +166,16 @@ export default {
     //编辑banner信息
     editBanner(index) {
       this.addShow = true;
-      this.banner = this.tableData[index];
-      http
-        .getEditBanner(this.banner)
-        .then(res => {
-          this.getBannerList();
-        })
-        .catch(res => {
-          console.log(res);
-        });
+      let list = { ...this.tableData[index] };
+      this.banner = list;
+      // http
+      //   .getEditBanner(this.banner)
+      //   .then(res => {
+      //     this.getBannerList();
+      //   })
+      //   .catch(res => {
+      //     console.log(res);
+      //   });
     },
     //上下移banner
     //删除

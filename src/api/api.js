@@ -1,6 +1,7 @@
 export default {
   login: '/login/login',
   logout: '/login/logout',
+
   //类目
   getListCategory: '/category/listCategory',
   addCategory: '/category/addCategory',
@@ -11,8 +12,8 @@ export default {
   categoryCourseSort: '/banner/setCategoryCourseSort',
 
   //会员管理
-  listUser:'/user/listUser',
-  applyCourse:'/user/listUserApplyCourse',
+  listUser: '/user/listUser',
+  applyCourse: '/user/listUserApplyCourse',
 
   //banner图接口
   addBanner: '/banner/addBanner',

@@ -120,6 +120,7 @@ export default {
       this.name = name;
       this.reviseName = index;
     },
+    //保存
     hold() {
       this.data[this.reviseName].categoryName = this.name;
       this.dialogTableVisible2 = false;

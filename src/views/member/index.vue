@@ -1,6 +1,6 @@
 <template>
   <div class="app-container calendar-list-container">
-    <div class='member-nav'>
+    <div class='marginButton'>
       会员：
       <el-input v-model="input1" placeholder="输入课程名称查询" clearable size="small"></el-input>
       &nbsp; 最近登录时间&nbsp;
@@ -23,7 +23,7 @@
 
     <!-- 查看报名课程弹框 -->
     <el-dialog title="查看报名课程" :visible.sync="dialogTableVisible">
-      <div>
+      <div class="marginButton">
         <el-input v-model="input3" placeholder="输入课程名称查询"></el-input>
         &nbsp;&nbsp;
         <template>
@@ -41,7 +41,6 @@
           <span>{{index+1}}</span>
         </template>
       </TablePager>
-
     </el-dialog>
   </div>
 </template>
@@ -80,22 +79,22 @@ export default {
       },
       columns: [
         { title: '序号', slot: 'numberId' },
-        { title: '微信昵称', key: 'nick' },
-        { title: '手机号码', key: 'phoneNumber' },
-        { title: '最近登录时间', key: 'logged' },
-        { title: '首次登录时间', key: 'firstLogin' },
-        { title: '报名课程数量', key: 'enterNumber' },
-        { title: '付费课程数', key: 'palyNumber' },
+        { title: '微信昵称', key: 'userNick' },
+        { title: '手机号码', key: 'userPhone' },
+        { title: '最近登录时间', key: 'lastLoginTime' },
+        { title: '首次登录时间', key: 'firstLoginTime' },
+        { title: '报名课程数量', key: 'userApplyCourseNum' },
+        { title: '付费课程数', key: 'userBuyCourseNum' },
         { title: '操作', slot: 'handle' }
       ],
       list: [
         {
-          nick: '红领巾',
-          phoneNumber: '16546451284',
-          logged: '2018.01.19',
-          firstLogin: '2018.01.19',
-          enterNumber: '1',
-          palyNumber: '1'
+          userNick: '红领巾',
+          userPhone: '16546451284',
+          lastLoginTime: '2018.3.19',
+          firstLoginTime: '2018.3.19',
+          userApplyCourseNum: '1',
+          userBuyCourseNum: '1'
         }
       ],
       columns1: [
@@ -141,7 +140,7 @@ export default {
 .el-input {
   width: auto;
 }
-.member-nav {
+.marginButton {
   margin-bottom: 25px;
 }
 .el-dialog__wrapper .el-dialog__header {
