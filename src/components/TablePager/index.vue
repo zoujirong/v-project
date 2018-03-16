@@ -1,6 +1,6 @@
 <template>
   <div class="text-center" element-loading-text="加载中..." v-loading="loading">
-    <el-table border :data="data" empty-text="没有相关的数据" @sort-change="onSortChange">
+    <el-table border :data="data" empty-text="没有相关的数据" :row-key="rowKey" @sort-change="onSortChange">
       <template v-for="column in columns">
         <el-table-column :label="column.title" :prop="column.key" :sortable="column.sortable || false">
           <template slot-scope="{row, $index: index}">
@@ -40,7 +40,8 @@ export default {
      * total: Number
      * pageSize: Number
      */
-    pagination: [Boolean, Object]
+    pagination: [Boolean, Object],
+    rowKey: [Function, String]
   },
   methods: {
     convert(a) {
