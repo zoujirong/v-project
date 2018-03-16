@@ -1,8 +1,15 @@
-import Vue from "vue";
+import Vue from 'vue';
+import { Message } from 'element-ui';
 
 Vue.config.asyncErrorHandler = err => {
-  //  在这里根据服务端返回的各种状态码处理通用错误
-  console.log("catch async error:", err);
+  //  在这里根据服务端返回的各种状态码处理通用错
+  Message({
+    type: 'error',
+    message: err.msg,
+    duration: 2000,
+    center: true
+  });
+  console.log('catch async error:', err);
 };
 
 Vue.mixin({
@@ -12,7 +19,7 @@ Vue.mixin({
       let fn = methods[key];
       this.$options.methods[key] = function(...args) {
         let ret = fn.apply(this, args);
-        if (ret && typeof ret.catch === "function") {
+        if (ret && typeof ret.catch === 'function') {
           return ret.catch(Vue.config.asyncErrorHandler);
         } else {
           return ret;

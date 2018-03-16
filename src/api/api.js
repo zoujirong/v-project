@@ -1,15 +1,17 @@
 export default {
   login: '/login/login',
   logout: '/login/logout',
-
-  //类目
+  //课程模块
+  courseList: '/course/listCourse', //课程列表
+  courseShelve: '/course/courseUnshelve', //课程上下架
+  courseDetail: '/course/getCourseById', //单个课程详情
+  //类目管理
   getListCategory: '/category/listCategory',
   addCategory: '/category/addCategory',
   reviseCategory: '/category/editCategory',
   delCategory: '/category/delCategory',
-
   getCategoryCourse: '/category/listCategoryCourse',
-  categoryCourseSort: '/banner/setCategoryCourseSort',
+  categoryCourseSort: '/category/setCategoryCourseSort',
 
   //会员管理
   listUser: '/user/listUser',

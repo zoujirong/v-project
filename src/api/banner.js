@@ -1,5 +1,5 @@
-import request from "@/utils/request";
-import api from "./api";
+import request from '@/utils/request';
+import api from './api';
 const {
   addBanner,
   editBanner,
@@ -14,7 +14,7 @@ const {
 export function getListBanner(query) {
   return request({
     url: listBanner,
-    method: "get",
+    method: 'get',
     params: query
   });
 }
@@ -23,7 +23,7 @@ export function getListBanner(query) {
 export function getAddBanner(query) {
   return request({
     url: addBanner,
-    method: "post",
+    method: 'post',
     params: query
   });
 }
@@ -32,7 +32,7 @@ export function getAddBanner(query) {
 export function getEditBanner(query) {
   return request({
     url: editBanner,
-    method: "post",
+    method: 'post',
     params: query
   });
 }
@@ -41,7 +41,7 @@ export function getEditBanner(query) {
 export function getDelBanner(query) {
   return request({
     url: delBanner,
-    method: "post",
+    method: 'post',
     params: query
   });
 }
@@ -50,7 +50,7 @@ export function getDelBanner(query) {
 export function getSetBannerSort(query) {
   return request({
     url: setBannerSort,
-    method: "post",
+    method: 'post',
     params: query
   });
 }
@@ -59,7 +59,7 @@ export function getSetBannerSort(query) {
 export function getListMarketCourse(query) {
   return request({
     url: listMarketCourse,
-    method: "get",
+    method: 'get',
     params: query
   });
 }
@@ -68,7 +68,7 @@ export function getListMarketCourse(query) {
 export function getCancelCourseMarketWay(query) {
   return request({
     url: cancelCourseMarketWay,
-    method: "post",
+    method: 'post',
     params: query
   });
 }
