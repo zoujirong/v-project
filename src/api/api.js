@@ -5,6 +5,7 @@ export default {
   courseList: '/course/listCourse', //课程列表
   courseShelve: '/course/courseUnshelve', //课程上下架
   courseDetail: '/course/getCourseById', //单个课程详情
+  courseStudent: '/course/listCourseApplyUser', //课程报名的学生列表
   //类目管理
   getListCategory: '/category/listCategory',
   addCategory: '/category/addCategory',
