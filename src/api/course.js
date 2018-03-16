@@ -1,6 +1,6 @@
 import request from '@/utils/request';
 import api from './api';
-const { courseList, courseShelve, courseDetail } = api;
+const { courseList, courseShelve, courseDetail, courseStudent } = api;
 
 export function queryCourseList(params) {
   return request({
@@ -22,5 +22,13 @@ export function getCourseDetail(courseId) {
     url: courseDetail,
     type: 'post',
     params: { courseId }
+  });
+}
+
+export function getCourseStudent(params) {
+  return request({
+    url: courseStudent,
+    type: 'get',
+    params
   });
 }

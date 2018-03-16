@@ -15,14 +15,23 @@
       <el-button type="primary" @click="getList">查询</el-button>
       <el-button @click="reset">重置</el-button>
     </el-form>
-    <table-pager :data="users" :columns="columns" :pagination="pagination" @change="onTableChange">
+    <table-pager :data="users" :loading="loading" :columns="columns" :pagination="pagination" @change="onTableChange">
+      <template slot="lastLoginTime" slot-scope="{row}">
+        <span>{{row.lastLoginTime | parseTime(timeFormat)}}</span>
+      </template>
+      <template slot="courseApplyTime" slot-scope="{row}">
+        <span>{{row.courseApplyTime | parseTime(timeFormat)}}</span>
+      </template>
+      <template slot="operate" slot-scope="{row}">
+        <el-button type="text">【查看报名课程】</el-button>
+      </template>
     </table-pager>
   </div>
 </template>
 <script>
 import TablePager from '@/components/TablePager';
 import { parseTime } from '@/filters';
-const timeFormat = '{y}-{m}-{d} {h}:{i}';
+import { getCourseStudent } from '@/api/course';
 const sortMap = {
   'lastLoginTime-0': 1, //降序
   'lastLoginTime-1': 2, //升序
@@ -32,8 +41,10 @@ const sortMap = {
 export default {
   data() {
     return {
+      timeFormat: '{y}-{m}-{d} {h}:{i}',
       applyTime: '',
       loginTime: '',
+      loading: false,
       searchParam: {
         courseId: this.$route.query.id,
         sort: 0,
@@ -50,7 +61,7 @@ export default {
           userPhone: '123456',
           marketWay: '1',
           lastLoginTime: 1521123175297,
-          courseApplyTime: 1521123175297
+          courseApplyTime: 1521183175297
         }
       ],
       pagination: {
@@ -63,18 +74,37 @@ export default {
         { title: '微信昵称', key: 'userNick' },
         { title: '手机号码', key: 'userPhone' },
         { title: '营销方式', key: 'marketWay' }, //0无营销，1手机验证送课
-        { title: '最近登陆时间', key: 'lastLoginTime', sortable: 'custom' },
-        { title: '报名时间', key: 'courseApplyTime', sortable: 'custom' },
-        { title: '操作' }
+        {
+          title: '最近登陆时间',
+          key: 'lastLoginTime',
+          slot: 'lastLoginTime',
+          sortable: 'custom'
+        },
+        {
+          title: '报名时间',
+          key: 'courseApplyTime',
+          slot: 'courseApplyTime',
+          sortable: 'custom'
+        },
+        { title: '操作', slot: 'operate' }
       ]
     };
   },
   components: { TablePager },
+  filters: { parseTime },
   methods: {
-    getList() {
-      console.log(this.searchParam);
+    async getList() {
+      this.loading = true;
+      await getCourseStudent(this.searchParam)
+        .then(res => {
+          this.users = res.data.user;
+        })
+        .finally(() => {
+          this.loading = false;
+        });
     },
     changeApplyTime(time) {
+      let timeFormat = this.timeFormat;
       let [start, end] = time;
       Object.assign(this.searchParam, {
         applyStartTime: parseTime(start, timeFormat),
@@ -82,6 +112,7 @@ export default {
       });
     },
     changeLoginTime(time) {
+      let timeFormat = this.timeFormat;
       let [start, end] = time;
       Object.assign(this.searchParam, {
         lastLoginStartTime: parseTime(start, timeFormat),
@@ -90,6 +121,7 @@ export default {
     },
     reset() {
       this.$refs.searchForm.resetFields();
+      this.getList();
     },
     onTableChange({ sort = {} }) {
       let sortKey = Object.keys(sort)[0];
