@@ -3,27 +3,28 @@ import api from './api';
 const { listTeacher, teacherAdd, editTeacher } = api;
 
 //获取老师列表
-export function listTeacher() {
+export function listTeacher(param) {
   return request({
     url: getlistTeacher,
-    method: 'GET'
+    method: 'GET',
+    param
   });
 }
 
 //添加老师
-export function addTeacher() {
+export function addTeacher(param) {
   return request({
     url: teacherAdd,
-    method: POST,
-    param: {}
+    method: 'POST',
+    param
   });
 }
 
 //编辑老师
-export function editTeacher() {
+export function editTeacher(param) {
   return request({
     url: editTeacher,
     method: 'POST',
-    param: {}
+    param
   });
 }
