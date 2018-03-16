@@ -2,8 +2,9 @@ export default {
   login: '/login/login',
   logout: '/login/logout',
   //课程模块
-  courseList: '/course/listCourse',
-  courseShelve: '/course/courseUnshelve',
+  courseList: '/course/listCourse', //课程列表
+  courseShelve: '/course/courseUnshelve', //课程上下架
+  courseDetail: '/course/getCourseById', //单个课程详情
   getListCategory: '/category/listCategory',
   addCategory: '/category/addCategory',
   reviseCategory: '/category/editCategory',

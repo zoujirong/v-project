@@ -5,7 +5,7 @@
     </div>
     <!-- 表格部分 -->
     <template>
-      <TablePager :data="tableData" :columns="columns" :pagination="pagination">
+      <TablePager :data="tableData" :columns="columns" :pagination="pagination" :loading="loading">
         <template slot='number' slot-scope="{row,index}">
           <span>{{index+1}}</span>
         </template>
@@ -31,9 +31,9 @@
           <el-form-item label="推荐位名称" prop='bannerTitle'>
             <el-input v-model="banner.bannerTitle"></el-input>
           </el-form-item>
-          <el-form-item label="图片">
+          <el-form-item label="图片" prop='bannerCover'>
             <upload-image :limit="1" :fileList="banner.bannerCover ? [{url: banner.bannerCover}] : []" @onSuccess="onUploadCover"></upload-image>
-            <!-- <span class="form-tips">要求：图片宽高像素分别为 X * Y</span> -->
+            <span class="form-tips">建议上传X*Y尺寸像素图片</span>
           </el-form-item>
           <el-form-item label="对应跳转的课程id" prop='courseId'>
             <el-input v-model.number="banner.courseId"></el-input>
@@ -75,10 +75,14 @@ export default {
         startTime: '',
         endTime: ''
       },
+      bannerPage: {
+        pageNo: 1,
+        pageSize: 10
+      },
+      loading: false,
       type: 1,
       picSrc: 0,
       picVisible: false,
-      editList: '',
       creatDate: new Date(),
       amendDate: '',
       pagination: {
@@ -103,7 +107,6 @@ export default {
           return Date.now() > time.getTime();
         }
       },
-      fileList2: [],
       tableData: [
         {
           bannerTitle: '123',
@@ -185,8 +188,10 @@ export default {
     },
     // 获取banner信息列表
     getBannerList() {
-      getListBanner()
+      this.loading = true;
+      getListBanner(this.bannerPage)
         .then(res => {
+          this.loading = false;
           this.tableData = res.data;
         })
         .catch(res => {
@@ -198,8 +203,9 @@ export default {
       this.type = 2;
       console.log(this.type);
       this.addShow = true;
-      this.editList = this.tableData[index];
-      this.banner = this.editList;
+      this.$nextTick(() => {
+        this.banner = { ...this.tableData[index] };
+      });
     },
     //删除
     delBanner(index) {
@@ -214,12 +220,6 @@ export default {
     },
     resetForm(form) {
       this.$refs[form].resetFields();
-    },
-    handleRemove(file, fileList) {
-      console.log(file, fileList);
-    },
-    handlePreview(file) {
-      console.log(file);
     },
     deleteRow(index, rows) {
       rows.splice(index, 1);
@@ -266,7 +266,7 @@ export default {
   }
 };
 </script>
-<style>
+<style scoped>
 img {
   width: 100%;
   height: 100%;
@@ -285,22 +285,24 @@ img {
 .updatapic {
   position: relative;
 }
-/* .updata input {
-  opacity: 0;
-  position: absolute;
-  top: 0;
-  left: 82px;
-  width: 98px;
-  height: 36px;
-}
-.updata button {
-  margin-left: 42px;
-} */
-.el-form-item__content {
-  float: left;
-}
 .el-form-item__label {
   width: 140px !important;
 }
+.el-form-item__content {
+  margin: 0 !important;
+  float: left;
+}
+.form-tips {
+  display: block;
+  float: left;
+  padding-left: 10px;
+  margin-top: 50px;
+}
+/* .v-modal {
+  z-index: 1997 !important;
+}
+.el-dialog__wrapper {
+  z-index: 2003 !important;
+} */
 </style>
 

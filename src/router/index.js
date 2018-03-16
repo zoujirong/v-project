@@ -79,6 +79,21 @@ export const constantRouterMap = [
     meta: { title: '课程管理', icon: 'dashboard', noCache: true }
   },
   {
+    path: '/course',
+    redirect: '/course/student',
+    hidden: true,
+    component: Layout,
+    children: [
+      {
+        path: 'student',
+        name: 'courseStedent',
+        component: _import('course/student'),
+        meta: { title: '学员管理', noCache: true }
+      }
+    ],
+    meta: { title: '课程管理', icon: 'dashboard', noCache: true }
+  },
+  {
     path: '/teacher',
     redirect: '/teacher/index',
     component: Layout,
