@@ -5,7 +5,7 @@
     </div>
     <!-- 表格部分 -->
     <template>
-      <TablePager :data="tableData" :columns="columns" :pagination="pagination" :loading="loading">
+      <TablePager :data="tableData" :columns="columns" :pagination="false" :loading="loading">
         <template slot='number' slot-scope="{row,index}">
           <span>{{index+1}}</span>
         </template>
@@ -16,7 +16,7 @@
           <el-button type="text" size="small" @click="editBanner(index)">编辑</el-button>
           <el-button type="text" size="small" @click="up(index)" v-show="index != 0">上移</el-button>
           <el-button type="text" size="small" @click="down(index)" v-show="(index != tableData.length-1) || index == 0">下移</el-button>
-          <el-button @click.native.prevent="deleteRow(index, row)" type="text" size="small"> 删除 </el-button>
+          <el-button @click.native.prevent="delBanner(index)" type="text" size="small"> 删除 </el-button>
         </template>
       </TablePager>
     </template>
@@ -25,9 +25,9 @@
       <img :src="tableData[picSrc].bannerCover" alt="">
     </el-dialog>
     <!-- 弹窗部分 -->
-    <el-dialog :visible.sync="addShow" width="30%" center @close="resetForm('banner')">
+    <el-dialog :visible.sync="addShow" width="35%" center @close="resetForm('banner')">
       <div class="bannerform">
-        <el-form :model="banner" :rules="rules" ref="banner" label-width="100px" class="demo-ruleForm">
+        <el-form :model="banner" :rules="rules" ref="banner" label-width="140px" class="demo-ruleForm">
           <el-form-item label="推荐位名称" prop='bannerTitle'>
             <el-input v-model="banner.bannerTitle"></el-input>
           </el-form-item>
@@ -85,11 +85,6 @@ export default {
       picVisible: false,
       creatDate: new Date(),
       amendDate: '',
-      pagination: {
-        currentPage: 1,
-        total: 400,
-        pageSize: 100
-      },
       columns: [
         { title: '序号', slot: 'number' },
         { title: '推荐位名称', key: 'bannerTitle' },
@@ -282,12 +277,6 @@ img {
 .el-table tr {
   text-align: center;
 }
-.updatapic {
-  position: relative;
-}
-.el-form-item__label {
-  width: 140px !important;
-}
 .el-form-item__content {
   margin: 0 !important;
   float: left;
@@ -296,7 +285,6 @@ img {
   display: block;
   float: left;
   padding-left: 10px;
-  margin-top: 50px;
 }
 /* .v-modal {
   z-index: 1997 !important;
