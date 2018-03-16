@@ -15,7 +15,7 @@
     <router-link :to="{name: 'addCourse'}">
       <el-button type="primary">发布课程</el-button>
     </router-link>
-    <TablePager :loading="loading" :data="data" :columns="columns" :pagination="pagination">
+    <TablePager :loading="loading" :data="data" :columns="columns" :pagination="pagination" @change="onTableChange">
       <template slot="teachingMethod" slot-scope="{row}">
         <span>{{row.teachingMethod == 0 ? '直播课' : '录播'}}</span>
       </template>
@@ -33,12 +33,13 @@
           </router-link>
           <el-button type="text" @click="recommend(row)">【编辑课时】</el-button>
           <el-button type="text" @click="setMarketing(row)" v-if="row.coursePrice!=0">【设置营销方式】</el-button>
-          <el-button type="text" @click="shelve(row, index)" v-if="row.unshelve == 0">【课程上架】</el-button>
-          <el-button type="text" @click="unShelve(row, index)" v-else>【课程下架】</el-button>
+          <el-button type="text" @click="unShelve(row, index)" v-if="row.unshelve == 1">【课程下架】</el-button>
+          <el-button type="text" @click="shelve(row, index)" v-else>【课程上架】</el-button>
           <router-link :to="{name: 'courseStedent', query: {id: row.courseId}}">
             <el-button type="text">【管理学员】</el-button>
           </router-link>
-          <el-button type="text" @click="recommend(row)">【设为推荐】</el-button>
+          <el-button type="text" @click="unRecommend(row, index)" v-if="row.isRecommend==1">【取消推荐】</el-button>
+          <el-button type="text" @click="recommend(row, index)" v-else>【设为推荐】</el-button>
         </div>
       </template>
     </TablePager>
@@ -59,7 +60,11 @@
 
 <script>
 import TablePager from '@/components/TablePager';
-import { queryCourseList, updateCourseShelve } from '@/api/course';
+import {
+  queryCourseList,
+  updateCourseShelve,
+  updateCourseRecommend
+} from '@/api/course';
 export default {
   data() {
     return {
@@ -96,7 +101,8 @@ export default {
           unshelve: '0',
           mainTeacher: 'livetest006',
           coursePrice: 0,
-          courseApplyNum: 200
+          courseApplyNum: 200,
+          isRecommend: 0
         },
         {
           courseId: 222,
@@ -106,7 +112,8 @@ export default {
           unshelve: '1',
           mainTeacher: 'livetest006',
           coursePrice: 123,
-          courseApplyNum: 200
+          courseApplyNum: 200,
+          isRecommend: 1
         }
       ]
     };
@@ -129,6 +136,17 @@ export default {
     reset() {
       let form = this.$refs.searchForm;
       form.resetFields();
+      this.getList();
+    },
+    onTableChange({ pagination }) {
+      let {
+        page: pageNo = this.searchParam.pageNo,
+        pageSize = this.searchParam.pageSize
+      } = pagination;
+      Object.assign(this.searchParam, {
+        pageNo,
+        pageSize
+      });
       this.getList();
     },
     setMarketing() {
@@ -166,19 +184,59 @@ export default {
     //上下架请求
     async updateShelve(row, index) {
       let { courseId, unshelve } = row;
-      let newStatus = +!+unshelve;
+      let newStatus = +unshelve ^ 1;
       await updateCourseShelve({
         courseId,
         unshelve: newStatus
-      }).then(res => {
-        this.data[index].unshelve = newStatus;
+      });
+      this.$message({
+        type: 'success',
+        message: '操作成功'
+      });
+      this.data[index].unshelve = newStatus;
+    },
+    async updateRecommend(row, index) {
+      let { courseId, isRecommend } = row;
+      let newStatus = +isRecommend ^ 1;
+      await updateCourseRecommend({
+        courseId,
+        isRecommend: newStatus
+      });
+      this.$message({
+        type: 'success',
+        message: '操作成功'
+      });
+      this.data[index].isRecommend = newStatus;
+    },
+    async recommend(row, index) {
+      this.loading = true;
+      this.updateRecommend(row, index).then(res => {
+        this.loading = false;
       });
     },
-    recommend(row, index) {
-      console.log('你点击了', row, index);
+    async unRecommend(row, index) {
+      let { isRecommend } = row;
+      await this.$confirm('您确定要取消推荐该课程吗？', '温馨提示', {
+        type: 'info',
+        closeOnClickModal: false,
+        beforeClose: (action, instance, done) => {
+          if (action === 'cancel') {
+            done();
+            return;
+          }
+          instance.confirmButtonLoading = true;
+          this.updateRecommend(row, index).then(res => {
+            instance.confirmButtonLoading = false;
+            isRecommend !== row.isRecommend && done();
+          });
+        }
+      }).catch(res => {
+        //不是主动点取消的，是确认过程中出错了
+        if (res !== 'cancel') throw res;
+      });
     }
   },
-  mounted() {
+  created() {
     this.getList();
   }
 };

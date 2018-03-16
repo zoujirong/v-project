@@ -192,8 +192,8 @@ export const constantRouterMap = [
     name: 'marketlist',
     children: [
       {
-        path: 'marketlists',
-        name: 'marketlists',
+        path: 'marketlist',
+        name: 'marketlist',
         component: _import('marketing/marketlist'),
         meta: { title: '营销管理', icon: 'message', noCache: true }
       }
