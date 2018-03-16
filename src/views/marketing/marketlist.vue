@@ -1,12 +1,12 @@
 <template>
   <div class="app-container">
-    <el-form :inline="true" :model="course" class="demo-form-inline" label-width="80px">
+    <el-form :inline="true" :model="courseSearch" ref='courseSearch' class="demo-form-inline" label-width="80px">
       <span class="course">课程</span>
-      <el-form-item>
-        <el-input placeholder="输入课程id或课程名称" v-model="course" clearable></el-input>
+      <el-form-item prop='courseParam'>
+        <el-input placeholder="输入课程id或课程名称" v-model.trim="courseSearch.courseParam" clearable></el-input>
       </el-form-item>
       <el-button type="primary" class="check" @click="queryCourse">查询</el-button>
-      <el-button @click="resetForm">重置</el-button>
+      <el-button @click="resetForm('courseSearch')">重置</el-button>
     </el-form>
     <!-- 表格部分 -->
     <template>
@@ -14,8 +14,8 @@
         <template slot="number" slot-scope="{row,index}">
           <span>{{index+1}}</span>
         </template>
-        <template slot="operate" slot-scope="{row}">
-          <el-button type="text" size="small">【取消赠送】</el-button>
+        <template slot="operate" slot-scope="{row,index}">
+          <el-button type="text" size="small" @click="cancel(index)">【取消赠送】</el-button>
         </template>
       </TablePager>
     </template>
@@ -28,7 +28,11 @@ import { getListMarketCourse, getCancelCourseMarketWay } from '@/api/banner.js';
 export default {
   data() {
     return {
-      course: '',
+      courseSearch: {
+        courseParam: '',
+        pageNo: 1,
+        pageSize: 10
+      },
       loading: false,
       pagination: {
         currentPage: 1,
@@ -52,35 +56,33 @@ export default {
   },
   methods: {
     queryCourse() {
-      getListMarketCourse({ courseId: this.course, courseName: this.course })
-        .then(res => {
-          this.tableData = res.data;
-        })
-        .catch(res => {
-          console.log(res);
-        });
+      this.getList();
     },
-    resetForm() {
-      this.course.id = '';
+    resetForm(formName) {
+      this.$refs[formName].resetFields();
       this.getList();
     },
     getList() {
-      getListMarketCourse()
+      this.loading = true;
+      getListMarketCourse(this.courseSearch)
         .then(res => {
-          this.tableData = res.data;
+          this.tableData = res.data.market;
         })
         .catch(res => {
+          this.loading = false;
           console.log(res);
         });
     },
     cancel(index) {
       let cancelId = this.tableData[index].courseId;
       let mark = this.tableData[index].marketWay;
+      this.loading = true;
       getCancelCourseMarketWay({ courseId: cancelId, marketWay: mark })
         .then(res => {
           this.getList();
         })
         .catch(res => {
+          this.loading = false;
           console.log(res);
         });
     }
