@@ -13,33 +13,42 @@
     </div>
     <TablePager :data="list" :pagination="pagination" :columns="columns">
       <template slot="handle" slot-scope="{row}">
-        <span @click="dialogTableVisible = true">编辑老师</span>
+        <span @click="dialogTableVisible2 = true">编辑老师</span>
       </template>
     </TablePager>
 
     <!-- 编辑老师 -->
-    <!-- <el-dialog title="编辑老师" :visible.sync="dialogTableVisible2" width='35%' ref='dataForm'>
+    <el-dialog title="编辑老师" :visible.sync="dialogTableVisible2" width='35%' ref='dataForm'>
       <div class=''>
-        类目名称：
-        <el-input v-model="name" placeholder="" clearable size="small"></el-input>
+        讲师名称
+        <el-input v-model="temp.teacherName" placeholder="" clearable size="small"></el-input>
+        <br><br> 讲师简介
+        <el-input v-model="temp.teacherIntro" type="textarea" :rows="2" placeholder="请输入内容">
+        </el-input>
+        <br><br> 讲师照片
+        <el-upload class="upload-demo" action="https://jsonplaceholder.typicode.com/posts/">
+          <el-button size="small" type="primary">点击上传</el-button>
+          <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+        </el-upload>
         <br><br>
-        <el-button type="primary" @click="hold()">保存</el-button>&nbsp;&nbsp;
-        <el-button @click="dialogTableVisible = false">返回</el-button>
+        <el-button type="primary" @click="updateData">保存</el-button>&nbsp;&nbsp;
+        <el-button @click="dialogTableVisible2 = false">返回</el-button>
       </div>
-    </el-dialog> -->
+    </el-dialog>
 
     <!-- 新增老师 -->
     <el-dialog title="新增讲师" :visible.sync="dialogTableVisible" width='35%' ref='dataForm'>
       <div class=''>
         讲师名称
-        <el-input v-model="temp.teachName" placeholder="" clearable size="small"></el-input>
+        <el-input v-model="temp.teacherName" placeholder="" clearable size="small"></el-input>
         <br><br> 讲师简介
-        <el-input v-model="temp.brief" type="textarea" placeholder="请输入内容">
+        <el-input v-model="temp.teacherIntro" type="textarea" :rows="2" placeholder="请输入内容">
         </el-input>
         <br><br> 讲师照片
-
-        <el-input v-model="temp.teachPhoto" type="textarea" placeholder="请输入内容">
-        </el-input>
+        <el-upload class="upload-demo" action="https://jsonplaceholder.typicode.com/posts/">
+          <el-button size="small" type="primary">点击上传</el-button>
+          <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+        </el-upload>
         <br><br>
         <el-button type="primary" @click="updateData">保存</el-button>&nbsp;&nbsp;
         <el-button @click="dialogTableVisible = false">返回</el-button>
@@ -62,6 +71,7 @@ export default {
         limit: 10
       },
       dialogTableVisible: false,
+      dialogTableVisible2: false,
       input1: '',
       pagination: {
         currentPage: 1,
@@ -69,13 +79,13 @@ export default {
         pageSize: 10
       },
       temp: {
-        teachName: '',
-        brief: '',
-        teachPhoto: ''
+        teacherName: '',
+        teacherIntro: '',
+        teachName: ''
       },
       columns: [
-        { title: '讲师名字', key: 'teachName' },
-        { title: '讲师简介', key: 'brief' },
+        { title: '讲师名字', key: 'teacherName' },
+        { title: '讲师简介', key: 'teacherIntro' },
         { title: '管理操作', slot: 'handle' }
       ],
       list: [
@@ -87,12 +97,11 @@ export default {
     };
   },
   components: { TablePager },
-  filters: {},
-  created() {},
   methods: {
     updateData() {
-      this.data.push(this.temp);
+      // this.data.push(this.temp);
       this.dialogTableVisible = false;
+      this.dialogTableVisible2 = false;
     }
   }
 };
