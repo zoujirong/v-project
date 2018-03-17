@@ -1,27 +1,27 @@
 import request from '@/utils/request';
 import api from './api';
-const { listTeacher, teacherAdd, editTeacher } = api;
+const { listTeacher, addTeacher, editTeacher } = api;
 
 //获取老师列表
-export function listTeacher(param) {
+export function teacherList(param) {
   return request({
-    url: getlistTeacher,
+    url: listTeacher,
     method: 'GET',
     param
   });
 }
 
 //添加老师
-export function addTeacher(param) {
+export function teacherAdd(param) {
   return request({
-    url: teacherAdd,
+    url: addTeacher,
     method: 'POST',
     param
   });
 }
 
 //编辑老师
-export function editTeacher(param) {
+export function teacherEdit(param) {
   return request({
     url: editTeacher,
     method: 'POST',
