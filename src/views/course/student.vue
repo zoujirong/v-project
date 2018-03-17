@@ -23,13 +23,16 @@
         <span>{{row.courseApplyTime | parseTime(timeFormat)}}</span>
       </template>
       <template slot="operate" slot-scope="{row}">
-        <el-button type="text">【查看报名课程】</el-button>
+        <el-button type="text" @click="showApply(row)">【查看报名课程】</el-button>
       </template>
     </table-pager>
+
+    <CheckApplyCourse :userId="choosedUserId" :visible="apply" @close="onDialogClose"></CheckApplyCourse>
   </div>
 </template>
 <script>
 import TablePager from '@/components/TablePager';
+import CheckApplyCourse from '@/views/member/checkApplyCourse';
 import { parseTime } from '@/filters';
 import { getCourseStudent } from '@/api/course';
 const sortMap = {
@@ -45,6 +48,8 @@ export default {
       applyTime: '',
       loginTime: '',
       loading: false,
+      apply: false,
+      choosedUserId: '',
       searchParam: {
         courseId: this.$route.query.id,
         sort: 0,
@@ -57,6 +62,14 @@ export default {
       users: [
         {
           uid: 123,
+          userNick: 'livetest001',
+          userPhone: '123456',
+          marketWay: '1',
+          lastLoginTime: 1521123175297,
+          courseApplyTime: 1521183175297
+        },
+        {
+          uid: 2222,
           userNick: 'livetest001',
           userPhone: '123456',
           marketWay: '1',
@@ -90,7 +103,7 @@ export default {
       ]
     };
   },
-  components: { TablePager },
+  components: { TablePager, CheckApplyCourse },
   filters: { parseTime },
   methods: {
     async getList() {
@@ -132,6 +145,13 @@ export default {
         });
       }
       console.log(this.searchParam);
+    },
+    showApply(row) {
+      this.choosedUserId = row.uid;
+      this.apply = true;
+    },
+    onDialogClose() {
+      this.apply = false;
     }
   },
   created() {
