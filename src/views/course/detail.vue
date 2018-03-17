@@ -1,0 +1,167 @@
+<template>
+  <div class="app-container">
+    <el-form ref="editForm" label-suffix="：" label-width="150px" :model="course" :rules="rules" :inline-message="true">
+      <el-form-item label="课程标题" prop="courseName">
+        <el-input v-model="course.courseName" class="short-input"></el-input>
+      </el-form-item>
+      <el-form-item label="课程类型" prop="teachingMethod" required>
+        <el-radio :label="0" v-model="course.teachingMethod">直播课</el-radio>
+        <el-radio :label="1" v-model="course.teachingMethod">录播课</el-radio>
+      </el-form-item>
+      <el-form-item label="课程类目" prop="categoryId" :rules="[{required: true,message: '请选择课程类目！'}]">
+        <template v-for="cate in categoryList">
+          <el-radio :key="cate.categoryId" v-model="course.categoryId" :label="cate.categoryId">{{cate.categoryName}}</el-radio>
+        </template>
+        <span class="form-tips" v-if="categoryList.length === 0">暂无类目，请先去添加相应类目吧！</span>
+      </el-form-item>
+      <el-form-item label="潭州课堂ID" prop="tzCourseId" :rules="[{required: course.teachingMethod === 0,message: '潭州课程ID不能为空'}]">
+        <el-input placeholder="填写潭州课程的课程ID（数字）" v-model="course.tzCourseId"></el-input>
+        <span class="form-tips">提示：录播课程不必填写课程id</span>
+      </el-form-item>
+      <el-form-item label="主讲老师" prop="mainTeacher" :rules="[{required: true,message: '请选择主讲老师！'}]">
+        <el-select v-model="course.mainTeacher" placeholder="请选择主讲老师">
+          <template v-for="cate in categoryList">
+            <el-option :key="cate.categoryId" :value="cate.categoryId">{{cate.categoryName}}</el-option>
+          </template>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="课程封面" prop="courseCover" :rules="[{required: true,message: '请上传课程封面！'}]">
+        <upload-image :limit="1" :fileList="course.courseCover ? [{url: course.courseCover}] : []" @onSuccess="onUploadCover"></upload-image>
+        <span class="form-tips">要求：图片宽高像素分别为 X * Y</span>
+      </el-form-item>
+      <el-form-item label="课程介绍" prop="courseDesc" :rules="[{required: true,message: '请上传课程介绍！'}]">
+        <upload-image :limit="1" :fileList="course.courseDesc ? [{url: course.courseDesc}] : []" @onSuccess="onUploadDetail"></upload-image>
+        <span class="form-tips">要求：建议图片宽度为**像素，高度不超过**像素</span>
+      </el-form-item>
+      <el-form-item label="课程价格" prop="coursePrice">
+        <el-input-number controls-position="right" :min="0.00" :step="0.01" v-model="course.coursePrice"></el-input-number>
+        <span class="form-tips">要求：价格精确到小数点后两位，填写0.00即为免费课程</span>
+      </el-form-item>
+      <el-form-item label="客服微信" prop="customerWx" :rules="[{required: true, message: '请填写客服微信！'}]">
+        <el-input v-model="course.customerWx"></el-input>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="submit" :loading="loading">保存并下一步</el-button>
+        <router-link :to="{name: 'courseList'}" tag="el-button">返回</router-link>
+      </el-form-item>
+    </el-form>
+  </div>
+</template>
+
+<script>
+import UploadImage from '@/components/UploadImage';
+import { getCourseDetail, updateCourse } from '@/api/course';
+import { listCategory } from '@/api/category';
+import { teacherList } from '@/api/teacher';
+
+export default {
+  data() {
+    return {
+      commonParam: {
+        pageNo: 1,
+        pageSize: 100
+      },
+      teacherList: [],
+      categoryList: [],
+      loading: false,
+      course: {
+        courseId: this.$route.query.id,
+        courseName: '',
+        teachingMethod: 0, //0直播,1录播
+        categoryId: '',
+        tzCourseId: '',
+        mainTeacher: '',
+        courseCover: '',
+        courseDesc: '',
+        coursePrice: 0.0,
+        customerWx: ''
+      },
+      rules: {
+        courseName: [
+          { required: true, message: '请填写课程标题！' },
+          {
+            validator: (field, value, callback) => {
+              if (value && +value == value) callback('课程标题不能是纯数字');
+              callback();
+            }
+          }
+        ]
+      }
+    };
+  },
+  components: { UploadImage },
+  methods: {
+    async getCourseDetailById() {
+      let res = await getCourseDetail(this.course.courseId);
+      this.course = res.data;
+    },
+    async getTeacher() {
+      let res = await teacherList(this.commonParam);
+      this.teacherList = res.data.teacher;
+    },
+    async getCategory() {
+      let res = await listCategory(this.commonParam);
+      this.categoryList = res.data.category;
+    },
+    onUploadCover(urls) {
+      console.log('上传封面', urls);
+      this.course.courseCover = urls[0];
+    },
+    onUploadDetail(urls) {
+      this.course.courseDesc = urls[0];
+      console.log('上传详情', urls);
+    },
+    success(response, file, fileList) {
+      console.log(response, file, fileList);
+    },
+    onChange(a) {
+      console.log(a);
+    },
+    async submit() {
+      let form = this.$refs.editForm;
+      let res = await form
+        .validate()
+        .then(res => {
+          if (!res) return Promise.reject({ msg: '信息填写有误' });
+          console.log(this.course);
+          this.loading = true;
+          return updateCourse(this.course);
+        })
+        .finally(res => {
+          this.loading = false;
+        });
+      //修改课程
+      if (this.course.courseId) {
+        this.$message.success('修改课程成功');
+        this.$router.push({ name: 'courseList' });
+      } else {
+        this.$router.push({
+          name: 'courseChapter',
+          params: { id: res.data.courseId }
+        });
+      }
+    }
+  },
+  created() {
+    this.course.courseId && this.getCourseDetailById();
+    this.getCategory();
+    this.getTeacher();
+  }
+};
+</script>
+<style scoped>
+.el-input,
+.el-select {
+  width: 20%;
+}
+.el-input.short-input {
+  width: 40%;
+}
+.form-tips {
+  color: #bbb;
+  margin-left: 20px;
+}
+.inline-block {
+  display: inline-block;
+}
+</style>

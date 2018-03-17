@@ -1,16 +1,16 @@
 <template>
-    <div class="fl">
-        <el-upload action="" accept="image/*" listType="picture-card" :limit="limit" :fileList="files" :autoUpload="false" :onChange="onChange" :onPreview="onPreview" :onExceed="onExceed">
-            <div class="upload-tips">
-                <i class="el-icon-plus"></i>
-                <br>
-                <span>选择图片并上传</span>
-            </div>
-        </el-upload>
-        <el-dialog :visible.sync="showPreview">
-            <img width="100%" :src="previewUrl">
-        </el-dialog>
-    </div>
+  <div class="fl">
+    <el-upload action="" accept="image/*" listType="picture-card" :limit="limit" :fileList="files" :autoUpload="false" :onChange="onChange" :onPreview="onPreview" :onExceed="onExceed" :onRemove="onRemove">
+      <div class="upload-tips">
+        <i class="el-icon-plus"></i>
+        <br>
+        <span>选择图片并上传</span>
+      </div>
+    </el-upload>
+    <el-dialog :visible.sync="showPreview">
+      <img width="100%" :src="previewUrl">
+    </el-dialog>
+  </div>
 </template>
 
 <script>
@@ -60,6 +60,10 @@ export default {
         });
         this.upload();
       });
+    },
+    onRemove(file, fileList) {
+      this.files = fileList;
+      this.upload();
     }
   }
 };

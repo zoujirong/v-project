@@ -7,6 +7,9 @@ export default {
   courseDetail: '/course/getCourseById', //单个课程详情
   courseStudent: '/course/listCourseApplyUser', //课程报名的学生列表
   courseRecommend: '/course/recommendCourse', //课程推荐
+  courseChapter: '/course/listChapterByCourseId', //课程章节
+  courseUpdate: '/course/editCourse', //更新课程信息
+  chapterUpdate: '/course/editCourseChapter', //更新课程章节
   //类目管理
   getListCategory: '/category/listCategory',
   addCategory: '/category/addCategory',
@@ -26,8 +29,10 @@ export default {
   delBanner: '/banner/delBanner',
   setBannerSort: '/banner/setBannerSort',
   //营销管理接口
+  marketWay: '/market/listMarketWay',
   listMarketCourse: '/market/listMarketCourse',
   cancelCourseMarketWay: '/market/cancelCourseMarketWay',
+  courseMarketWay: '/market/setCourseMarketWay',
   //老师管理
   getlistTeacher: '/teacher/listTeacher',
   teacherAdd: '/teacher/addTeacher',

@@ -3,8 +3,7 @@ import { Message } from 'element-ui';
 
 Vue.config.asyncErrorHandler = err => {
   //  在这里根据服务端返回的各种状态码处理通用错
-  Message({
-    type: 'error',
+  Message.error({
     message: err.msg,
     duration: 2000,
     center: true
