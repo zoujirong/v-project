@@ -7,17 +7,20 @@
       <el-form-item label="类目" prop="categoryId">
         <el-select placeholder="选择类目" v-model="searchParam.categoryId">
           <el-option value="">全部</el-option>
+          <template v-for="cate in categoryList">
+            <el-option :key="cate.categoryId" :value="cate.categoryId">{{cate.categoryName}}</el-option>
+          </template>
         </el-select>
       </el-form-item>
       <el-button type="primary" @click="getList">查询</el-button>
       <el-button @click="reset">重置</el-button>
     </el-form>
-    <router-link :to="{name: 'addCourse'}">
+    <router-link :to="{name: 'courseDetail'}">
       <el-button type="primary">发布课程</el-button>
     </router-link>
     <TablePager :loading="loading" :data="data" :columns="columns" :pagination="pagination" @change="onTableChange">
       <template slot="teachingMethod" slot-scope="{row}">
-        <span>{{row.teachingMethod == 0 ? '直播课' : '录播'}}</span>
+        <span>{{row.teachingMethod == 0 ? '直播课' : '录播课'}}</span>
       </template>
       <template slot="unshelve" slot-scope="{row}">
         <span>{{row.unshelve == 0 ? '下架' : '上架'}}</span>
@@ -28,10 +31,12 @@
       </template>
       <template slot="operate" slot-scope="{row, index}">
         <div class="op-btn">
-          <router-link :to="{name: 'addCourse', query: {id: row.courseId}}">
+          <router-link :to="{name: 'courseDetail', query: {id: row.courseId}}">
             <el-button type="text">【编辑课程】</el-button>
           </router-link>
-          <el-button type="text" @click="recommend(row)">【编辑课时】</el-button>
+          <router-link :to="{name: 'courseChapter', params: {id: row.courseId}, query: {type: row.teachingMethod}}">
+            <el-button type="text">【编辑课时】</el-button>
+          </router-link>
           <el-button type="text" @click="setMarketing(row)" v-if="row.coursePrice!=0">【设置营销方式】</el-button>
           <el-button type="text" @click="unShelve(row, index)" v-if="row.unshelve == 1">【课程下架】</el-button>
           <el-button type="text" @click="shelve(row, index)" v-else>【课程上架】</el-button>
@@ -65,11 +70,13 @@ import {
   updateCourseShelve,
   updateCourseRecommend
 } from '@/api/course';
+import { listCategory } from '@/api/category';
 export default {
   data() {
     return {
       marketing: false,
       loading: true,
+      categoryList: [],
       searchParam: {
         courseParam: '',
         categoryId: '',
@@ -132,6 +139,10 @@ export default {
         .finally(() => {
           this.loading = false;
         });
+    },
+    async getCategory() {
+      let res = await listCategory(this.commonParam);
+      this.categoryList = res.data.category;
     },
     reset() {
       let form = this.$refs.searchForm;
@@ -238,6 +249,7 @@ export default {
   },
   created() {
     this.getList();
+    this.getCategory();
   }
 };
 </script>
