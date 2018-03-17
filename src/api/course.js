@@ -5,7 +5,10 @@ const {
   courseShelve,
   courseDetail,
   courseStudent,
-  courseRecommend
+  courseRecommend,
+  courseChapter,
+  chapterUpdate,
+  courseUpdate
 } = api;
 
 export function queryCourseList(params) {
@@ -41,6 +44,28 @@ export function getCourseStudent(params) {
 export function updateCourseRecommend(params) {
   return request({
     url: courseRecommend,
+    type: 'post',
+    params
+  });
+}
+export function getCourseChaper(courseId) {
+  return request({
+    url: courseChapter,
+    type: 'get',
+    params: { courseId }
+  });
+}
+export function updateCourseChapter(params) {
+  return request({
+    url: chapterUpdate,
+    type: 'post',
+    params
+  });
+}
+
+export function updateCourse(params) {
+  return request({
+    url: courseUpdate,
     type: 'post',
     params
   });

@@ -58,7 +58,6 @@ export default {
         handle: '',
         del: '删除'
       },
-      input1: '',
       pagination: {
         currentPage: 1,
         total: 100,
@@ -86,8 +85,10 @@ export default {
     },
     //获取类目列表
     getList() {
-      listCategory().then(res => {
-        return (this.data = res.data.category);
+      this.listLoading = true;
+      listCategory(this.pagination).then(res => {
+        this.listLoading = false;
+        this.data = res.data.category;
       });
     },
     resetTemp() {
@@ -98,7 +99,9 @@ export default {
     },
     //新增类目
     updateData() {
+      this.listLoading = true;
       // categoryAdd(this.temp.categoryName).then(res => {
+      this.listLoading = false;
       this.data.push(this.temp);
       this.dialogTableVisible = false;
       this.resetTemp();

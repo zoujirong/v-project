@@ -64,16 +64,32 @@ export const constantRouterMap = [
   },
   {
     path: '/course',
-    redirect: '/course/add',
+    redirect: '/course/detail',
     hidden: true,
     name: 'course',
     component: Layout,
     children: [
       {
-        path: 'add',
-        name: 'addCourse',
-        component: _import('course/add'),
-        meta: { title: '发布课程', noCache: true }
+        path: 'detail',
+        name: 'courseDetail',
+        component: _import('course/detail'),
+        meta: { title: '课程基本信息', noCache: true }
+      }
+    ],
+    meta: { title: '课程管理', icon: 'dashboard', noCache: true }
+  },
+  {
+    path: '/course',
+    // redirect: '/course/chapter',
+    hidden: true,
+    name: 'chapter',
+    component: Layout,
+    children: [
+      {
+        path: 'chapter/:id(\\d+)',
+        name: 'courseChapter',
+        component: _import('course/chapter'),
+        meta: { title: '课时信息', noCache: true }
       }
     ],
     meta: { title: '课程管理', icon: 'dashboard', noCache: true }
