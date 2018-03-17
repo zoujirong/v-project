@@ -134,8 +134,7 @@ export default {
         ],
         bannerCover: [{ required: true, message: '请上传图片' }],
         courseId: [
-          { required: true, message: '请输入课程id', trigger: 'blur' },
-          { type: 'number', message: '课程id必须为数字值' }
+          { required: true, message: '请输入课程id', trigger: 'blur' }
         ],
         startTime: [
           { required: true, message: '请选择开始时间', trigger: 'blur' }
@@ -188,6 +187,7 @@ export default {
           this.tableData = res.data.banner;
         })
         .catch(res => {
+          this.loading = false;
           console.log(res);
         });
     },
@@ -256,6 +256,9 @@ export default {
       console.log(urls);
       this.banner.bannerCover = urls[0];
     }
+  },
+  mounted() {
+    this.getBannerList();
   }
 };
 </script>
