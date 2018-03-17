@@ -10,36 +10,36 @@ const {
 } = api;
 
 //获取类目列表
-export function listCategory(pagination) {
+export function listCategory(param) {
   return request({
     url: getListCategory,
     method: 'get',
-    param: { pagination }
+    params: param
   });
 }
 
 //添加类目
-export function categoryAdd(categoryName) {
+export function categoryAdd(param) {
   return request({
     url: addCategory,
     method: 'post',
-    param: { categoryName }
+    params: param
   });
 }
 //修改类目
-export function categoryRevise(categoryId, categoryName) {
+export function categoryRevise(param) {
   return request({
     url: reviseCategory,
     method: 'post',
-    param: {}
+    params: param
   });
 }
 //删除类目
-export function CategoryDel(categoryId) {
+export function CategoryDel(param) {
   return request({
     url: delCategory,
     method: 'GET',
-    param: { categoryId }
+    params: param
   });
 }
 
@@ -52,10 +52,10 @@ export function categoryCourse() {
 }
 
 //类目课程排序
-export function sortCategoryCourse(courserId, weight) {
+export function sortCategoryCourse(param) {
   return request({
     url: categoryCourseSort,
     method: 'POST',
-    param: {}
+    params: param
   });
 }
