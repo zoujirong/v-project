@@ -1,132 +1,140 @@
 <template>
   <!-- 编辑课程弹窗 -->
   <div ref='dataForm' class="addCourse">
-    <div class='marginBottom'>
-      编辑推荐课程: 
-      &nbsp;&nbsp;&nbsp;&nbsp;
-      <el-input v-model="input1" placeholder="课程名或课程id进行查询" clearable size="small" @keyup.enter='searchList'></el-input>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      <el-button type="primary" @click="searchList()">查询</el-button>
+    <el-form inline class='marginBottom' :model="searchParam" ref='searchForm'>
+      <el-form-item label="编辑推荐课程" prop="courseParam">
+        <el-input v-model="searchParam.courseParam" placeholder="课程名或课程id进行查询" clearable size="small" @keyup.enter='getList()'></el-input>
+      </el-form-item>
+      <el-button type="primary" @click="getList()">查询</el-button>
       &nbsp;&nbsp;
       <el-button>重置</el-button>
       <br><br>
-      <el-button type="primary">编辑排序</el-button>
-    </div>
-    <!-- <TablePager :data='courses' :columns="columns2" :pagination="pagination">
+      <el-button type="primary" @click='editSort' v-if='EditSort'>编辑排序</el-button>
+      <el-button type="success" @click='saveEditSort' v-else>保存</el-button>
+    </el-form>
+    <TablePager :data='courses' :columns="columns2" :pagination="false" row-key="courseId">
       <template slot='position' slot-scope='{row,index}'>
         <span>{{index+1}}</span>
       </template>
-      <template slot="sort" slot-scope="{row}">
-        <span>
-          <el-button v-if="row.sort == 'start'" type="text">下移 删除</el-button>
-          <el-button v-else-if="row.sort == 'end'" type="text">上移 删除</el-button>
-          <el-button v-else type="text">上移 下移 删除</el-button>
-        </span>
-      </template>
-      <template slot="sort" slot-scope="{row}">
-        <svg-icon class='drag-handler' icon-class="drag"></svg-icon> &nbsp;&nbsp;
+      <template slot="sort" slot-scope="{row}" ref='sortPart'>
+        <svg-icon class='drag-handler' icon-class="drag" style="color:#409EFF"></svg-icon>
       </template>
       <template slot="handle" slot-scope="{row,index}">
         <el-button type="text" @click="delCourse(row.courseId,index)"> 取消推荐</el-button>
       </template>
-    </TablePager> -->
-    <el-table :data="courses" row-key="id">
-      <el-table-column class-name="status-col" label="Status" width="110">
-        <el-table-column align="center" label="ID" width="65">
-          <template slot-scope="scope">
-            <span>{{scope.row.id}}</span>
-          </template>
-        </el-table-column>
-      </el-table-column>
-      <el-table-column label="drag">
-        <template slot-scope="{row}">
-          <svg-icon class='drag-handler' icon-class="drag"></svg-icon> &nbsp;&nbsp;
-        </template>
-      </el-table-column>
-    </el-table>
-
+    </TablePager>
   </div>
 </template>
 
 <script>
-import { categoryCourse } from '@/api/category';
+import { categoryCourse, sortCategoryCourse } from '@/api/category';
 import Sortable from 'sortablejs';
 import TablePager from '@/components/TablePager';
 import { fetchList } from '@/api/article';
 export default {
   data() {
     return {
-      input1: '',
+      listLoading: true,
       sortable: '',
-      search: '',
-      pagination: {
-        currentPage: 1,
-        total: 100,
-        pageSize: 10
+      EditSort: true,
+      searchParam: {
+        courseParam: ''
       },
       columns2: [
         { title: '位置', slot: 'position' },
         { title: '课程id', key: 'courseId' },
         { title: '课程名称', key: 'courseName' },
-        { title: '排序', slot: 'sort' },
         { title: '操作', slot: 'handle' }
       ],
-      // courses: [
-      //   { courseId: '25', courseName: '设计质量1', sort: 'start' },
-      //   { courseId: '20', courseName: '设计质量2', sort: '' },
-      //   { courseId: '13', courseName: '工业设计3', sort: 'end' }
-      // ],
+      courses: [
+        { courseId: '25', courseName: '设计质量1', sort: 'start' },
+        { courseId: '20', courseName: '设计质量2', sort: '' },
+        { courseId: '13', courseName: '工业设计3', sort: 'end' }
+      ],
       // 拖拽
       sortable: '',
       oldList: [],
       newList: [],
-      courses: [],
 
-      listQuery:{
-        courseId:'',
-        courseName:'',
-        weight:''
-      }
+      listQuery: {
+        courseId: '',
+        courseName: '',
+        weight: ''
+      },
+      courseSort: [
+        {
+          courserId: '',
+          weight: ''
+        }
+      ],
+      //被拖拽的课程
+      oldIndex: '',
+      newIndex: '',
+      sortCourse: [],
+      SortList: {},
+      weight: ''
     };
   },
   components: { TablePager },
   created() {
-    this.getList();
-    // this.aaa();
+    // this.getList();
+    this.aaa();
   },
   methods: {
     //获取推荐课程列表
-    // getList() {
-    //   getCategoryCourse(this.listQuery).then(res => {
-    //     return (this.courses = res.data.course);
-    //   });
-    // },
-
-    //查询
-    searchList() {
-      this.listQuery.courseId = 1;
-      this.getList()
+    getList() {
+      this.listLoading = true;
+      // getCategoryCourse(this.searchParam).then(res => {
+      this.listLoading = false;
+      this.courses = res.data.course;
+      // });
     },
 
+    //重置
+    reset() {
+      let form = this.$refs.searchForm;
+      form.resetFields();
+      this.getList();
+    },
+    //编辑排序
+    editSort() {
+      this.columns2.splice(3, 0, { title: '排序', slot: 'sort' });
+      this.EditSort = !this.EditSort;
+    },
+    //保存排序
+    saveEditSort() {
+      this.columns2.splice(3, 1);
+      if (this.oldIndex !== this.newIndex) {
+        let key = this.courses[this.newIndex].courseId;
+        if (this.oldIndex == 0) {
+          this.weight = this.courses[this.oldIndex + 1].weight / 2;
+        } else if (this.oldIndex + 1 == this.courses.length) {
+          this.weight = this.courses[this.oldIndex - 1].weight + 1;
+        } else {
+          this.weight =
+            (this.courses[this.oldIndex - 1].weight +
+              this.courses[this.oldIndex + 1].weight) /
+            2;
+        }
+        this.SortList[key] = this.weight;
+
+        this.sortCourse = Object.keys(this.SortList).map(item => ({
+          courseId: item,
+          weight: this.SortList[item]
+        }));
+        console.log(this.sortCourse);
+      }
+      // sortCategoryCourse(this.sortCourse).then(res => {
+      //   this.getList();
+      // });
+      this.EditSort = !this.EditSort;
+    },
     //拖拽
-    // aaa() {
-    //   this.oldList = this.courses.map(v => v.courseId);
-    //   this.newList = this.oldList.slice();
-    //   this.$nextTick(() => {
-    //     this.setSort();
-    //   });
-    // },
-    getList() {
-      // this.listLoading = true;
-      fetchList(this.listQuery).then(response => {
-        this.courses = response.data.items;
-        // this.total = response.data.total;
-        this.listLoading = false;
-        this.oldList = this.courses.map(v => v.id);
-        this.newList = this.oldList.slice();
-        this.$nextTick(() => {
-          this.setSort();
-        });
+    aaa() {
+      this.oldList = this.courses.map(v => v.courseId);
+      this.newList = this.oldList.slice();
+      this.$nextTick(() => {
+        this.setSort();
       });
     },
     setSort() {
@@ -140,10 +148,10 @@ export default {
           dataTransfer.setData('Text', '');
         },
         onEnd: evt => {
-          console.log(111);
           const targetRow = this.courses.splice(evt.oldIndex, 1)[0];
           this.courses.splice(evt.newIndex, 0, targetRow);
-          console.log(this.courses);
+          this.oldIndex = evt.oldIndex; //被拖动后的位置
+          this.newIndex = evt.newIndex; //被拖动的元素的位置
         }
       });
     },
