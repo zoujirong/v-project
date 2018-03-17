@@ -32,6 +32,7 @@ export default {
   marketWay: '/market/listMarketWay',
   listMarketCourse: '/market/listMarketCourse',
   cancelCourseMarketWay: '/market/cancelCourseMarketWay',
+  courseMarketWay: '/market/setCourseMarketWay',
   //老师管理
   getlistTeacher: '/teacher/listTeacher',
   teacherAdd: '/teacher/addTeacher',

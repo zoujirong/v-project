@@ -51,13 +51,17 @@
 
     <!-- 设置营销方式 -->
     <el-dialog title="设置营销方式" width="500px" :close-on-click-modal="false" :visible.sync="marketing">
-      <el-table border>
-        <el-table-column label="选择"></el-table-column>
-        <el-table-column label="选择">营销方式名称</el-table-column>
+      <el-table :data="marketingList" border>
+        <el-table-column label="选择">
+          <template slot-scope="{row}">
+            <el-radio :label="row.marketWayId" v-model="choosedRow.marketingWay"></el-radio>
+          </template>
+        </el-table-column>
+        <el-table-column label="营销方式名称" prop="marketWayName"></el-table-column>
       </el-table>
       <div slot="footer">
         <el-button @click="marketing=false">取消</el-button>
-        <el-button type="primary">确定</el-button>
+        <el-button type="primary" @click="updateMarkting">确定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -71,17 +75,25 @@ import {
   updateCourseRecommend
 } from '@/api/course';
 import { listCategory } from '@/api/category';
+import { getMarketWay, setCourseMarketWay } from '@/api/market';
 export default {
   data() {
     return {
       marketing: false,
       loading: true,
       categoryList: [],
+      marketingList: [],
+      choosedRow: {},
+      marketingWay: '', //设置营销方式时选择的参数
       searchParam: {
         courseParam: '',
         categoryId: '',
         pageNo: 1,
         pageSize: 10
+      },
+      commonParam: {
+        pageNo: 1,
+        pageSize: 100
       },
       pagination: {
         currentPage: 1,
@@ -144,6 +156,10 @@ export default {
       let res = await listCategory(this.commonParam);
       this.categoryList = res.data.category;
     },
+    async getMarketing() {
+      let res = await getMarketWay(this.commonParam);
+      this.marketingList = res.data.marketWay;
+    },
     reset() {
       let form = this.$refs.searchForm;
       form.resetFields();
@@ -160,7 +176,9 @@ export default {
       });
       this.getList();
     },
-    setMarketing() {
+    setMarketing(row) {
+      this.choosedRow = row;
+      this.marketingList.length === 0 && this.getMarketing();
       this.marketing = true;
     },
     shelve(row, index) {
@@ -245,6 +263,14 @@ export default {
         //不是主动点取消的，是确认过程中出错了
         if (res !== 'cancel') throw res;
       });
+    },
+    async updateMarkting() {
+      /* await setCourseMarketWay({
+        courseId: this.choosedRow.courseId,
+        marketingWay: this.marketingWay
+      });
+      this.$message.success('营销方式设置成功');
+      this.choosedRow.marketingWay = this.marketingWay; */
     }
   },
   created() {

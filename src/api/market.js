@@ -1,6 +1,11 @@
 import request from '@/utils/request';
 import api from './api';
-const { marketWay, listMarketCourse, cancelCourseMarketWay } = api;
+const {
+  marketWay,
+  listMarketCourse,
+  cancelCourseMarketWay,
+  courseMarketWay
+} = api;
 
 //获取营销方式
 export function getMarketWay(query) {
@@ -24,6 +29,15 @@ export function getListMarketCourse(query) {
 export function getCancelCourseMarketWay(query) {
   return request({
     url: cancelCourseMarketWay,
+    method: 'post',
+    params: query
+  });
+}
+
+//设置课程营销方式
+export function setCourseMarketWay(query) {
+  return request({
+    url: courseMarketWay,
     method: 'post',
     params: query
   });

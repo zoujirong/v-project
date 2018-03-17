@@ -81,3 +81,9 @@ tr.el-table__row .el-form-item__error {
   right: 10px;
   top: 7px;
 }
+.el-table__header th {
+  text-align: center;
+}
+.el-table__header tr {
+  background: #efefef;
+}
