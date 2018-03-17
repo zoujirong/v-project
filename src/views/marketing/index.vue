@@ -4,7 +4,28 @@
     </div>
 </template>
 <script>
-export default {};
+import { getMarketWay } from '@/api/market.js';
+export default {
+  data() {
+    return {
+      page: {
+        pageNo: 1,
+        pageSize: 10
+      },
+      list: ''
+    };
+  },
+  methods: {
+    getWay() {
+      getMarketWay(this.page).then(res => {
+        this.list = res.data.marketWay;
+      });
+    }
+  },
+  mounted() {
+    this.getWay();
+  }
+};
 </script>
 <style>
 

@@ -24,7 +24,7 @@
 </template>
 <script>
 import TablePager from '@/components/TablePager';
-import { getListMarketCourse, getCancelCourseMarketWay } from '@/api/banner.js';
+import { getListMarketCourse, getCancelCourseMarketWay } from '@/api/market.js';
 export default {
   data() {
     return {

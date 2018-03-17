@@ -29,6 +29,7 @@ export default {
   delBanner: '/banner/delBanner',
   setBannerSort: '/banner/setBannerSort',
   //营销管理接口
+  marketWay: '/market/listMarketWay',
   listMarketCourse: '/market/listMarketCourse',
   cancelCourseMarketWay: '/market/cancelCourseMarketWay',
   //老师管理
