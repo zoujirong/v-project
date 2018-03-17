@@ -6,6 +6,7 @@ export default {
   courseShelve: '/course/courseUnshelve', //课程上下架
   courseDetail: '/course/getCourseById', //单个课程详情
   courseStudent: '/course/listCourseApplyUser', //课程报名的学生列表
+  courseRecommend: '/course/recommendCourse', //课程推荐
   //类目管理
   getListCategory: '/category/listCategory',
   addCategory: '/category/addCategory',
@@ -26,5 +27,9 @@ export default {
   setBannerSort: '/banner/setBannerSort',
   //营销管理接口
   listMarketCourse: '/market/listMarketCourse',
-  cancelCourseMarketWay: '/market/cancelCourseMarketWay'
+  cancelCourseMarketWay: '/market/cancelCourseMarketWay',
+  //老师管理
+  getlistTeacher: '/teacher/listTeacher',
+  teacherAdd: '/teacher/addTeacher',
+  editTeacher: '/teacher/editTeacher'
 };

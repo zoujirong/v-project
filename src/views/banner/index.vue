@@ -29,20 +29,20 @@
       <div class="bannerform">
         <el-form :model="banner" :rules="rules" ref="banner" label-width="140px" class="demo-ruleForm">
           <el-form-item label="推荐位名称" prop='bannerTitle'>
-            <el-input v-model="banner.bannerTitle"></el-input>
+            <el-input v-model.trim="banner.bannerTitle"></el-input>
           </el-form-item>
           <el-form-item label="图片" prop='bannerCover'>
             <upload-image :limit="1" :fileList="banner.bannerCover ? [{url: banner.bannerCover}] : []" @onSuccess="onUploadCover"></upload-image>
             <span class="form-tips">建议上传X*Y尺寸像素图片</span>
           </el-form-item>
           <el-form-item label="对应跳转的课程id" prop='courseId'>
-            <el-input v-model.number="banner.courseId"></el-input>
+            <el-input v-model.trim="banner.courseId"></el-input>
           </el-form-item>
           <el-form-item label="开始时间" prop='startTime'>
-            <el-date-picker v-model="banner.startTime" type="datetime" placeholder="选择日期" :picker-options="pickr"></el-date-picker>
+            <el-date-picker v-model.trim="banner.startTime" type="datetime" placeholder="选择日期" :picker-options="pickr"></el-date-picker>
           </el-form-item>
           <el-form-item label="结束时间" prop='endTime'>
-            <el-date-picker v-model="banner.endTime" type="datetime" placeholder="选择日期" :picker-options="pickr"></el-date-picker>
+            <el-date-picker v-model.trim="banner.endTime" type="datetime" placeholder="选择日期" :picker-options="pickr"></el-date-picker>
           </el-form-item>
         </el-form>
       </div>
@@ -132,9 +132,7 @@ export default {
         bannerTitle: [
           { required: true, message: '请输入推荐位名称', trigger: 'blur' }
         ],
-        bannerCover: [
-          { required: true, message: '请上传图片', trigger: 'blur' }
-        ],
+        bannerCover: [{ required: true, message: '请上传图片' }],
         courseId: [
           { required: true, message: '请输入课程id', trigger: 'blur' },
           { type: 'number', message: '课程id必须为数字值' }
@@ -184,10 +182,10 @@ export default {
     // 获取banner信息列表
     getBannerList() {
       this.loading = true;
-      getListBanner(this.bannerPage)
+      getListBanner()
         .then(res => {
           this.loading = false;
-          this.tableData = res.data;
+          this.tableData = res.data.banner;
         })
         .catch(res => {
           console.log(res);
@@ -288,8 +286,8 @@ img {
 }
 /* .v-modal {
   z-index: 1997 !important;
-}
-.el-dialog__wrapper {
+} */
+/* .el-dialog__wrapper {
   z-index: 2003 !important;
 } */
 </style>

@@ -48,10 +48,14 @@ export default {
       console.log(a);
     },
     handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
+      this.$emit('change', {
+        pagination: { pageSize: val }
+      });
     },
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
+      this.$emit('change', {
+        pagination: { page: val }
+      });
     },
     onSortChange({ prop, order }) {
       this.$emit('change', {
