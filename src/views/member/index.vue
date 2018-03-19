@@ -20,8 +20,9 @@
       </template>
     </TablePager>
 
+    <CheckCourse :checkMumber='checkMumber' :dialogTableVisible='dialogTableVisible' @change='CheckCourseStatus'></CheckCourse>
     <!-- 查看报名课程弹框 -->
-    <el-dialog title="查看报名课程" :visible.sync="dialogTableVisible">
+    <!-- <el-dialog title="查看报名课程" :visible.sync="dialogTableVisible">
       <el-form inline ref="checkForm">
         <el-form-item prop="checkParam">
           <el-input v-model="checkParam.courseName" placeholder="输入课程名称查询"></el-input>
@@ -40,7 +41,7 @@
           <span>{{index+1}}</span>
         </template>
       </TablePager>
-    </el-dialog>
+    </el-dialog> -->
   </div>
 </template>
 
@@ -48,6 +49,7 @@
 import TablePager from '@/components/TablePager';
 import { parseTime } from '@/filters';
 import { getlistUser, getApplyCourse } from '@/api/member.js';
+import CheckCourse from './checkApplyCourse';
 const sortMap = {
   'lastLoginTime-0': 1, //降序
   'lastLoginTime-1': 2, //升序
@@ -58,9 +60,15 @@ export default {
   name: 'member',
   data() {
     return {
+      checkMumber: '',
       listLoading: true,
       dialogTableVisible: false,
       loginTime: '',
+      pagination: {
+        currentPage: 1,
+        total: 100,
+        pageSize: 10
+      },
       searchParam: {
         sort: '',
         nick: '',
@@ -135,7 +143,7 @@ export default {
       }
     };
   },
-  components: { TablePager },
+  components: { TablePager, CheckCourse },
   filters: {},
   created() {
     // this.getList()
@@ -154,13 +162,14 @@ export default {
     getUserApplyCourse(row) {
       this.dialogTableVisible = true;
       this.listLoading = true;
-      this.checkParam={
-        uid: row.uid,
-      }
-      getApplyCourse(this.checkParam).then(res => {
-        this.listLoading = false;
-        this.data = res.data.course;
-      });
+      this.checkMumber = row.uid;
+      // this.checkParam = {
+      //   uid: row.uid
+      // };
+      // getApplyCourse(this.checkParam).then(res => {
+      // this.listLoading = false;
+      // this.data = res.data.course;
+      // });
     },
     changeLoginTime(time) {
       let [start, end] = time;
@@ -180,19 +189,16 @@ export default {
       }
       console.log(this.searchParam);
     },
-
+    CheckCourseStatus(val) {
+      this.dialogTableVisible = val;
+    },
     //重置会员列表
     reset() {
       let form = this.$refs.searchForm;
       form.resetFields();
       this.getList();
     },
-    //重置查看课程列表
-    resetCheck() {
-      let form = this.$refs.checkForm;
-      form.resetFields();
-      this.getUserApplyCourse();
-    }
+
   }
 };
 </script>

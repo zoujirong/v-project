@@ -7,17 +7,20 @@
       <el-form-item label="类目" prop="categoryId">
         <el-select placeholder="选择类目" v-model="searchParam.categoryId">
           <el-option value="">全部</el-option>
+          <template v-for="cate in categoryList">
+            <el-option :key="cate.categoryId" :value="cate.categoryId">{{cate.categoryName}}</el-option>
+          </template>
         </el-select>
       </el-form-item>
       <el-button type="primary" @click="getList">查询</el-button>
       <el-button @click="reset">重置</el-button>
     </el-form>
-    <router-link :to="{name: 'addCourse'}">
+    <router-link :to="{name: 'courseDetail'}">
       <el-button type="primary">发布课程</el-button>
     </router-link>
     <TablePager :loading="loading" :data="data" :columns="columns" :pagination="pagination" @change="onTableChange">
       <template slot="teachingMethod" slot-scope="{row}">
-        <span>{{row.teachingMethod == 0 ? '直播课' : '录播'}}</span>
+        <span>{{row.teachingMethod == 0 ? '直播课' : '录播课'}}</span>
       </template>
       <template slot="unshelve" slot-scope="{row}">
         <span>{{row.unshelve == 0 ? '下架' : '上架'}}</span>
@@ -28,10 +31,12 @@
       </template>
       <template slot="operate" slot-scope="{row, index}">
         <div class="op-btn">
-          <router-link :to="{name: 'addCourse', query: {id: row.courseId}}">
+          <router-link :to="{name: 'courseDetail', query: {id: row.courseId}}">
             <el-button type="text">【编辑课程】</el-button>
           </router-link>
-          <el-button type="text" @click="recommend(row)">【编辑课时】</el-button>
+          <router-link :to="{name: 'courseChapter', params: {id: row.courseId}, query: {type: row.teachingMethod}}">
+            <el-button type="text">【编辑课时】</el-button>
+          </router-link>
           <el-button type="text" @click="setMarketing(row)" v-if="row.coursePrice!=0">【设置营销方式】</el-button>
           <el-button type="text" @click="unShelve(row, index)" v-if="row.unshelve == 1">【课程下架】</el-button>
           <el-button type="text" @click="shelve(row, index)" v-else>【课程上架】</el-button>
@@ -46,13 +51,17 @@
 
     <!-- 设置营销方式 -->
     <el-dialog title="设置营销方式" width="500px" :close-on-click-modal="false" :visible.sync="marketing">
-      <el-table border>
-        <el-table-column label="选择"></el-table-column>
-        <el-table-column label="选择">营销方式名称</el-table-column>
+      <el-table :data="marketingList" border>
+        <el-table-column label="选择">
+          <template slot-scope="{row}">
+            <el-radio :label="row.marketWayId" v-model="choosedRow.marketingWay"></el-radio>
+          </template>
+        </el-table-column>
+        <el-table-column label="营销方式名称" prop="marketWayName"></el-table-column>
       </el-table>
       <div slot="footer">
         <el-button @click="marketing=false">取消</el-button>
-        <el-button type="primary">确定</el-button>
+        <el-button type="primary" @click="updateMarkting">确定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -65,16 +74,26 @@ import {
   updateCourseShelve,
   updateCourseRecommend
 } from '@/api/course';
+import { listCategory } from '@/api/category';
+import { getMarketWay, setCourseMarketWay } from '@/api/market';
 export default {
   data() {
     return {
       marketing: false,
       loading: true,
+      categoryList: [],
+      marketingList: [],
+      choosedRow: {},
+      marketingWay: '', //设置营销方式时选择的参数
       searchParam: {
         courseParam: '',
         categoryId: '',
         pageNo: 1,
         pageSize: 10
+      },
+      commonParam: {
+        pageNo: 1,
+        pageSize: 100
       },
       pagination: {
         currentPage: 1,
@@ -133,6 +152,14 @@ export default {
           this.loading = false;
         });
     },
+    async getCategory() {
+      let res = await listCategory(this.commonParam);
+      this.categoryList = res.data.category;
+    },
+    async getMarketing() {
+      let res = await getMarketWay(this.commonParam);
+      this.marketingList = res.data.marketWay;
+    },
     reset() {
       let form = this.$refs.searchForm;
       form.resetFields();
@@ -149,7 +176,9 @@ export default {
       });
       this.getList();
     },
-    setMarketing() {
+    setMarketing(row) {
+      this.choosedRow = row;
+      this.marketingList.length === 0 && this.getMarketing();
       this.marketing = true;
     },
     shelve(row, index) {
@@ -234,10 +263,19 @@ export default {
         //不是主动点取消的，是确认过程中出错了
         if (res !== 'cancel') throw res;
       });
+    },
+    async updateMarkting() {
+      /* await setCourseMarketWay({
+        courseId: this.choosedRow.courseId,
+        marketingWay: this.marketingWay
+      });
+      this.$message.success('营销方式设置成功');
+      this.choosedRow.marketingWay = this.marketingWay; */
     }
   },
   created() {
     this.getList();
+    this.getCategory();
   }
 };
 </script>

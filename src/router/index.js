@@ -36,44 +36,60 @@ export const constantRouterMap = [
   },
   { path: '/404', component: _import('errorPage/404'), hidden: true },
   { path: '/401', component: _import('errorPage/401'), hidden: true },
+  // {
+  //   path: '',
+  //   component: Layout,
+  //   redirect: 'dashboard',
+  //   children: [
+  //     {
+  //       path: 'dashboard',
+  //       component: _import('dashboard/index'),
+  //       name: 'dashboard',
+  //       meta: { title: 'dashboard', icon: 'dashboard', noCache: true }
+  //     }
+  //   ]
+  // },
   {
     path: '',
-    component: Layout,
-    redirect: 'dashboard',
-    children: [
-      {
-        path: 'dashboard',
-        component: _import('dashboard/index'),
-        name: 'dashboard',
-        meta: { title: 'dashboard', icon: 'dashboard', noCache: true }
-      }
-    ]
-  },
-  {
-    path: '/course',
     redirect: '/course/index',
     component: Layout,
     children: [
       {
-        path: 'index',
+        path: 'course/index',
         name: 'courseList',
         component: _import('course/index'),
-        meta: { title: '课程管理', icon: 'dashboard', noCache: true }
+        meta: { title: '课程管理', icon: 'table', noCache: true }
       }
     ]
   },
   {
     path: '/course',
-    redirect: '/course/add',
+    redirect: '/course/detail',
     hidden: true,
     name: 'course',
     component: Layout,
     children: [
       {
-        path: 'add',
-        name: 'addCourse',
-        component: _import('course/add'),
-        meta: { title: '发布课程', noCache: true }
+        path: 'detail',
+        name: 'courseDetail',
+        component: _import('course/detail'),
+        meta: { title: '课程基本信息', noCache: true }
+      }
+    ],
+    meta: { title: '课程管理', icon: 'dashboard', noCache: true }
+  },
+  {
+    path: '/course',
+    // redirect: '/course/chapter',
+    hidden: true,
+    name: 'chapter',
+    component: Layout,
+    children: [
+      {
+        path: 'chapter/:id(\\d+)',
+        name: 'courseChapter',
+        component: _import('course/chapter'),
+        meta: { title: '课时信息', noCache: true }
       }
     ],
     meta: { title: '课程管理', icon: 'dashboard', noCache: true }
@@ -102,7 +118,7 @@ export const constantRouterMap = [
         path: 'index',
         name: 'teacherList',
         component: _import('teacher/index'),
-        meta: { title: '讲师管理', icon: 'dashboard', noCache: true }
+        meta: { title: '讲师管理', icon: 'user', noCache: true }
       }
     ]
   },
@@ -115,7 +131,7 @@ export const constantRouterMap = [
         path: 'index',
         name: 'category',
         component: _import('category/index'),
-        meta: { title: '类目管理', icon: 'dashboard', noCache: true }
+        meta: { title: '类目管理', icon: 'component', noCache: true }
       }
     ]
   },
@@ -142,7 +158,7 @@ export const constantRouterMap = [
         path: 'index',
         name: 'orderList',
         component: _import('order/index'),
-        meta: { title: '订单管理', icon: 'dashboard', noCache: true }
+        meta: { title: '订单管理', icon: 'form', noCache: true }
       }
     ]
   },
@@ -155,7 +171,7 @@ export const constantRouterMap = [
         path: 'index',
         name: 'member',
         component: _import('member/index'),
-        meta: { title: '会员管理', icon: 'dashboard', noCache: true }
+        meta: { title: '会员管理', icon: 'peoples', noCache: true }
       }
     ]
   },
@@ -168,7 +184,7 @@ export const constantRouterMap = [
         path: 'index',
         name: 'bannerlist',
         component: _import('banner/index'),
-        meta: { title: '推荐位管理', icon: 'form', noCache: true }
+        meta: { title: '推荐位管理', icon: 'star', noCache: true }
       }
     ]
   },
@@ -193,7 +209,7 @@ export const constantRouterMap = [
     children: [
       {
         path: 'marketlist',
-        name: 'marketlist',
+        name: 'marketlists',
         component: _import('marketing/marketlist'),
         meta: { title: '营销管理', icon: 'message', noCache: true }
       }

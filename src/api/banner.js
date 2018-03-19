@@ -1,14 +1,6 @@
 import request from '@/utils/request';
 import api from './api';
-const {
-  addBanner,
-  editBanner,
-  listBanner,
-  delBanner,
-  setBannerSort,
-  listMarketCourse,
-  cancelCourseMarketWay
-} = api;
+const { addBanner, editBanner, listBanner, delBanner, setBannerSort } = api;
 
 // banner图列表
 export function getListBanner(query) {
@@ -50,24 +42,6 @@ export function getDelBanner(query) {
 export function getSetBannerSort(query) {
   return request({
     url: setBannerSort,
-    method: 'post',
-    params: query
-  });
-}
-
-//营销管理获取营销课程列表
-export function getListMarketCourse(query) {
-  return request({
-    url: listMarketCourse,
-    method: 'get',
-    params: query
-  });
-}
-
-//取消课程营销方式
-export function getCancelCourseMarketWay(query) {
-  return request({
-    url: cancelCourseMarketWay,
     method: 'post',
     params: query
   });
