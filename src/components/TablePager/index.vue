@@ -11,7 +11,7 @@
       </template>
     </el-table>
     <div class="pagination-container" v-if="pagination">
-      <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[50, 100, 150, 200]" :page-size="pageSize" layout="total, prev, pager, next, sizes, jumper" :total="total">
+      <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[10, 20, 50, 100]" :page-size="pageSize" layout="total, prev, pager, next, sizes, jumper" :total="total">
       </el-pagination>
     </div>
   </div>

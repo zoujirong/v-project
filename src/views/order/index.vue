@@ -4,19 +4,20 @@
       <el-form-item label="课程" prop="courseParam">
         <el-input placeholder="输入课程id或课程名称" v-model="searchParam.courseParam"></el-input>
       </el-form-item>
-      <el-form-item label="用户" prop="courseParam">
+      <el-form-item label="用户" prop="nick">
         <el-input placeholder="输入用户微信名" v-model="searchParam.nick"></el-input>
       </el-form-item>
-      <el-form-item label="支付方式" prop="marketWay">
-        <el-select placeholder="全部" v-model="searchParam.marketWay">
-          <el-option value="">验证手机</el-option>
-          <el-option value="">直接购买</el-option>
+      <el-form-item label="支付方式" prop="presentWay">
+        <el-select placeholder="全部" v-model="searchParam.presentWay">
+          <el-option :value="1" label="验证手机"></el-option>
+          <el-option :value="0" label="直接购买"></el-option>
         </el-select>
       </el-form-item>
       <el-button type="primary" @click="getList">查询</el-button>
       <el-button @click="reset">重置</el-button>
     </el-form>
-    <TablePager :data="data" :columns="columns">
+
+    <TablePager :data="data" :columns="columns" :loading="loading" :pagination="pagination" @change="onChange">
 
       <template slot="marketWay" slot-scope="{row}">
         <span>{{row.marketWay == 0 ? '直接购买' : '手机验证'}}</span>
@@ -28,21 +29,23 @@
 
 <script>
 import TablePager from '@/components/TablePager';
-import { queryCourseList, updateCourseShelve } from '@/api/course';
 import { orderList } from '@/api/order';
 export default {
   data() {
     return {
-      // loading: '',
-      nick: '',
-      // marketing: false,
+      loading: false,
       searchParam: {
         courseName: '',
-        userNick: '',
+        nick: '',
+        presentWay: '',
         pageNo: 1,
         pageSize: 10
       },
-      pagination: {},
+      pagination: {
+        total: 200,
+        currentPage: 2,
+        pageSize: 10
+      },
       columns: [
         { title: '订单ID', key: 'orderId' },
         { title: '订单对应课程', key: 'courseName' },
@@ -79,33 +82,32 @@ export default {
   },
   methods: {
     async getList() {
-      let form = this.$refs.searchForm;
-      // this.loading = true;
-      await queryCourseList(this.searchParam).then(res => {
-        this.data = res.data.course;
+      this.loading = true;
+      let res = await orderList(this.searchParam).finally(() => {
+        this.loading = false;
       });
+      this.data = res.data.order;
     },
     reset() {
       let form = this.$refs.searchForm;
       form.resetFields();
       this.getList();
     },
-    setMarketing() {
-      this.marketing = true;
+    onChange({ pagination }) {
+      let {
+        page = this.searchParam.pageNo,
+        pageSize = this.searchParam.pageSize
+      } = pagination;
+      Object.assign(this.searchParam, {
+        pageNo: page,
+        pageSize
+      });
+      this.getList();
     }
-    // shelve(row, index) {
-    //   // this.loading = true;
-    //   this.updateShelve(row, index).then(res => {
-    //     this.loading = false;
-    //   });
-    // }
-    // recommend(row, index) {
-    //   console.log('你点击了', row, index);
-    // }
+  },
+  created() {
+    this.getList();
   }
-  // mounted() {
-  //   this.getList();
-  // }
 };
 </script>
 <style scoped>
