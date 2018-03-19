@@ -283,8 +283,8 @@ img {
   float: left;
 }
 .form-tips {
-  display: block;
-  float: left;
+  display: inline-block;
+  /* float: left; */
   padding-left: 10px;
 }
 /* .v-modal {
