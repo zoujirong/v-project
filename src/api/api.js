@@ -31,5 +31,7 @@ export default {
   //老师管理
   getlistTeacher: '/teacher/listTeacher',
   teacherAdd: '/teacher/addTeacher',
-  editTeacher: '/teacher/editTeacher'
+  editTeacher: '/teacher/editTeacher',
+  //订单管理
+  orderList: '/order/listOrder'
 };
