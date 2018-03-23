@@ -76,14 +76,30 @@ export default {
     cancel(index) {
       let cancelId = this.tableData[index].courseId;
       let mark = this.tableData[index].marketWay;
-      this.loading = true;
-      getCancelCourseMarketWay({ courseId: cancelId, marketWay: mark })
-        .then(res => {
-          this.getList();
+      this.$confirm('确认取消课程?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          getCancelCourseMarketWay({ courseId: cancelId, marketWay: mark })
+            .then(res => {
+              this.getList();
+              this.$message({
+                type: 'success',
+                message: '取消成功!'
+              });
+            })
+            .catch(res => {
+              this.loading = false;
+              console.log(res);
+            });
         })
-        .catch(res => {
-          this.loading = false;
-          console.log(res);
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '取消失败'
+          });
         });
     }
   },
