@@ -1,15 +1,16 @@
-import { loginByUsername, logout, getUserInfo } from "@/api/login";
-import { getToken, setToken, removeToken } from "@/utils/auth";
+import { loginByUsername, logOut, getUserInfo } from '@/api/login';
+import { getToken, setToken, removeToken } from '@/utils/auth';
+const crypto = require('crypto');
 
 const user = {
   state: {
-    user: "",
-    status: "",
-    code: "",
+    user: '',
+    status: '',
+    code: '',
     token: getToken(),
-    name: "",
-    avatar: "",
-    introduction: "",
+    name: '',
+    avatar: '',
+    introduction: '',
     roles: [],
     setting: {
       articlePlatform: []
@@ -46,12 +47,20 @@ const user = {
   actions: {
     // 用户名登录
     LoginByUsername({ commit }, userInfo) {
-      const username = userInfo.username.trim();
+      let { userName, password } = userInfo;
+      let pass = crypto
+        .createHash('md5')
+        .update(password)
+        .digest('base64')
+        .slice(0, -2);
       return new Promise((resolve, reject) => {
-        loginByUsername(username, userInfo.password)
+        loginByUsername({
+          userName: userName.trim(),
+          password: pass
+        })
           .then(response => {
             const data = response.data;
-            commit("SET_TOKEN", data.token);
+            commit('SET_TOKEN', data.token);
             setToken(response.data.token);
             resolve();
           })
@@ -68,13 +77,13 @@ const user = {
           .then(response => {
             if (!response.data) {
               // 由于mockjs 不支持自定义状态码只能这样hack
-              reject("error");
+              reject('error');
             }
             const data = response.data;
-            commit("SET_ROLES", data.roles);
-            commit("SET_NAME", data.name);
-            commit("SET_AVATAR", data.avatar);
-            commit("SET_INTRODUCTION", data.introduction);
+            commit('SET_ROLES', data.roles);
+            commit('SET_NAME', data.name);
+            commit('SET_AVATAR', data.avatar);
+            commit('SET_INTRODUCTION', data.introduction);
             resolve(response);
           })
           .catch(error => {
@@ -100,10 +109,10 @@ const user = {
     // 登出
     LogOut({ commit, state }) {
       return new Promise((resolve, reject) => {
-        logout(state.token)
+        logOut(state.token)
           .then(() => {
-            commit("SET_TOKEN", "");
-            commit("SET_ROLES", []);
+            commit('SET_TOKEN', '');
+            commit('SET_ROLES', []);
             removeToken();
             resolve();
           })
@@ -116,7 +125,7 @@ const user = {
     // 前端 登出
     FedLogOut({ commit }) {
       return new Promise(resolve => {
-        commit("SET_TOKEN", "");
+        commit('SET_TOKEN', '');
         removeToken();
         resolve();
       });
@@ -125,14 +134,14 @@ const user = {
     // 动态修改权限
     ChangeRoles({ commit }, role) {
       return new Promise(resolve => {
-        commit("SET_TOKEN", role);
+        commit('SET_TOKEN', role);
         setToken(role);
         getUserInfo(role).then(response => {
           const data = response.data;
-          commit("SET_ROLES", data.roles);
-          commit("SET_NAME", data.name);
-          commit("SET_AVATAR", data.avatar);
-          commit("SET_INTRODUCTION", data.introduction);
+          commit('SET_ROLES', data.roles);
+          commit('SET_NAME', data.name);
+          commit('SET_AVATAR', data.avatar);
+          commit('SET_INTRODUCTION', data.introduction);
           resolve();
         });
       });

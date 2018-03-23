@@ -5,18 +5,18 @@
         <h3 class="title">{{$t('login.title')}}</h3>
         <!-- <lang-select class="set-language"></lang-select> -->
       </div>
-      <el-form-item prop="username">
+      <el-form-item prop="userName">
         <span class="svg-container svg-container_login">
           <svg-icon icon-class="user" />
         </span>
-        <el-input name="username" type="text" v-model="loginForm.username" autoComplete="on" placeholder="username" />
+        <el-input name="username" type="text" v-model="loginForm.userName" autoComplete="on" placeholder="用户名" />
       </el-form-item>
 
       <el-form-item prop="password">
         <span class="svg-container">
           <svg-icon icon-class="password" />
         </span>
-        <el-input name="password" :type="passwordType" @keyup.enter.native="handleLogin" v-model="loginForm.password" autoComplete="on" placeholder="password" />
+        <el-input name="password" :type="passwordType" @keyup.enter.native="handleLogin" v-model="loginForm.password" autoComplete="on" placeholder="密码" />
         <span class="show-pwd" @click="showPwd">
           <svg-icon icon-class="eye" />
         </span>
@@ -57,26 +57,27 @@ export default {
   name: 'login',
   data() {
     const validateUsername = (rule, value, callback) => {
-      if (!isvalidUsername(value)) {
-        callback(new Error('Please enter the correct user name'));
+      if (!value) {
+        //isvalidUsername(value)
+        callback(new Error('用户名不能为空'));
       } else {
         callback();
       }
     };
     const validatePassword = (rule, value, callback) => {
-      if (value.length < 6) {
-        callback(new Error('The password can not be less than 6 digits'));
+      if (!value) {
+        callback(new Error('密码不能为空'));
       } else {
         callback();
       }
     };
     return {
       loginForm: {
-        username: 'admin',
-        password: '1111111'
+        userName: '',
+        password: ''
       },
       loginRules: {
-        username: [
+        userName: [
           { required: true, trigger: 'blur', validator: validateUsername }
         ],
         password: [
@@ -96,24 +97,25 @@ export default {
         this.passwordType = 'password';
       }
     },
-    handleLogin() {
-      this.$refs.loginForm.validate(valid => {
-        if (valid) {
+    async handleLogin() {
+      await new Promise((resolve, reject) => {
+        this.$refs.loginForm.validate(valid => {
+          if (valid) resolve();
+          else reject();
+        });
+      })
+        .then(res => {
           this.loading = true;
-          this.$store
-            .dispatch('LoginByUsername', this.loginForm)
-            .then(() => {
-              this.loading = false;
-              this.$router.push({ path: '/' });
-            })
-            .catch(() => {
-              this.loading = false;
-            });
-        } else {
-          console.log('error submit!!');
-          return false;
-        }
-      });
+          return this.$store.dispatch('LoginByUsername', this.loginForm);
+        })
+        .finally(() => {
+          this.loading = false;
+        })
+        .catch(res => {
+          if (res) throw res;
+        });
+
+      this.$router.push({ path: '/' });
     },
     afterQRScan() {
       // const hash = window.location.hash.slice(1)

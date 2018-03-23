@@ -1,28 +1,26 @@
-import request from "@/utils/request";
+import request from '@/utils/request';
+import api from './api';
+const { login, logout } = api;
 
-export function loginByUsername(username, password) {
-  const data = {
-    username,
-    password
-  };
+export function loginByUsername(data) {
   return request({
-    url: "/login/login",
-    method: "post",
+    url: login,
+    method: 'post',
     data
   });
 }
 
-export function logout() {
+export function logOut() {
   return request({
-    url: "/login/logout",
-    method: "post"
+    url: logout,
+    method: 'post'
   });
 }
 
 export function getUserInfo(token) {
   return request({
-    url: "/user/info",
-    method: "get",
+    url: '/user/info',
+    method: 'get',
     params: { token }
   });
 }

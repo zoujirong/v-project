@@ -1,11 +1,11 @@
-import axios from "axios";
-import { Message } from "element-ui";
-import store from "@/store";
-import { getToken } from "@/utils/auth";
-import qs from "qs";
+import axios from 'axios';
+import { Message } from 'element-ui';
+import store from '@/store';
+import { getToken } from '@/utils/auth';
+import qs from 'qs';
 
-axios.defaults.headers.post["Content-Type"] =
-  "application/x-www-form-urlencoded";
+axios.defaults.headers.post['Content-Type'] =
+  'application/x-www-form-urlencoded';
 // create an axios instance
 const service = axios.create({
   baseURL: process.env.BASE_API, // api的base_url
@@ -17,15 +17,15 @@ service.interceptors.request.use(
   config => {
     config.data = { ...config.data, terminalType: 4 };
     if (store.getters.token) {
-      config.data["token"] = getToken();
+      config.headers.authorization = store.getters.token;
     }
-    if (config.method === "post") {
+    if (config.method === 'post') {
       config.data = qs.stringify(config.data);
     }
     return config;
   },
   error => {
-    console.log("axios error:", error); // for debug
+    console.log('axios error:', error); // for debug
     return Promise.reject({
       msg: error.message,
       status: 5000
@@ -40,7 +40,7 @@ service.interceptors.response.use(
     return data;
   },
   error => {
-    console.log("axios error:", error); // for debug
+    console.log('axios error:', error); // for debug
     return Promise.reject({
       msg: error.message,
       status: 5000
