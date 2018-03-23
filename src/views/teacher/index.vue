@@ -18,23 +18,15 @@
     </TablePager>
 
     <!-- 新增老师 -->
-    <!-- <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
-      <el-form-item label="新增讲师" prop="name">
-        <el-input v-model="ruleForm.name"></el-input>
-      </el-form-item>
-
-    </el-form> -->
-
     <el-dialog title="新增讲师" width='35%' :visible.sync="dialogTableVisible">
-      讲师名称
+      讲师名称：
       <el-input placeholder=" " clearable size="small " v-model="editPopup.teacherName"></el-input>
-      <br><br> 讲师简介
-      <el-input type="textarea" :rows="2" placeholder="请输入内容 " v-model="editPopup.teacherIntro">
+      <br><br> 讲师简介：&nbsp;&nbsp;
+      <el-input type="textarea" width="100" placeholder="请输入内容 " v-model="editPopup.teacherIntro">
       </el-input>
-      <br><br> 讲师照片
+      <br><br> 讲师照片：&nbsp;&nbsp;
       <upload-image class="upload-demo " size="small" :limit="1" :fileList="editPopup.teacherIcon ? [{url: editPopup.teacherIcon}] : []" @onSuccess="onUploadCover" type="primary "></upload-image>
       <div slot="tip " class="el-upload__tip ">只能上传jpg/png文件，且不超过500kb</div>
-
       <br><br>
       <el-button type="primary " @click="updateTeach">保存</el-button>&nbsp;&nbsp;
       <el-button @click="dialogTableVisible= false">返回</el-button>
@@ -42,13 +34,13 @@
 
     <!-- 编辑老师 -->
     <el-dialog title="编辑讲师" width='35%' :visible.sync="dialogTableVisible2">
-      讲师名称
+      讲师名称：&nbsp;&nbsp;
       <el-input placeholder="请输入老师姓名" clearable size="small " v-model="editPopup.teacherName"></el-input>
-      <br><br> 讲师简介
+      <br><br> 讲师简介:&nbsp;&nbsp;
       <el-input type="textarea " :rows="2" placeholder="请输入内容 " v-model="editPopup.teacherIntro">
       </el-input>
 
-      <br><br> 讲师照片
+      <br><br> 讲师照片:&nbsp;&nbsp;
       <upload-image class="upload-demo " size="small" :limit="1" :fileList="editPopup.teacherIcon ? [{url: editPopup.teacherIcon}] : []" @onSuccess="onUploadCover" type="primary "></upload-image>
       <div slot="tip " class="el-upload__tip ">只能上传jpg/png文件，且不超过500kb</div>
 
@@ -151,5 +143,8 @@ export default {
 }
 .category-nav {
   margin-bottom: 20px;
+}
+.el-textarea {
+  width: 60%;
 }
 </style>
