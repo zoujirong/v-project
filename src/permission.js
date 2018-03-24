@@ -21,12 +21,17 @@ router.beforeEach((to, from, next) => {
   if (getToken()) {
     // determine if there has token
     /* has token*/
-    store.dispatch('GenerateRoutes', { roles: 'admin' }).then(() => {
-      // 根据roles权限生成可访问的路由表
-      router.addRoutes(store.getters.addRouters); // 动态添加可访问路由表
-      next(); // hack方法 确保addRoutes已完成 ,set the replace: true so the navigation will not leave a history record
-      NProgress.done();
-    });
+    // 判断动态可访问路由表是否已添加完毕
+    if (store.getters.addRouters.length === 0) {
+      store.dispatch('GenerateRoutes', { roles: 'admin' }).then(() => {
+        // 根据roles权限生成可访问的路由表
+        router.addRoutes(store.getters.addRouters); // 动态添加可访问路由表
+        next(); // hack方法 确保addRoutes已完成 ,set the replace: true so the navigation will not leave a history record
+        NProgress.done();
+      });
+    } else {
+      next();
+    }
     /* if (to.path === '/login') {
       next({ path: '/' });
       NProgress.done(); // if current page is dashboard will not trigger	afterEach hook, so manually handle it
@@ -73,5 +78,6 @@ router.beforeEach((to, from, next) => {
 });
 
 router.afterEach(() => {
+  console.log(4)
   NProgress.done(); // finish progress bar
 });
