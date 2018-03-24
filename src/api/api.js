@@ -35,11 +35,11 @@ export default {
   cancelCourseMarketWay: '/market/cancelCourseMarketWay',
   courseMarketWay: '/market/setCourseMarketWay',
   //老师管理
-  getlistTeacher: '/teacher/listTeacher',
-  teacherAdd: '/teacher/addTeacher',
+  listTeacher: '/teacher/listTeacher',
+  addTeacher: '/teacher/addTeacher',
   editTeacher: '/teacher/editTeacher',
   //订单管理
-  orderList: '/order/listOrder',
+  listOrder: '/order/listOrder',
   //上传
   upload: '/app/upload'
 };
