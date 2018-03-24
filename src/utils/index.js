@@ -299,3 +299,18 @@ export function getRandom(min, max) {
   var increase = max - min;
   return Math.round(ram * increase + min);
 }
+
+export function transTimeStamp(time) {
+  return time * 1000;
+}
+export function calcuWeight(list, index) {
+  let prev = list[index - 1];
+  let next = list[index + 1];
+  if (prev && next) {
+    return (prev.weight + next.weight) / 2;
+  } else if (!(prev || next)) {
+    return 1;
+  } else {
+    return prev.weight + 1;
+  }
+}
