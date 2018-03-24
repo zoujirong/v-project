@@ -16,7 +16,7 @@ export function getAddBanner(query) {
   return request({
     url: addBanner,
     method: 'post',
-    params: query
+    data: query
   });
 }
 
@@ -25,7 +25,7 @@ export function getEditBanner(query) {
   return request({
     url: editBanner,
     method: 'post',
-    params: query
+    data: query
   });
 }
 
@@ -34,7 +34,7 @@ export function getDelBanner(query) {
   return request({
     url: delBanner,
     method: 'post',
-    params: query
+    data: query
   });
 }
 
@@ -43,6 +43,6 @@ export function getSetBannerSort(query) {
   return request({
     url: setBannerSort,
     method: 'post',
-    params: query
+    data: query
   });
 }

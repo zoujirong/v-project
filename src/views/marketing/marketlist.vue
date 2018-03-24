@@ -9,7 +9,7 @@
       <el-button @click="resetForm('courseSearch')">重置</el-button>
     </el-form>
     <!-- 表格部分 -->
-    <template>
+    <template v-if="tableData">
       <TablePager :data="tableData" :columns="columns" :pagination="pagination" :loading=loading>
         <template slot="number" slot-scope="{row,index}">
           <span>{{index+1}}</span>
@@ -47,7 +47,7 @@ export default {
         { title: '操作', slot: 'operate' }
       ],
       tableData: [
-        { courseName: '产品入门到猝死1', courseId: 260, coursePrice: 250 }
+        // { courseName: '产品入门到猝死1', courseId: 260, coursePrice: 250 }
       ]
     };
   },
@@ -64,9 +64,10 @@ export default {
     },
     getList() {
       this.loading = true;
+      debugger;
       getListMarketCourse(this.courseSearch)
         .then(res => {
-          this.tableData = res.data.market;
+          this.tableData = res.data.data;
         })
         .catch(res => {
           this.loading = false;

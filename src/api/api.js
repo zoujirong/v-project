@@ -29,10 +29,10 @@ export default {
   editBanner: '/banner/editBanner',
   listBanner: '/banner/listBanner',
   delBanner: '/banner/delBanner',
-  setBannerSort: '/banner/setBannerSort',
+  setBannerSort: '/banner/sortBanner',
   //营销管理接口
   marketWay: '/market/listMarketWay',
-  listMarketCourse: '/market/listMarketCourse',
+  marketCourse: '/market/listMarketCourse',
   cancelCourseMarketWay: '/market/cancelCourseMarketWay',
   courseMarketWay: '/market/setCourseMarketWay',
   //老师管理
