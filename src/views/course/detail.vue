@@ -1,8 +1,8 @@
 <template>
   <div class="app-container">
     <el-form ref="editForm" label-suffix="：" label-width="150px" :model="course" :rules="rules" :inline-message="true">
-      <el-form-item label="课程标题" prop="courseName">
-        <el-input v-model="course.courseName" class="short-input"></el-input>
+      <el-form-item label="课程标题" prop="title">
+        <el-input v-model="course.title" class="short-input"></el-input>
       </el-form-item>
       <el-form-item label="课程类型" prop="teachingMethod" required>
         <el-radio :label="0" v-model="course.teachingMethod">直播课</el-radio>
@@ -20,8 +20,8 @@
       </el-form-item>
       <el-form-item label="主讲老师" prop="mainTeacher" :rules="[{required: true,message: '请选择主讲老师！'}]">
         <el-select v-model="course.mainTeacher" placeholder="请选择主讲老师">
-          <template v-for="cate in categoryList">
-            <el-option :key="cate.categoryId" :value="cate.categoryId">{{cate.categoryName}}</el-option>
+          <template v-for="teacher in teacherList">
+            <el-option :key="teacher.teacherId" :value="teacher.teacherId" :label="teacher.teacherName"></el-option>
           </template>
         </el-select>
       </el-form-item>
@@ -50,7 +50,7 @@
 
 <script>
 import UploadImage from '@/components/UploadImage';
-import { getCourseDetail, updateCourse } from '@/api/course';
+import { getCourseDetail, updateCourse, addCourse } from '@/api/course';
 import { listCategory } from '@/api/category';
 import { teacherList } from '@/api/teacher';
 
@@ -65,8 +65,8 @@ export default {
       categoryList: [],
       loading: false,
       course: {
-        courseId: this.$route.query.id,
-        courseName: '',
+        id: this.$route.query.id,
+        title: '',
         teachingMethod: 0, //0直播,1录播
         categoryId: '',
         tzCourseId: '',
@@ -77,7 +77,7 @@ export default {
         customerWx: ''
       },
       rules: {
-        courseName: [
+        title: [
           { required: true, message: '请填写课程标题！' },
           {
             validator: (field, value, callback) => {
@@ -92,16 +92,16 @@ export default {
   components: { UploadImage },
   methods: {
     async getCourseDetailById() {
-      let res = await getCourseDetail(this.course.courseId);
+      let res = await getCourseDetail(this.course.id);
       this.course = res.data;
     },
     async getTeacher() {
       let res = await teacherList(this.commonParam);
-      this.teacherList = res.data.teacher;
+      this.teacherList = res.data.data;
     },
     async getCategory() {
       let res = await listCategory(this.commonParam);
-      this.categoryList = res.data.category;
+      this.categoryList = res.data.data;
     },
     onUploadCover(urls) {
       console.log('上传封面', urls);
@@ -123,15 +123,14 @@ export default {
         .validate()
         .then(res => {
           if (!res) return Promise.reject({ msg: '信息填写有误' });
-          console.log(this.course);
           this.loading = true;
-          return updateCourse(this.course);
+          return (this.course.id ? updateCourse : addCourse)(this.course);
         })
         .finally(res => {
           this.loading = false;
         });
       //修改课程
-      if (this.course.courseId) {
+      if (this.course.id) {
         this.$message.success('修改课程成功');
         this.$router.push({ name: 'courseList' });
       } else {
@@ -143,7 +142,7 @@ export default {
     }
   },
   created() {
-    this.course.courseId && this.getCourseDetailById();
+    this.course.id && this.getCourseDetailById();
     this.getCategory();
     this.getTeacher();
   }
