@@ -56,6 +56,7 @@
 import TablePager from '@/components/TablePager';
 import { getCourseChaper, updateCourseChapter } from '@/api/course';
 import { parseTime } from '@/filters';
+import { calcuWeight } from '@/utils';
 
 export default {
   data() {
@@ -64,6 +65,7 @@ export default {
       timeFormat: '{y}-{m}-{d} {h}:{i}',
       courseId: this.$route.params.id,
       isLiving: this.$route.query.type != 1, //0直播，1录播
+      deletes: [],
       form: {
         chapterNum: '',
         chapter: []
@@ -83,18 +85,27 @@ export default {
           livingStartTime,
           livingEndTime,
           playTime: [livingStartTime, livingEndTime],
-          disabled: chapterStatus != 0
+          disabled: chapterStatus != 0,
+          flag: 2
         };
       });
       this.form.chapter = chapters;
     },
     addChapter(index) {
-      this.form.chapter.splice(index + 1, 0, {
+      let newIndex = this.form.chapter.length === 0 ? index : index + 1;
+      let obj = {
         chapterTitle: '',
-        playUrl: ''
-      });
+        playUrl: '',
+        flag: 1
+      };
+      this.form.chapter.splice(newIndex, 0, obj);
+      obj.weight = calcuWeight(newIndex);
     },
     removeChapter(index) {
+      let record = this.form.chapter[index];
+      if (record.chapterId) {
+        this.deletes.push(Object.assign({ flag: 3 }, record));
+      }
       this.form.chapter.splice(index, 1);
     },
     onChangeTime(index, time) {
@@ -116,11 +127,10 @@ export default {
         .validate()
         .then(res => {
           if (!res) return Promise.reject({ msg: '信息输入有误' });
-          let data = this.form;
           this.loading = true;
           return updateCourseChapter({
-            ...data,
-            chapter: JSON.stringify(data.chapter),
+            ...this.form,
+            chapter: JSON.stringify(chapter.concat(this.deletes)),
             courseId: this.courseId
           });
         })
