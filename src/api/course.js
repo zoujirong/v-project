@@ -8,13 +8,14 @@ const {
   courseRecommend,
   courseChapter,
   chapterUpdate,
-  courseUpdate
+  courseUpdate,
+  courseAdd
 } = api;
 
 export function queryCourseList(params) {
   return request({
     url: courseList,
-    type: 'get',
+    method: 'get',
     params
   });
 }
@@ -22,14 +23,14 @@ export function queryCourseList(params) {
 export function updateCourseShelve(params) {
   return request({
     url: courseShelve,
-    type: 'post',
+    method: 'post',
     params
   });
 }
 export function getCourseDetail(courseId) {
   return request({
     url: courseDetail,
-    type: 'get',
+    method: 'get',
     params: { courseId }
   });
 }
@@ -37,36 +38,44 @@ export function getCourseDetail(courseId) {
 export function getCourseStudent(params) {
   return request({
     url: courseStudent,
-    type: 'get',
+    method: 'get',
     params
   });
 }
 export function updateCourseRecommend(params) {
   return request({
     url: courseRecommend,
-    type: 'post',
+    method: 'post',
     params
   });
 }
 export function getCourseChaper(courseId) {
   return request({
     url: courseChapter,
-    type: 'get',
+    method: 'get',
     params: { courseId }
   });
 }
 export function updateCourseChapter(params) {
   return request({
     url: chapterUpdate,
-    type: 'post',
+    method: 'post',
     params
+  });
+}
+
+export function addCourse(params) {
+  return request({
+    url: courseAdd,
+    method: 'post',
+    data: params
   });
 }
 
 export function updateCourse(params) {
   return request({
     url: courseUpdate,
-    type: 'post',
-    params
+    method: 'post',
+    data: params
   });
 }
