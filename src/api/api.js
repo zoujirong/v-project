@@ -1,4 +1,5 @@
 export default {
+  //登录
   login: '/admin/login',
   logout: '/admin/logout',
   //课程模块
@@ -38,5 +39,7 @@ export default {
   teacherAdd: '/teacher/addTeacher',
   editTeacher: '/teacher/editTeacher',
   //订单管理
-  orderList: '/order/listOrder'
+  orderList: '/order/listOrder',
+  //上传
+  upload: '/app/upload'
 };

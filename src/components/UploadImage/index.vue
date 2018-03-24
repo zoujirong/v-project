@@ -14,6 +14,7 @@
 </template>
 
 <script>
+import { getUploadParam, uploadImage } from '@/api/common';
 export default {
   props: {
     limit: Number,
@@ -43,11 +44,27 @@ export default {
       });
     },
     upload() {
-      this.$emit('onSuccess', this.files.map(file => file.url));
+      getUploadParam()
+        .then(res => {
+          let file = this.files[0];
+          let { host, accessid, dir, expire, policy, signature } = res.data;
+          return uploadImage({
+            name: '',
+            key: dir + '${filename}',
+            policy,
+            OSSAccessKeyId: accessid,
+            success_action_status: 200,
+            signature,
+            file
+          });
+        })
+        .then(res => {});
+      // this.$emit('onSuccess', this.files.map(file => file.url));
     },
     onChange(file, fileList) {
       this.files = fileList;
-      this.upload();
+      console.log(files);
+      // this.upload();
     },
     onPreview(file) {
       this.previewUrl = file.url;

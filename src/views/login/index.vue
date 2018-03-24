@@ -5,11 +5,11 @@
         <h3 class="title">{{$t('login.title')}}</h3>
         <!-- <lang-select class="set-language"></lang-select> -->
       </div>
-      <el-form-item prop="userName">
+      <el-form-item prop="username">
         <span class="svg-container svg-container_login">
           <svg-icon icon-class="user" />
         </span>
-        <el-input name="username" type="text" v-model="loginForm.userName" autoComplete="on" placeholder="用户名" />
+        <el-input name="username" type="text" v-model="loginForm.username" autoComplete="on" placeholder="用户名" />
       </el-form-item>
 
       <el-form-item prop="password">
@@ -73,11 +73,11 @@ export default {
     };
     return {
       loginForm: {
-        userName: '',
-        password: ''
+        username: 'admin',
+        password: '123456'
       },
       loginRules: {
-        userName: [
+        username: [
           { required: true, trigger: 'blur', validator: validateUsername }
         ],
         password: [

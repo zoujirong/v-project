@@ -47,7 +47,7 @@ const user = {
   actions: {
     // 用户名登录
     LoginByUsername({ commit }, userInfo) {
-      let { userName, password } = userInfo;
+      let { username, password } = userInfo;
       let pass = crypto
         .createHash('md5')
         .update(password)
@@ -55,7 +55,7 @@ const user = {
         .slice(0, -2);
       return new Promise((resolve, reject) => {
         loginByUsername({
-          userName: userName.trim(),
+          username: username.trim(),
           password: pass
         })
           .then(response => {

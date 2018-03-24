@@ -3,12 +3,13 @@ import { Message } from 'element-ui';
 import store from '@/store';
 import { getToken } from '@/utils/auth';
 import qs from 'qs';
+import env from './env';
 
 axios.defaults.headers.post['Content-Type'] =
   'application/x-www-form-urlencoded';
 // create an axios instance
 const service = axios.create({
-  baseURL: process.env.BASE_API, // api的base_url
+  baseURL: env[process.env.ENV_CONFIG].base + '/manager', // api的base_url ///api/minApp
   timeout: 30e3 // request timeout
 });
 
@@ -17,7 +18,7 @@ service.interceptors.request.use(
   config => {
     config.data = { ...config.data, terminalType: 4 };
     if (store.getters.token) {
-      config.headers.authorization = store.getters.token;
+      config.headers.token = store.getters.token;
     }
     if (config.method === 'post') {
       config.data = qs.stringify(config.data);
@@ -36,7 +37,7 @@ service.interceptors.request.use(
 // respone interceptor
 service.interceptors.response.use(
   ({ data }) => {
-    if (data.status > 0) return Promise.reject(data);
+    if (data.status != 0) return Promise.reject(data);
     return data;
   },
   error => {

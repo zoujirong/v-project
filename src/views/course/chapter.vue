@@ -23,7 +23,7 @@
           </el-form-item>
         </template>
       </el-table-column>
-      <el-table-column :label="isLiving ? '视频回看地址' : '视频播放地址'" min-width="200">
+      <el-table-column label="视频ID" min-width="200">
         <template slot-scope="{row, $index: index}">
           <el-form-item :rules="[{required: true, message: '不能为空'}]" :prop="'chapter['+index+'].playUrl'">
             <el-input v-model.trim="row.playUrl" :disabled="row.disabled"></el-input>
@@ -69,7 +69,7 @@ export default {
         chapter: [
           {
             chapterTitle: '222',
-            playUrl: 'http://www.baidu.com',
+            playUrl: 14151515151,
             livingStartTime: 1521204421035,
             livingEndTime: 1528204421035,
             playTime: [1521204421035, 1528204421035],
@@ -77,7 +77,7 @@ export default {
           },
           {
             chapterTitle: '333',
-            playUrl: 'http://www.sougou.com',
+            playUrl: 5251612616151,
             livingStartTime: 1522204421035,
             livingEndTime: 1521704421035,
             playTime: [1522204421035, 1521704421035],
@@ -85,7 +85,7 @@ export default {
           },
           {
             chapterTitle: '444',
-            playUrl: 'http://www.google.com',
+            playUrl: 698596079079,
             livingStartTime: 1521205421035,
             livingEndTime: 1521202421035,
             playTime: [1521205421035, 1521202421035],
