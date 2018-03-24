@@ -39,6 +39,7 @@ export default {
       sortable: '',
       EditSort: true,
       searchParam: {
+        categoryId: '',
         courseParam: ''
       },
       columns2: [
@@ -78,7 +79,7 @@ export default {
   },
   components: { TablePager },
   created() {
-    // this.getList();
+    this.getList();
     this.drag();
   },
   computed: {
@@ -90,10 +91,10 @@ export default {
     //获取推荐课程列表
     getList() {
       this.listLoading = true;
-      // getCategoryCourse(this.searchParam).then(res => {
-      this.listLoading = false;
-      this.courses = res.data.course;
-      // });
+      categoryCourse(categoryId).then(res => {
+        this.listLoading = false;
+        this.courses = res.data.course;
+      });
     },
 
     //重置
@@ -131,7 +132,7 @@ export default {
         console.log(this.sortCourse);
       }
       // sortCategoryCourse({this.categoryId,this.sortCourse}).then(res => {
-      //   this.getList();
+      // this.getList();
       // });
       this.EditSort = !this.EditSort;
     },
@@ -163,10 +164,10 @@ export default {
     },
     //删除推荐课程
     async delCourse(row, index) {
-      // await updateCourseRecommend({
-      //   courseId: row.courseId,
-      //   isRecommend: 0
-      // });
+      await updateCourseRecommend({
+        courseId: row.courseId,
+        isRecommend: 0
+      });
       this.courses.splice(index, 1);
       this.$notify({
         title: '成功',
