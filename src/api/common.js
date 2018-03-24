@@ -1,11 +1,11 @@
 import request from '@/utils/request';
 import api from './api';
 import store from '@/store';
-const { upload } = api;
+const { uploadParam } = api;
 
 export function getUploadParam(params) {
   return request({
-    url: 'http://oss-demo.aliyuncs.com/oss-h5-upload-js-php/php/get.php', //upload,
+    url: uploadParam,
     methods: 'get',
     params
   });
@@ -20,13 +20,15 @@ export function uploadImage(url, params) {
   return new Promise((resolve, reject) => {
     let xhr = new XMLHttpRequest();
     xhr.onreadystatechange = () => {
-      if (xhr.readyState === 4) {
-        if (xhr.status === xhr.DONE) {
-          console.log(xhr.responseText);
+      if (xhr.readyState == xhr.DONE) {
+        if (xhr.status == 200) {
+          resolve();
+        } else {
+          reject(JSON.parse(xhr.responseText));
         }
       }
     };
-    xhr.open(url);
+    xhr.open('POST', url);
     xhr.send(formData);
   });
 }

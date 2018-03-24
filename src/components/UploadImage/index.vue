@@ -14,7 +14,10 @@
 </template>
 
 <script>
-import { getUploadParam, uploadImage } from '@/api/common';
+import { uploadImage, getUploadParam } from '@/api/common';
+import { getRandom } from '@/utils';
+import env from '@/utils/env';
+const IMG_URL = env.res;
 export default {
   props: {
     limit: Number,
@@ -26,6 +29,11 @@ export default {
       showPreview: false,
       previewUrl: ''
     };
+  },
+  computed: {
+    uploadParam() {
+      return this.$store.getters.uploadParam;
+    }
   },
   watch: {
     fileList(fileList) {
@@ -43,28 +51,39 @@ export default {
         fr.readAsDataURL(file);
       });
     },
-    upload() {
-      getUploadParam()
-        .then(res => {
-          let file = this.files[0];
-          let { host, accessid, dir, expire, policy, signature } = res.data;
-          return uploadImage({
-            name: '',
-            key: dir + '${filename}',
-            policy,
-            OSSAccessKeyId: accessid,
-            success_action_status: 200,
-            signature,
-            file
-          });
-        })
-        .then(res => {});
-      // this.$emit('onSuccess', this.files.map(file => file.url));
+    async upload(file) {
+      let res = await getUploadParam();
+      /* let pro = this.uploadParam
+        ? Promise.resolve(this.uploadParam)
+        : this.$store.dispatch('GetUploadParam');
+      let option = await pro;
+      console.log(option); */
+      let random = Array.from({ length: 6 })
+        .map(() => getRandom(1, 10))
+        .join('');
+      let fileName = 'small_' + +new Date() + random + '.png';
+      let { host, accessid, dir, policy, signature } = res.data;
+      return uploadImage(host, {
+        name: fileName,
+        key: dir + '/' + fileName,
+        policy,
+        OSSAccessKeyId: accessid,
+        success_action_status: 200,
+        signature,
+        file
+      }).then(res => {
+        return [IMG_URL, dir, fileName].join('/');
+      });
     },
     onChange(file, fileList) {
-      this.files = fileList;
-      console.log(files);
-      // this.upload();
+      // console.log(file, fileList);
+      // this.files = fileList;
+      this.upload(file.raw).then(res => {
+        let files = fileList.slice();
+        files[files.length - 1].url = res;
+        this.files = files;
+        this.$emit('onSuccess', files.map(file => file.url));
+      });
     },
     onPreview(file) {
       this.previewUrl = file.url;

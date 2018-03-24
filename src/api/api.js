@@ -41,5 +41,5 @@ export default {
   //订单管理
   orderList: '/order/listOrder',
   //上传
-  upload: '/app/upload'
+  uploadParam: '/oss/getToken'
 };
