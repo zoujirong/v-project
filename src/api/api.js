@@ -1,6 +1,6 @@
 export default {
-  login: '/login/login',
-  logout: '/login/logout',
+  login: '/admin/login',
+  logout: '/admin/logout',
   //课程模块
   courseList: '/course/listCourse', //课程列表
   courseShelve: '/course/courseUnshelve', //课程上下架

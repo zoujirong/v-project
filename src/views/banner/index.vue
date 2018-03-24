@@ -203,12 +203,29 @@ export default {
     //删除
     delBanner(index) {
       let delCourseId = this.tableData[index].courseId;
-      getDelBanner({ bannerId: delCourseId })
-        .then(res => {
-          this.getBannerList();
+      this.$confirm('是否删除该信息?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          getDelBanner({ bannerId: delCourseId })
+            .then(res => {
+              this.getBannerList();
+              this.$message({
+                type: 'success',
+                message: '删除成功!'
+              });
+            })
+            .catch(res => {
+              console.log(res);
+            });
         })
-        .catch(res => {
-          console.log(res);
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });
         });
     },
     resetForm(form) {
@@ -283,8 +300,8 @@ img {
   float: left;
 }
 .form-tips {
-  display: block;
-  float: left;
+  display: inline-block;
+  /* float: left; */
   padding-left: 10px;
 }
 /* .v-modal {
