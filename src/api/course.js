@@ -24,7 +24,7 @@ export function updateCourseShelve(params) {
   return request({
     url: courseShelve,
     method: 'post',
-    params
+    data: params
   });
 }
 export function getCourseDetail(courseId) {
@@ -46,7 +46,7 @@ export function updateCourseRecommend(params) {
   return request({
     url: courseRecommend,
     method: 'post',
-    params
+    daat: params
   });
 }
 export function getCourseChaper(courseId) {
@@ -60,7 +60,7 @@ export function updateCourseChapter(params) {
   return request({
     url: chapterUpdate,
     method: 'post',
-    params
+    data: params
   });
 }
 
