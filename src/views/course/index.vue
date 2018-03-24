@@ -8,7 +8,7 @@
         <el-select placeholder="选择类目" v-model="searchParam.categoryId">
           <el-option value="">全部</el-option>
           <template v-for="cate in categoryList">
-            <el-option :key="cate.categoryId" :value="cate.categoryId">{{cate.categoryName}}</el-option>
+            <el-option :key="cate.categoryId" :value="cate.categoryId" :label="cate.categoryName"></el-option>
           </template>
         </el-select>
       </el-form-item>
@@ -18,7 +18,11 @@
     <router-link :to="{name: 'courseDetail'}">
       <el-button type="primary">发布课程</el-button>
     </router-link>
-    <TablePager :loading="loading" :data="data" :columns="columns" :pagination="pagination" @change="onTableChange">
+    <TablePager :loading="loading" :data="data" :columns="columns" :pagination="{
+      currentPage: searchParam.pageNo,
+      pageSize: searchParam.pageSize,
+      total: total
+    }" @change="onTableChange">
       <template slot="teachingMethod" slot-scope="{row}">
         <span>{{row.teachingMethod == 0 ? '直播课' : '录播课'}}</span>
       </template>
@@ -91,18 +95,14 @@ export default {
         pageNo: 1,
         pageSize: 10
       },
+      total: 0,
       commonParam: {
         pageNo: 1,
         pageSize: 100
       },
-      pagination: {
-        currentPage: 1,
-        total: 400,
-        pageSize: 100
-      },
       columns: [
         { title: '课程ID', key: 'courseId' },
-        { title: '课程名称', key: 'courseName' },
+        { title: '课程名称', key: 'title' },
         { title: '课程类目', key: 'categoryName' },
         { title: '课程类型', slot: 'teachingMethod' },
         { title: '课程状态', slot: 'unshelve' },
@@ -111,30 +111,7 @@ export default {
         { title: '学员数量', key: 'courseApplyNum' },
         { title: '管理操作', slot: 'operate' }
       ],
-      data: [
-        {
-          courseId: 123,
-          courseName: '你好',
-          categoryName: '语言留学',
-          teachingMethod: '0',
-          unshelve: '0',
-          mainTeacher: 'livetest006',
-          coursePrice: 0,
-          courseApplyNum: 200,
-          isRecommend: 0
-        },
-        {
-          courseId: 222,
-          courseName: '你好',
-          categoryName: '语言留学',
-          teachingMethod: '1',
-          unshelve: '1',
-          mainTeacher: 'livetest006',
-          coursePrice: 123,
-          courseApplyNum: 200,
-          isRecommend: 1
-        }
-      ]
+      data: []
     };
   },
   components: {
@@ -146,7 +123,9 @@ export default {
       this.loading = true;
       await queryCourseList(this.searchParam)
         .then(res => {
-          this.data = res.data.course;
+          let { data, total } = res.data;
+          this.data = data;
+          this.total = total;
         })
         .finally(() => {
           this.loading = false;
@@ -154,7 +133,7 @@ export default {
     },
     async getCategory() {
       let res = await listCategory(this.commonParam);
-      this.categoryList = res.data.category;
+      this.categoryList = res.data.data;
     },
     async getMarketing() {
       let res = await getMarketWay(this.commonParam);

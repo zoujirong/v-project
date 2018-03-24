@@ -27,6 +27,14 @@ export default {
       pageSize
     };
   },
+  watch: {
+    pagination(pagination) {
+      let { currentPage, total, pageSize } = this.pagination;
+      this.currentPage = currentPage;
+      this.total = total;
+      this.pageSize = pageSize;
+    }
+  },
   props: {
     loading: {
       type: Boolean,
