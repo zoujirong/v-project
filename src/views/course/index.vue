@@ -102,7 +102,7 @@ export default {
       },
       columns: [
         { title: '课程ID', key: 'courseId' },
-        { title: '课程名称', key: 'courseName' },
+        { title: '课程名称', key: 'title' },
         { title: '课程类目', key: 'categoryName' },
         { title: '课程类型', slot: 'teachingMethod' },
         { title: '课程状态', slot: 'unshelve' },
@@ -123,9 +123,9 @@ export default {
       this.loading = true;
       await queryCourseList(this.searchParam)
         .then(res => {
-          let { data, count } = res.data;
+          let { data, total } = res.data;
           this.data = data;
-          this.total = count;
+          this.total = total;
         })
         .finally(() => {
           this.loading = false;
