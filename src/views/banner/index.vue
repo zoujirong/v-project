@@ -4,7 +4,7 @@
       <button class="el-button el-button--primary el-button--medium" @click="addbanner">新增推荐位</button>
     </div>
     <!-- 表格部分 -->
-    <template>
+    <template v-if="tableData.length">
       <TablePager :data="tableData" :columns="columns" :pagination="false" :loading="loading">
         <template slot='number' slot-scope="{row,index}">
           <span>{{index+1}}</span>
@@ -21,7 +21,7 @@
       </TablePager>
     </template>
     <!-- 图片放大弹窗 -->
-    <el-dialog :visible.sync="picVisible" width="50%" height="100%">
+    <el-dialog v-if="tableData.length" :visible.sync="picVisible" width="50%" height="100%">
       <img :src="tableData[picSrc].bannerCover" alt="">
     </el-dialog>
     <!-- 弹窗部分 -->
@@ -32,17 +32,17 @@
             <el-input v-model.trim="banner.bannerTitle"></el-input>
           </el-form-item>
           <el-form-item label="图片" prop='bannerCover'>
-            <upload-image :limit="1" :fileList="banner.bannerCover ? [{url: banner.bannerCover}] : []" @onSuccess="onUploadCover"></upload-image>
+            <upload-image :limit="1" :fileList="banner.bannerCover" @onSuccess="onUploadCover"></upload-image>
             <span class="form-tips">建议上传X*Y尺寸像素图片</span>
           </el-form-item>
           <el-form-item label="对应跳转的课程id" prop='courseId'>
             <el-input v-model.trim="banner.courseId"></el-input>
           </el-form-item>
           <el-form-item label="开始时间" prop='startTime'>
-            <el-date-picker v-model.trim="banner.startTime" type="datetime" placeholder="选择日期" :picker-options="pickr"></el-date-picker>
+            <el-date-picker value-format="yyyy-MM-dd HH:mm:ss" v-model.trim="banner.startTime" type="datetime" placeholder="选择日期" :picker-options="pickr"></el-date-picker>
           </el-form-item>
           <el-form-item label="结束时间" prop='endTime'>
-            <el-date-picker v-model.trim="banner.endTime" type="datetime" placeholder="选择日期" :picker-options="pickr"></el-date-picker>
+            <el-date-picker value-format="yyyy-MM-dd HH:mm:ss" v-model.trim="banner.endTime" type="datetime" placeholder="选择日期" :picker-options="pickr"></el-date-picker>
           </el-form-item>
         </el-form>
       </div>
@@ -55,6 +55,7 @@
 <script>
 import TablePager from '@/components/TablePager';
 import UploadImage from '@/components/UploadImage';
+import { parseTime } from '@/utils/index.js';
 import {
   getListBanner,
   getAddBanner,
@@ -70,7 +71,7 @@ export default {
       authorization: '',
       banner: {
         bannerTitle: '',
-        bannerCover: '',
+        bannerCover: [],
         courseId: '',
         startTime: '',
         endTime: ''
@@ -103,36 +104,36 @@ export default {
         }
       },
       tableData: [
-        {
-          bannerTitle: '123',
-          bannerCover:
-            'https://res.shiguangkey.com//file/201712/23/20171223212038113939692.jpg!mall_course_c',
-          courseId: '123',
-          startTime: '2018.7.03',
-          endTime: '2018.8.03'
-        },
-        {
-          bannerTitle: '456',
-          bannerCover:
-            'https://res.shiguangkey.com//file/201803/12/20180312120835066269015.jpg!mall_index_banner_a',
-          courseId: '456',
-          startTime: '2018.3.03',
-          endTime: '2018.7.03'
-        },
-        {
-          bannerTitle: '789',
-          bannerCover:
-            'https://res.shiguangkey.com//file/201710/19/20171019184621781403274.jpg!mall_course_a',
-          courseId: '789',
-          startTime: '2018.4.03',
-          endTime: '2018.5.03'
-        }
+        // {
+        //   bannerTitle: '123',
+        //   bannerCover:
+        //     'https://res.shiguangkey.com//file/201712/23/20171223212038113939692.jpg!mall_course_c',
+        //   courseId: '123',
+        //   startTime: '2018.7.03',
+        //   endTime: '2018.8.03'
+        // },
+        // {
+        //   bannerTitle: '456',
+        //   bannerCover:
+        //     'https://res.shiguangkey.com//file/201803/12/20180312120835066269015.jpg!mall_index_banner_a',
+        //   courseId: '456',
+        //   startTime: '2018.3.03',
+        //   endTime: '2018.7.03'
+        // },
+        // {
+        //   bannerTitle: '789',
+        //   bannerCover:
+        //     'https://res.shiguangkey.com//file/201710/19/20171019184621781403274.jpg!mall_course_a',
+        //   courseId: '789',
+        //   startTime: '2018.4.03',
+        //   endTime: '2018.5.03'
+        // }
       ],
       rules: {
         bannerTitle: [
           { required: true, message: '请输入推荐位名称', trigger: 'blur' }
         ],
-        bannerCover: [{ required: true, message: '请上传图片' }],
+        bannerCover: [{ required: true, message: '请上传图片', type: 'array' }],
         courseId: [
           { required: true, message: '请输入课程id', trigger: 'blur' }
         ],
@@ -149,11 +150,18 @@ export default {
     TablePager,
     UploadImage
   },
+  computed: {
+    startTime() {
+      return parseTime();
+    }
+  },
   methods: {
     // 增加bannner部分
     submit(form) {
+      console.log(this.banner);
       this.$refs[form].validate(valid => {
         if (valid) {
+          this.banner.bannerCover = this.banner.bannerCover.join('');
           let addtype =
             this.type == 1
               ? getAddBanner(this.banner)
@@ -164,9 +172,9 @@ export default {
               this.getBannerList();
             })
             .catch(res => {
+              this.$message.error(res.msg);
               console.log(res);
             });
-          console.log(this.tableData);
           this.addShow = false;
         } else {
           return false;
@@ -176,15 +184,14 @@ export default {
     addbanner() {
       this.type = 1;
       this.addShow = true;
-      console.log(this.type);
     },
     // 获取banner信息列表
     getBannerList() {
       this.loading = true;
-      getListBanner()
+      getListBanner(this.bannerPage)
         .then(res => {
           this.loading = false;
-          this.tableData = res.data.banner;
+          this.tableData = res.data;
         })
         .catch(res => {
           this.loading = false;
@@ -271,7 +278,7 @@ export default {
     },
     onUploadCover(urls) {
       console.log(urls);
-      this.banner.bannerCover = urls[0];
+      this.banner.bannerCover.push(urls[0]);
     }
   },
   mounted() {
