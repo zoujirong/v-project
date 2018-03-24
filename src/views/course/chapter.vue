@@ -58,6 +58,11 @@ import { getCourseChaper, updateCourseChapter } from '@/api/course';
 import { parseTime } from '@/filters';
 import { calcuWeight } from '@/utils';
 
+let CHAPTER_FLAG = {
+  ADD: 1,
+  UPDATE: 2,
+  DELETE: 3
+};
 export default {
   data() {
     return {
@@ -67,7 +72,7 @@ export default {
       isLiving: this.$route.query.type != 1, //0直播，1录播
       deletes: [],
       form: {
-        chapterNum: '',
+        chapterNum: this.$route.query.num,
         chapter: []
       }
     };
@@ -78,15 +83,22 @@ export default {
       let res = await getCourseChaper(this.courseId);
       let chapters = res.data.map(chapter => {
         let { chapterStatus, livingStartTime, livingEndTime } = chapter;
-        livingStartTime = parseTime(livingStartTime, this.timeFormat);
-        livingEndTime = parseTime(livingEndTime, this.timeFormat);
+        let obj = {
+          disabled: this.isLiving && chapterStatus != 0,
+          flag: CHAPTER_FLAG.UPDATE
+        };
+        if (this.isLiving) {
+          livingStartTime = parseTime(livingStartTime, this.timeFormat);
+          livingEndTime = parseTime(livingEndTime, this.timeFormat);
+          obejct.assign(obj, {
+            livingStartTime,
+            livingEndTime,
+            playTime: [livingStartTime, livingEndTime]
+          });
+        }
         return {
           ...chapter,
-          livingStartTime,
-          livingEndTime,
-          playTime: [livingStartTime, livingEndTime],
-          disabled: chapterStatus != 0,
-          flag: 2
+          ...obj
         };
       });
       this.form.chapter = chapters;
@@ -96,15 +108,17 @@ export default {
       let obj = {
         chapterTitle: '',
         playUrl: '',
-        flag: 1
+        flag: CHAPTER_FLAG.Add
       };
       this.form.chapter.splice(newIndex, 0, obj);
-      obj.weight = calcuWeight(newIndex);
+      obj.weight = calcuWeight(this.form.chapter, newIndex);
     },
     removeChapter(index) {
       let record = this.form.chapter[index];
       if (record.chapterId) {
-        this.deletes.push(Object.assign({ flag: 3 }, record));
+        this.deletes.push(
+          Object.assign({}, record, { flag: CHAPTER_FLAG.DELETE })
+        );
       }
       this.form.chapter.splice(index, 1);
     },
@@ -122,7 +136,8 @@ export default {
         this.$message.error('请先添加课时信息');
         return;
       }
-      let form = this.$refs.editChapter;
+      console.log(chapter.concat(this.deletes));
+      /* let form = this.$refs.editChapter;
       await form
         .validate()
         .then(res => {
@@ -138,7 +153,7 @@ export default {
           this.loading = false;
         });
       this.$message.success('修改课程成功');
-      this.$router.push({ name: 'courseList' });
+      this.$router.push({ name: 'courseList' }); */
     }
   },
   created() {

@@ -38,7 +38,7 @@
           <router-link :to="{name: 'courseDetail', query: {id: row.courseId}}">
             <el-button type="text">【编辑课程】</el-button>
           </router-link>
-          <router-link :to="{name: 'courseChapter', params: {id: row.courseId}, query: {type: row.teachingMethod}}">
+          <router-link :to="{name: 'courseChapter', params: {id: row.courseId}, query: {type: row.teachingMethod, num: row.chapterNum}}">
             <el-button type="text">【编辑课时】</el-button>
           </router-link>
           <el-button type="text" @click="setMarketing(row)" v-if="row.coursePrice!=0">【设置营销方式】</el-button>
