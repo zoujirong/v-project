@@ -11,7 +11,7 @@
     <div class='category-nav'>
       <el-button type="success" @click="dialogTableVisible = true">新增讲师</el-button>
     </div>
-    <TablePager :data="data" :columns="columns" :loading="loading">
+    <TablePager :data="data" :columns="columns" :loading="loading" :pagination="pagination" @change="onChange">
       <template slot="operation" slot-scope="{row, index}">
         <el-button type="text" @click="editTeacher(row,index)">编辑</el-button>
       </template>
@@ -69,6 +69,11 @@ export default {
         teacherIntro: '',
         teacherIcon: ''
       },
+      pagination: {
+        total: 200,
+        currentPage: 1,
+        pageSize: 10
+      },
       teacherParm: '',
       newIndex: '',
       Name: '',
@@ -81,11 +86,13 @@ export default {
       data: [
         {
           teacherName: '王小虎',
-          teacherIntro: '上海市普陀区金沙江路 1518 弄'
+          teacherIntro: '上海市普陀区金沙江路 1518 弄',
+          teacherIcon: ''
         },
         {
           teacherName: '22222',
-          teacherIntro: '上海市普陀区金沙江路 1518 弄'
+          teacherIntro: '上海市普陀区金沙江路 1518 弄',
+          teacherIcon: ''
         }
       ]
     };
@@ -110,7 +117,7 @@ export default {
     updateTeach() {
       this.data.push(this.editPopup);
       this.dialogTableVisible = false;
-      this.reset();
+      // this.reset();
     },
     //编辑老师
     editTeacher(row, index) {
@@ -129,8 +136,20 @@ export default {
     onUploadCover(urls) {
       console.log('上传封面', urls);
       this.editPopup.teacherIcon = urls[0];
+    },
+    onChange({ pagination }) {
+      let {
+        page = this.searchParam.pageNo,
+        pageSize = this.searchParam.pageSize
+      } = pagination;
+      Object.assign(this.searchParam, {
+        pageNo: page,
+        pageSize
+      });
+      this.getList();
     }
   },
+
   created() {
     this.getteacherList();
   }
