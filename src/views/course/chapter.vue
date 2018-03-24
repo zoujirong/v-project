@@ -66,32 +66,7 @@ export default {
       isLiving: this.$route.query.type != 1, //0直播，1录播
       form: {
         chapterNum: '',
-        chapter: [
-          {
-            chapterTitle: '222',
-            playUrl: 14151515151,
-            livingStartTime: 1521204421035,
-            livingEndTime: 1528204421035,
-            playTime: [1521204421035, 1528204421035],
-            disabled: true
-          },
-          {
-            chapterTitle: '333',
-            playUrl: 5251612616151,
-            livingStartTime: 1522204421035,
-            livingEndTime: 1521704421035,
-            playTime: [1522204421035, 1521704421035],
-            disabled: false
-          },
-          {
-            chapterTitle: '444',
-            playUrl: 698596079079,
-            livingStartTime: 1521205421035,
-            livingEndTime: 1521202421035,
-            playTime: [1521205421035, 1521202421035],
-            disabled: false
-          }
-        ]
+        chapter: []
       }
     };
   },
@@ -99,7 +74,7 @@ export default {
   methods: {
     async getChapter() {
       let res = await getCourseChaper(this.courseId);
-      let chapters = res.data.chapter.map(chapter => {
+      let chapters = res.data.map(chapter => {
         let { chapterStatus, livingStartTime, livingEndTime } = chapter;
         livingStartTime = parseTime(livingStartTime, this.timeFormat);
         livingEndTime = parseTime(livingEndTime, this.timeFormat);
