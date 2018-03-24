@@ -1,7 +1,7 @@
 <template>
-    <div class="app-container">
-        <router-link :to="{ name: 'marketlists'}" class="el-button el-button--primary el-button--medium">验证手机赠送课程</router-link>
-    </div>
+  <div class="app-container">
+    <router-link v-for="el in list" :key="el" :to="{ name: 'marketlists'}" class="el-button el-button--primary el-button--medium">{{el.marketWayName}}</router-link>
+  </div>
 </template>
 <script>
 import { getMarketWay } from '@/api/market.js';
@@ -18,7 +18,7 @@ export default {
   methods: {
     getWay() {
       getMarketWay(this.page).then(res => {
-        this.list = res.data.marketWay;
+        this.list = res.data.data;
       });
     }
   },
