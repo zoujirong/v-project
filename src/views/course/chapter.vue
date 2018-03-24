@@ -19,7 +19,7 @@
       <el-table-column label="直播时间" width="420" v-if="isLiving">
         <template slot-scope="{row, $index: index}">
           <el-form-item :rules="[{required: true, message: '不能为空'}]" :prop="'chapter['+index+'].playTime'">
-            <el-date-picker v-model="row.playTime" format="yyyy-MM-dd HH:mm" type="datetimerange" start-placeholder="开始日期" end-placeholder="结束日期" :disabled="row.disabled" @change="onChangeTime(index, $event)"></el-date-picker>
+            <el-date-picker v-model="row.playTime" format="yyyy-MM-dd HH:mm" type="datetimerange" start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="{disabledDate: disabledDate.bind(null, index)}" :disabled="row.disabled" @change="onChangeTime(index, $event)"></el-date-picker>
           </el-form-item>
         </template>
       </el-table-column>
@@ -82,18 +82,18 @@ export default {
     async getChapter() {
       let res = await getCourseChaper(this.courseId);
       let chapters = res.data.map(chapter => {
-        let { chapterStatus, livingStartTime, livingEndTime } = chapter;
+        let { chapterStatus, startTime, endTime } = chapter;
         let obj = {
           disabled: this.isLiving && chapterStatus != 0,
           flag: CHAPTER_FLAG.UPDATE
         };
         if (this.isLiving) {
-          livingStartTime = parseTime(livingStartTime, this.timeFormat);
-          livingEndTime = parseTime(livingEndTime, this.timeFormat);
+          startTime = parseTime(startTime, this.timeFormat);
+          endTime = parseTime(endTime, this.timeFormat);
           obejct.assign(obj, {
-            livingStartTime,
-            livingEndTime,
-            playTime: [livingStartTime, livingEndTime]
+            startTime: startTime + ':00',
+            endTime: endTime + ':00',
+            playTime: [startTime, endTime]
           });
         }
         return {
@@ -108,7 +108,7 @@ export default {
       let obj = {
         chapterTitle: '',
         playUrl: '',
-        flag: CHAPTER_FLAG.Add
+        flag: CHAPTER_FLAG.ADD
       };
       this.form.chapter.splice(newIndex, 0, obj);
       obj.weight = calcuWeight(this.form.chapter, newIndex);
@@ -122,12 +122,36 @@ export default {
       }
       this.form.chapter.splice(index, 1);
     },
+    disabledDate(index, date) {
+      let list = this.form.chapter;
+      let prev = list[index - 1];
+      return date < this.getPrevDate(index);
+    },
+    getPrevDate(index) {
+      let list = this.form.chapter;
+      let prev = list[index - 1];
+
+      if (index === 0) {
+        return this.getStartOfDate(parseTime(new Date()));
+      } else {
+        if (prev.endTime) {
+          return this.getStartOfDate(prev.endTime);
+        } else {
+          return this.getPrevDate(index - 1);
+        }
+      }
+    },
+    getStartOfDate(dateStr) {
+      let arr = dateStr.split(' ');
+      arr.splice(1, 1, '00:00:00');
+      return new Date(arr.join(' '));
+    },
     onChangeTime(index, time) {
       let timeFormat = this.timeFormat;
-      let [start, end] = time;
+      let [start, end] = time || [];
       Object.assign(this.form.chapter[index], {
-        livingStartTime: parseTime(start, timeFormat),
-        livingEndTime: parseTime(end, timeFormat)
+        startTime: start ? parseTime(start, timeFormat + ':{s}') : '',
+        endTime: end ? parseTime(end, timeFormat + ':{s}') : ''
       });
     },
     async submit() {
@@ -136,8 +160,7 @@ export default {
         this.$message.error('请先添加课时信息');
         return;
       }
-      console.log(chapter.concat(this.deletes));
-      /* let form = this.$refs.editChapter;
+      let form = this.$refs.editChapter;
       await form
         .validate()
         .then(res => {
@@ -153,7 +176,7 @@ export default {
           this.loading = false;
         });
       this.$message.success('修改课程成功');
-      this.$router.push({ name: 'courseList' }); */
+      this.$router.push({ name: 'courseList' });
     }
   },
   created() {
