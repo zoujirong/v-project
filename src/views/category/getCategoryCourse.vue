@@ -3,11 +3,11 @@
   <div ref='dataForm' class="addCourse">
     <el-form inline class='marginBottom' :model="searchParam" ref='searchForm'>
       <el-form-item label="编辑推荐课程" prop="courseParam">
-        <el-input v-model="searchParam.courseParam" placeholder="课程名或课程id进行查询" clearable size="small" @keyup.enter='getList()'></el-input>
+        <el-input v-model="searchParam.courseParam" placeholder="课程名或课程id进行查询" clearable size="small" @keyup.enter='getList'></el-input>
       </el-form-item>
-      <el-button type="primary" @click="getList()">查询</el-button>
+      <el-button type="primary" @click="getList">查询</el-button>
       &nbsp;&nbsp;
-      <el-button>重置</el-button>
+      <el-button @click='reset'>重置</el-button>
       <br><br>
       <el-button type="primary" @click='editSort' v-if='EditSort'>编辑排序</el-button>
       <el-button type="success" @click='saveEditSort' v-else>保存</el-button>
@@ -28,6 +28,7 @@
 
 <script>
 import { categoryCourse, sortCategoryCourse } from '@/api/category';
+import { updateCourseRecommend } from '@/api/course';
 import Sortable from 'sortablejs';
 import TablePager from '@/components/TablePager';
 import { fetchList } from '@/api/article';
@@ -78,7 +79,12 @@ export default {
   components: { TablePager },
   created() {
     // this.getList();
-    this.aaa();
+    this.drag();
+  },
+  computed: {
+    categoryId() {
+      return this.$router.params.categoryId;
+    }
   },
   methods: {
     //获取推荐课程列表
@@ -124,13 +130,13 @@ export default {
         }));
         console.log(this.sortCourse);
       }
-      // sortCategoryCourse(this.sortCourse).then(res => {
+      // sortCategoryCourse({this.categoryId,this.sortCourse}).then(res => {
       //   this.getList();
       // });
       this.EditSort = !this.EditSort;
     },
     //拖拽
-    aaa() {
+    drag() {
       this.oldList = this.courses.map(v => v.courseId);
       this.newList = this.oldList.slice();
       this.$nextTick(() => {
@@ -156,10 +162,18 @@ export default {
       });
     },
     //删除推荐课程
-    delCourse(courseId, index) {
-      console.log(courseId);
-
+    async delCourse(row, index) {
+      // await updateCourseRecommend({
+      //   courseId: row.courseId,
+      //   isRecommend: 0
+      // });
       this.courses.splice(index, 1);
+      this.$notify({
+        title: '成功',
+        message: '取消成功',
+        type: 'success',
+        duration: 2000
+      });
     }
   }
 };
