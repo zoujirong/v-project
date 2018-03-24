@@ -136,7 +136,8 @@ export default {
       } else {
         this.$router.push({
           name: 'courseChapter',
-          params: { id: res.data.courseId }
+          params: { id: res.data.courseId },
+          query: { type: this.course.teachingMethod }
         });
       }
     }

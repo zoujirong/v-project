@@ -89,13 +89,28 @@ export default {
       this.form.chapter = chapters;
     },
     addChapter(index) {
-      this.form.chapter.splice(index + 1, 0, {
+      let newIndex = this.form.chapter.length === 0 ? index : index + 1;
+      let obj = {
         chapterTitle: '',
         playUrl: ''
-      });
+      };
+      this.form.chapter.splice(newIndex, 0, obj);
+      obj.weight = this.calcuWeight(newIndex);
     },
     removeChapter(index) {
       this.form.chapter.splice(index, 1);
+    },
+    calcuWeight(index) {
+      let chapters = this.form.chapter;
+      let prev = chapters[index - 1];
+      let next = chapters[index + 1];
+      if (prev && next) {
+        return (prev.weight + next.weight) / 2;
+      } else if (!(prev || next)) {
+        return 1;
+      } else {
+        return prev.weight + 1;
+      }
     },
     onChangeTime(index, time) {
       let timeFormat = this.timeFormat;
