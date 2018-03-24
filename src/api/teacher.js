@@ -12,11 +12,11 @@ export function teacherList(params) {
 }
 
 //添加老师
-export function teacherAdd(params) {
+export function teacherAdd(param) {
   return request({
     url: addTeacher,
     method: 'POST',
-    params
+    data: param
   });
 }
 
@@ -25,6 +25,6 @@ export function teacherEdit(params) {
   return request({
     url: editTeacher,
     method: 'POST',
-    params
+    data: params
   });
 }

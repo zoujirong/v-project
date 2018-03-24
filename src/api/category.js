@@ -23,7 +23,7 @@ export function categoryAdd(param) {
   return request({
     url: addCategory,
     method: 'post',
-    params: param
+    data: param
   });
 }
 //编辑类目
@@ -31,7 +31,7 @@ export function categoryRevise(param) {
   return request({
     url: reviseCategory,
     method: 'post',
-    params: param
+    data: param
   });
 }
 //删除类目
@@ -44,10 +44,11 @@ export function CategoryDel(param) {
 }
 
 //获取推荐课程
-export function categoryCourse() {
+export function categoryCourse(params) {
   return request({
     url: getCategoryCourse,
-    method: 'GET'
+    method: 'GET',
+    params: params
   });
 }
 
@@ -56,6 +57,6 @@ export function sortCategoryCourse(param) {
   return request({
     url: categoryCourseSort,
     method: 'POST',
-    params: param
+    data: param
   });
 }

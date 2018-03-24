@@ -3,7 +3,7 @@
     <div class='category-nav'>
       <el-button type="success" @click="dialogTableVisible = true">新增类目</el-button>
     </div>
-    <TablePager :data="data" :pagination="pagination" :columns="columns1">
+    <TablePager :data="list" :pagination="pagination1" :columns="columns1">
       <template slot='categoryId' slot-scope="{row,index}">
         <span>{{index+1}}</span>
       </template>
@@ -63,17 +63,21 @@ export default {
         handle: '',
         del: '删除'
       },
-      pagination: {
+      Parameter: {
+        pageNo: 1,
+        pageSize: 5
+      },
+      pagination1: {
         currentPage: 1,
-        total: 100,
-        pageSize: 10
+        total: 1,
+        pageSize: 2
       },
       columns1: [
         { title: '类目ID', slot: 'categoryId' },
         { title: '类目名称', key: 'categoryName' },
         { title: '操作管理', slot: 'handle' }
       ],
-      data: [{ categoryName: '推荐课程' }, { categoryName: '交互设计' }]
+      categoryId: ''
     };
   },
   components: {
@@ -81,7 +85,7 @@ export default {
   },
   filters: {},
   created() {
-    // this.getList();
+    this.getList();
   },
   methods: {
     //  页面跳转
@@ -91,9 +95,14 @@ export default {
     //获取类目列表
     getList() {
       this.listLoading = true;
-      listCategory(this.pagination).then(res => {
+      listCategory(this.Parameter).then(res => {
         this.listLoading = false;
-        this.data = res.data.category;
+        this.list = res.data.data;
+        this.pagination1 = {
+          currentPage: this.Parameter.pageNo,
+          total: res.data.total,
+          pageSize: this.Parameter.pageSize
+        };
       });
     },
     resetTemp() {
@@ -103,21 +112,22 @@ export default {
       };
     },
     //新增类目
-    updateData() {
+    async updateData() {
       this.listLoading = true;
-      // categoryAdd(this.categoryParam.categoryName).then(res => {
-      this.listLoading = false;
-      this.data.push(this.categoryParam);
-      this.dialogTableVisible = false;
-      this.resetTemp();
-      // });
+      await categoryAdd({ categoryName: this.categoryParam.categoryName }).then(
+        res => {
+          this.listLoading = false;
+          this.dialogTableVisible = false;
+          this.resetTemp();
+        }
+      );
+      this.getList();
     },
     //删除类目
-    del(index, courseId) {
-      CategoryDel(courseId).then(res => {
+    del(index, categoryId) {
+      CategoryDel({ categoryId: categoryId }).then(res => {
         this.getList();
       });
-      this.data.splice(index, 1);
       this.$notify({
         title: '成功',
         message: '删除成功',
@@ -127,20 +137,20 @@ export default {
     },
     //编辑类目
     editCategory(index, row) {
-      this.categoryParam = {
-        categoryId: row.categoryId,
-        categoryName: row.categoryName
-      };
       this.dialogTableVisible2 = true;
-      categoryRevise(this.categoryParam).then(res => {
-        this.getList();
-      });
-      this.name = name;
+      this.name = row.categoryName;
       this.reviseName = index;
+      this.categoryId = row.categoryId;
     },
     //保存
     hold() {
-      this.data[this.reviseName].categoryName = this.name;
+      this.categoryParam = {
+        categoryId: this.categoryId,
+        categoryName: this.name
+      };
+      categoryRevise(this.categoryParam).then(res => {
+        this.getList();
+      });
       this.dialogTableVisible2 = false;
     }
   }
