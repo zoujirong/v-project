@@ -46,7 +46,7 @@ export function updateCourseRecommend(params) {
   return request({
     url: courseRecommend,
     method: 'post',
-    daat: params
+    data: params
   });
 }
 export function getCourseChaper(courseId) {
