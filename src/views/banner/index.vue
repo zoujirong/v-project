@@ -39,10 +39,10 @@
             <el-input v-model.trim="banner.courseId"></el-input>
           </el-form-item>
           <el-form-item label="开始时间" prop='startTime'>
-            <el-date-picker v-model.trim="banner.startTime" type="datetime" placeholder="选择日期" :picker-options="pickr"></el-date-picker>
+            <el-date-picker value-format="yyyy-MM-dd HH:mm:ss" v-model.trim="banner.startTime" type="datetime" placeholder="选择日期" :picker-options="pickr"></el-date-picker>
           </el-form-item>
           <el-form-item label="结束时间" prop='endTime'>
-            <el-date-picker v-model.trim="banner.endTime" type="datetime" placeholder="选择日期" :picker-options="pickr"></el-date-picker>
+            <el-date-picker value-format="yyyy-MM-dd HH:mm:ss" v-model.trim="banner.endTime" type="datetime" placeholder="选择日期" :picker-options="pickr"></el-date-picker>
           </el-form-item>
         </el-form>
       </div>
@@ -55,6 +55,7 @@
 <script>
 import TablePager from '@/components/TablePager';
 import UploadImage from '@/components/UploadImage';
+import { parseTime } from '@/utils/index.js';
 import {
   getListBanner,
   getAddBanner,
@@ -70,13 +71,7 @@ export default {
       authorization: '',
       banner: {
         bannerTitle: '',
-        bannerCover: [
-          {
-            uid: 1,
-            url:
-              'https://res.shiguangkey.com/file/201803/22/20180322091230008492307.png'
-          }
-        ],
+        bannerCover: [],
         courseId: '',
         startTime: '',
         endTime: ''
@@ -155,13 +150,18 @@ export default {
     TablePager,
     UploadImage
   },
+  computed: {
+    startTime() {
+      return parseTime();
+    }
+  },
   methods: {
     // 增加bannner部分
     submit(form) {
-      debugger;
       console.log(this.banner);
       this.$refs[form].validate(valid => {
         if (valid) {
+          this.banner.bannerCover = this.banner.bannerCover.join('');
           let addtype =
             this.type == 1
               ? getAddBanner(this.banner)
@@ -172,9 +172,9 @@ export default {
               this.getBannerList();
             })
             .catch(res => {
+              this.$message.error(res.msg);
               console.log(res);
             });
-          console.log(this.tableData);
           this.addShow = false;
         } else {
           return false;
@@ -184,7 +184,6 @@ export default {
     addbanner() {
       this.type = 1;
       this.addShow = true;
-      console.log(this.type);
     },
     // 获取banner信息列表
     getBannerList() {
@@ -278,9 +277,8 @@ export default {
       this.picVisible = true;
     },
     onUploadCover(urls) {
-      debugger;
       console.log(urls);
-      this.banner.bannerCover = urls[0];
+      this.banner.bannerCover.push(urls[0]);
     }
   },
   mounted() {
