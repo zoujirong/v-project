@@ -1,8 +1,8 @@
 <template>
   <div class="app-container calendar-list-container">
     <el-form :model="searchParam" ref="searchForm" inline>
-      <el-form-item label="会员" prop="courseParam">
-        <el-input v-model="searchParam.uid" placeholder="输入微信昵称或手机号码"></el-input>
+      <el-form-item label="会员" prop="userParam">
+        <el-input v-model="searchParam.userParam" placeholder="输入微信昵称或手机号码"></el-input>
       </el-form-item>
       <el-form-item label="最近登录时间" prop="loginTime">
         <el-date-picker type="datetimerange" format="yyyy-MM-dd HH:mm" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" v-model="loginTime" @change="changeLoginTime">
@@ -20,28 +20,8 @@
       </template>
     </TablePager>
 
-    <CheckCourse :checkMumber='checkMumber' :dialogTableVisible='dialogTableVisible' @change='CheckCourseStatus'></CheckCourse>
-    <!-- 查看报名课程弹框 -->
-    <!-- <el-dialog title="查看报名课程" :visible.sync="dialogTableVisible">
-      <el-form inline ref="checkForm">
-        <el-form-item prop="checkParam">
-          <el-input v-model="checkParam.courseName" placeholder="输入课程名称查询"></el-input>
-        </el-form-item>
-        <el-form-item prop="options">
-          <el-select placeholder="免费报名" v-model="value">
-            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-button type="primary" @click='getUserApplyCourse()'>查询</el-button>&nbsp;&nbsp;
-        <el-button @click='resetCheck'>重置</el-button>
-      </el-form>
-      <TablePager :data='data' :pagination="pagination" :columns="columns1">
-        <template slot-scope="{row,index}" slot="numberId">
-          <span>{{index+1}}</span>
-        </template>
-      </TablePager>
-    </el-dialog> -->
+    <CheckCourse :userId='checkMumber' :visible='dialogTableVisible' @close='CheckCourseStatus'></CheckCourse>
+
   </div>
 </template>
 
@@ -63,6 +43,7 @@ export default {
       checkMumber: '',
       listLoading: true,
       dialogTableVisible: false,
+      timeFormat: '{y}-{m}-{d} {h}:{i}',
       loginTime: '',
       pagination: {
         currentPage: 1,
@@ -71,8 +52,7 @@ export default {
       },
       searchParam: {
         sort: '',
-        nick: '',
-        phone: '',
+        userParam: '',
         lastLoginStartTime: '',
         lastLoginEndTime: '',
         pageNo: '',
@@ -112,7 +92,7 @@ export default {
         {
           userNick: '红领巾',
           userPhone: '16546451284',
-          lastLoginTime: '2018.3.20',
+          lastLoginTime: '1521123175297',
           firstLoginTime: '2018.3.19',
           userApplyCourseNum: '1',
           userBuyCourseNum: '1'
@@ -171,7 +151,10 @@ export default {
       // this.data = res.data.course;
       // });
     },
+    //组件监听的回调函数
     changeLoginTime(time) {
+      let timeFormat = this.timeFormat;
+      //time是一个数组，用户选择的最近登录时间段
       let [start, end] = time;
       Object.assign(this.searchParam, {
         lastLoginStartTime: parseTime(start, timeFormat),
@@ -196,9 +179,9 @@ export default {
     reset() {
       let form = this.$refs.searchForm;
       form.resetFields();
+      this.loginTime = [];
       this.getList();
-    },
-
+    }
   }
 };
 </script>

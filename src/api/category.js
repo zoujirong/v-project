@@ -26,7 +26,7 @@ export function categoryAdd(param) {
     params: param
   });
 }
-//修改类目
+//编辑类目
 export function categoryRevise(param) {
   return request({
     url: reviseCategory,

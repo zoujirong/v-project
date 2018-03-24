@@ -8,10 +8,10 @@
         <span>{{index+1}}</span>
       </template>
       <template slot="handle" slot-scope="{row,index}">
-        <el-button @click="jump('getCategoryList')" type='text' v-if='index==0'>编辑课程</el-button>
-        <el-button type='text' v-else @click="editCategory(index,row.categoryName)">编辑类目名称</el-button>
+        <el-button @click="jump('getCategoryList',row.categoryId)" type='text' v-if='index==0'>编辑课程</el-button>
+        <el-button type='text' v-else @click="editCategory(index,row)">编辑类目名称</el-button>
         &nbsp;&nbsp;&nbsp;
-        <el-button type='text' @click="del(index)" v-if='index!=0'>删除</el-button>
+        <el-button type='text' @click="del(index,row.categoryId)" v-if='index!=0'>删除</el-button>
       </template>
     </TablePager>
 
@@ -19,7 +19,7 @@
     <el-dialog title="新增类目" :visible.sync="dialogTableVisible" width='35%' ref='dataForm'>
       <div class=''>
         类目名称：
-        <el-input v-model="temp.categoryName" placeholder="" clearable size="small"></el-input>
+        <el-input v-model="categoryParam.categoryName" placeholder="" clearable size="small"></el-input>
         <br><br>
         <el-button type="primary" @click="updateData">保存</el-button>&nbsp;&nbsp;
         <el-button @click="dialogTableVisible = false">返回</el-button>
@@ -33,14 +33,19 @@
         <el-input v-model="name" placeholder="" clearable size="small"></el-input>
         <br><br>
         <el-button type="primary" @click="hold()">保存</el-button>&nbsp;&nbsp;
-        <el-button @click="dialogTableVisible = false">返回</el-button>
+        <el-button @click="dialogTableVisible2 = false">返回</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { listCategory, categoryAdd, CategoryDel } from '@/api/category';
+import {
+  listCategory,
+  categoryAdd,
+  CategoryDel,
+  categoryRevise
+} from '@/api/category';
 import TablePager from '@/components/TablePager';
 export default {
   name: 'category',
@@ -52,7 +57,7 @@ export default {
       reviseName: '',
       dialogTableVisible: false,
       dialogTableVisible2: false,
-      temp: {
+      categoryParam: {
         categoryId: '',
         categoryName: '',
         handle: '',
@@ -80,8 +85,8 @@ export default {
   },
   methods: {
     //  页面跳转
-    jump(pageType, courseId) {
-      this.$router.push({ name: pageType, params: {} });
+    jump(pageType, query) {
+      this.$router.push({ name: pageType, params: { categoryId: query } });
     },
     //获取类目列表
     getList() {
@@ -92,7 +97,7 @@ export default {
       });
     },
     resetTemp() {
-      this.temp = {
+      this.categoryParam = {
         categoryId: '',
         categoryName: ''
       };
@@ -100,15 +105,18 @@ export default {
     //新增类目
     updateData() {
       this.listLoading = true;
-      // categoryAdd(this.temp.categoryName).then(res => {
+      // categoryAdd(this.categoryParam.categoryName).then(res => {
       this.listLoading = false;
-      this.data.push(this.temp);
+      this.data.push(this.categoryParam);
       this.dialogTableVisible = false;
       this.resetTemp();
       // });
     },
-    del(index) {
-      CategoryDel().then(res => {});
+    //删除类目
+    del(index, courseId) {
+      CategoryDel(courseId).then(res => {
+        this.getList();
+      });
       this.data.splice(index, 1);
       this.$notify({
         title: '成功',
@@ -118,8 +126,15 @@ export default {
       });
     },
     //编辑类目
-    editCategory(index, name) {
+    editCategory(index, row) {
+      this.categoryParam = {
+        categoryId: row.categoryId,
+        categoryName: row.categoryName
+      };
       this.dialogTableVisible2 = true;
+      categoryRevise(this.categoryParam).then(res => {
+        this.getList();
+      });
       this.name = name;
       this.reviseName = index;
     },
