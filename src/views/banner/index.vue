@@ -44,7 +44,7 @@
             <el-input v-model.trim="banner.bannerTitle"></el-input>
           </el-form-item>
           <el-form-item label="图片" prop='bannerCover'>
-            <upload-image :limit="1" :fileList="banner.bannerCover?[{url: banner.bannerCover}] : []" @onSuccess="onUploadCover"></upload-image>
+            <upload-image :limit="1" :fileList="banner.bannerCover" @onSuccess="onUploadCover"></upload-image>
             <span class="form-tips">建议上传X*Y尺寸像素图片</span>
           </el-form-item>
           <el-form-item label="对应跳转的课程id" prop='courseId'>
@@ -204,11 +204,12 @@ export default {
       this.addShow = true;
       this.$nextTick(() => {
         this.banner = { ...this.tableData[index] };
+        this.banner.bannerCover = [{ url: this.banner.bannerCover }];
       });
     },
     //删除
     async delBanner(index) {
-      let delCourseId = this.tableData[index].courseId;
+      let delCourseId = this.tableData[index].id;
       this.$confirm('是否删除该信息?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -236,6 +237,7 @@ export default {
     },
     resetForm(form) {
       this.$refs[form].resetFields();
+      console.log(this.banner);
     },
     deleteRow(index, rows) {
       rows.splice(index, 1);
