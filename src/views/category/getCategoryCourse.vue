@@ -20,7 +20,7 @@
         <svg-icon class='drag-handler' icon-class="drag" style="color:#409EFF"></svg-icon>
       </template>
       <template slot="handle" slot-scope="{row,index}">
-        <el-button type="text" @click="delCourse(row.courseId,index)"> 取消推荐</el-button>
+        <el-button type="text" @click="delCourse(row.courseId)"> 取消推荐</el-button>
       </template>
     </TablePager>
   </div>
@@ -32,6 +32,7 @@ import { updateCourseRecommend } from '@/api/course';
 import Sortable from 'sortablejs';
 import TablePager from '@/components/TablePager';
 import { fetchList } from '@/api/article';
+import { calcuWeight } from '@/utils/index';
 export default {
   data() {
     return {
@@ -48,11 +49,7 @@ export default {
         { title: '课程名称', key: 'courseName' },
         { title: '操作', slot: 'handle' }
       ],
-      courses: [
-        { courseId: '25', courseName: '设计质量1', sort: 'start' },
-        { courseId: '20', courseName: '设计质量2', sort: '' },
-        { courseId: '13', courseName: '工业设计3', sort: 'end' }
-      ],
+      courses: [],
       // 拖拽
       sortable: '',
       oldList: [],
@@ -81,19 +78,23 @@ export default {
   created() {
     this.getList();
     this.drag();
+    console.log(this);
   },
   computed: {
-    categoryId() {
-      return this.$router.params.categoryId;
+    CategoryId() {
+      return this.$route.query.categoryId;
     }
   },
   methods: {
     //获取推荐课程列表
     getList() {
       this.listLoading = true;
-      categoryCourse(categoryId).then(res => {
+      categoryCourse({
+        categoryId: this.CategoryId,
+        courseParam: this.searchParam.courseParam
+      }).then(res => {
         this.listLoading = false;
-        this.courses = res.data.course;
+        this.courses = res.data.data;
       });
     },
 
@@ -111,29 +112,13 @@ export default {
     //保存排序
     saveEditSort() {
       this.columns2.splice(3, 1);
-      if (this.oldIndex !== this.newIndex) {
-        let key = this.courses[this.newIndex].courseId;
-        if (this.oldIndex == 0) {
-          this.weight = this.courses[this.oldIndex + 1].weight / 2;
-        } else if (this.oldIndex + 1 == this.courses.length) {
-          this.weight = this.courses[this.oldIndex - 1].weight + 1;
-        } else {
-          this.weight =
-            (this.courses[this.oldIndex - 1].weight +
-              this.courses[this.oldIndex + 1].weight) /
-            2;
-        }
-        this.SortList[key] = this.weight;
 
-        this.sortCourse = Object.keys(this.SortList).map(item => ({
-          courseId: item,
-          weight: this.SortList[item]
-        }));
-        console.log(this.sortCourse);
-      }
-      // sortCategoryCourse({this.categoryId,this.sortCourse}).then(res => {
-      // this.getList();
-      // });
+      sortCategoryCourse({
+        categoryId: this.CategoryId,
+        courseSort: JSON.stringify(this.sortCourse)
+      }).then(res => {
+        this.getList();
+      });
       this.EditSort = !this.EditSort;
     },
     //拖拽
@@ -159,16 +144,27 @@ export default {
           this.courses.splice(evt.newIndex, 0, targetRow);
           this.oldIndex = evt.oldIndex; //被拖动后的位置
           this.newIndex = evt.newIndex; //被拖动的元素的位置
+
+          if (this.oldIndex !== this.newIndex) {
+            let key = this.courses[this.newIndex].courseId;
+            this.weight = calcuWeight(this.courses, this.oldIndex);
+            this.SortList[key] = this.weight;
+            this.sortCourse = Object.keys(this.SortList).map(item => ({
+              courseId: item,
+              weight: this.SortList[item]
+            }));
+            console.log(this.sortCourse);
+          }
         }
       });
     },
-    //删除推荐课程
-    async delCourse(row, index) {
+    //取消推荐课程
+    async delCourse(courseId) {
       await updateCourseRecommend({
-        courseId: row.courseId,
+        courseId: courseId,
         isRecommend: 0
       });
-      this.courses.splice(index, 1);
+      this.getList();
       this.$notify({
         title: '成功',
         message: '取消成功',
