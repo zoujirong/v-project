@@ -3,11 +3,11 @@ import api from './api';
 const { listTeacher, addTeacher, editTeacher } = api;
 
 //获取老师列表
-export function teacherList(params) {
+export function teacherList(param) {
   return request({
     url: listTeacher,
     method: 'GET',
-    params
+    params: param
   });
 }
 
@@ -21,10 +21,10 @@ export function teacherAdd(param) {
 }
 
 //编辑老师
-export function teacherEdit(params) {
+export function teacherEdit(param) {
   return request({
     url: editTeacher,
     method: 'POST',
-    data: params
+    data: param
   });
 }
