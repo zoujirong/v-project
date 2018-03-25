@@ -13,16 +13,16 @@
           <img :src="tableData[index].bannerCover" alt="" @click="picBig(index)">
         </template>
         <template slot="startTime" slot-scope="{row,index}">
-          {{startDate[index].startDateFormat}}
+          {{startDate[index].startTime}}
         </template>
         <template slot="endTime" slot-scope="{row,index}">
-          {{startDate[index].endDateFormat}}
+          {{startDate[index].endTime}}
         </template>
         <template slot="createTime" slot-scope="{row,index}">
-          {{startDate[index].creatDateFormat}}
+          {{startDate[index].createTime}}
         </template>
         <template slot="modifiedTime" slot-scope="{row,index}">
-          {{startDate[index].modifiedDateFormat}}
+          {{startDate[index].modifiedTime}}
         </template>
         <template slot="operate" slot-scope="{row,index}">
           <el-button type="text" size="small" @click="editBanner(index)">编辑</el-button>
@@ -44,7 +44,7 @@
             <el-input v-model.trim="banner.bannerTitle"></el-input>
           </el-form-item>
           <el-form-item label="图片" prop='bannerCover'>
-            <upload-image :limit="1" :fileList="banner.bannerCover" @onSuccess="onUploadCover"></upload-image>
+            <upload-image :limit="1" :fileList="banner.bannerCover?[{url:banner.bannerCover}]:[]" @onSuccess="onUploadCover"></upload-image>
             <span class="form-tips">建议上传X*Y尺寸像素图片</span>
           </el-form-item>
           <el-form-item label="对应跳转的课程id" prop='courseId'>
@@ -67,7 +67,7 @@
 <script>
 import TablePager from '@/components/TablePager';
 import UploadImage from '@/components/UploadImage';
-import { parseTime } from '@/utils/index.js';
+import { parseTime, calcuWeight } from '@/utils/index.js';
 import {
   getListBanner,
   getAddBanner,
@@ -83,10 +83,11 @@ export default {
       authorization: '',
       banner: {
         bannerTitle: '',
-        bannerCover: [],
+        bannerCover: '',
         courseId: '',
         startTime: '',
-        endTime: ''
+        endTime: '',
+        bannerId: ''
       },
       bannerPage: {
         pageNo: 1,
@@ -119,7 +120,9 @@ export default {
         bannerTitle: [
           { required: true, message: '请输入推荐位名称', trigger: 'blur' }
         ],
-        bannerCover: [{ required: true, message: '请上传图片', type: 'array' }],
+        bannerCover: [
+          { required: true, message: '请上传图片', type: 'string' }
+        ],
         courseId: [
           { required: true, message: '请输入课程id', trigger: 'blur' }
         ],
@@ -141,10 +144,10 @@ export default {
       return this.tableData.map(s => {
         return {
           ...s,
-          startDateFormat: parseTime(s.startTime),
-          endDateFormat: parseTime(s.endTime),
-          creatDateFormat: parseTime(s.createTime),
-          modifiedDateFormat: parseTime(s.modifiedTime)
+          startTime: parseTime(s.startTime),
+          endTime: parseTime(s.endTime),
+          createTime: parseTime(s.createTime),
+          modifiedTime: parseTime(s.modifiedTime)
         };
       });
     }
@@ -155,12 +158,10 @@ export default {
       console.log(this.banner);
       this.$refs[form].validate(valid => {
         if (valid) {
-          this.banner.bannerCover = this.banner.bannerCover.join('');
           let addtype =
             this.type == 1
               ? getAddBanner(this.banner)
               : getEditBanner(this.banner);
-          console.log(addtype);
           addtype
             .then(res => {
               this.$message({
@@ -198,13 +199,13 @@ export default {
         });
     },
     //编辑banner信息
-    async editBanner(index) {
+    editBanner(index) {
       this.type = 2;
       console.log(this.type);
       this.addShow = true;
       this.$nextTick(() => {
-        this.banner = { ...this.tableData[index] };
-        this.banner.bannerCover = [{ url: this.banner.bannerCover }];
+        this.banner = { ...this.startDate[index] };
+        this.banner.bannerId = this.startDate[index].id;
       });
     },
     //删除
@@ -239,12 +240,8 @@ export default {
       this.$refs[form].resetFields();
       console.log(this.banner);
     },
-    deleteRow(index, rows) {
-      rows.splice(index, 1);
-    },
     //上下移banner
     up(index) {
-      console.log(index);
       var options = this.tableData;
       var prev = options.slice(0, index - 1);
       //reverse() 颠倒数组中元素的顺序。
@@ -253,23 +250,32 @@ export default {
       this.tableData = prev.concat(curr).concat(tail);
       let banners = {
         bannerId: this.tableData[index].id,
-        upCourseId: ''
+        weight: calcuWeight(this.tableData, index)
       };
-      getSetBannerSort(banners)
+      console.log(banners.weight);
+      getSetBannerSort({ banners: JSON.stringify([banners]) })
         .then(res => {})
         .catch(res => {
           console.log(res);
         });
     },
     down(index) {
-      console.log(index);
       var options = this.tableData;
       var prev = options.slice(0, index);
       var curr = options.slice(index, index + 2).reverse();
       var tail = options.slice(index + 2);
       this.tableData = prev.concat(curr).concat(tail);
-      let downCourseId = this.tableData[index].courseId;
-      getSetBannerSort({ downBannerId: downCourseId })
+      let arr = this.tableData.map(res => {
+        return res.weight;
+      });
+      let w = calcuWeight(this.tableData, index + 1);
+      console.log(w);
+      console.log(arr);
+      let banners = {
+        bannerId: this.tableData[index + 1].id,
+        weight: calcuWeight(this.tableData, index + 1)
+      };
+      getSetBannerSort({ banners: JSON.stringify([banners]) })
         .then(res => {})
         .catch(res => {
           console.log(res);
@@ -282,7 +288,7 @@ export default {
     },
     onUploadCover(urls) {
       console.log(urls);
-      this.banner.bannerCover.push(urls[0]);
+      this.banner.bannerCover = urls[0];
     }
   },
   mounted() {
