@@ -41,7 +41,7 @@
         <el-input v-model="course.customerWx"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="submit" :loading="loading">保存并下一步</el-button>
+        <el-button type="primary" @click="submit" :loading="loading">保存</el-button>
         <router-link :to="{name: 'courseList'}" tag="el-button">返回</router-link>
       </el-form-item>
     </el-form>

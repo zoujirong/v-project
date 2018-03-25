@@ -4,7 +4,7 @@ export default {
   logout: '/admin/logout',
   //课程模块
   courseList: '/course/listCourse', //课程列表
-  courseShelve: '/coursecourse/courseUnshelve', //课程上下架
+  courseShelve: '/course/courseUnshelve', //课程上下架
   courseDetail: '/course/getCourseById', //单个课程详情
   courseStudent: '/course/listCourseApplyUser', //课程报名的学生列表
   courseRecommend: '/course/recommendCourse', //课程推荐

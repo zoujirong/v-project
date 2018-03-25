@@ -310,7 +310,9 @@ export function calcuWeight(list, index) {
     return (prev.weight + next.weight) / 2;
   } else if (!(prev || next)) {
     return 1;
-  } else {
+  } else if (prev) {
     return prev.weight + 1;
+  } else {
+    return next.weight / 2;
   }
 }
