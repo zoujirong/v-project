@@ -107,10 +107,10 @@ export default {
     },
     onUploadCover(urls) {
       console.log('上传封面', urls);
-      this.course.courseCover = urls[0];
+      this.course.courseCover = urls[0] || '';
     },
     onUploadDetail(urls) {
-      this.course.courseDesc = urls[0];
+      this.course.courseDesc = urls[0] || '';
       console.log('上传详情', urls);
     },
     success(response, file, fileList) {
