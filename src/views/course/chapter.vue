@@ -90,7 +90,7 @@ export default {
         if (this.isLiving) {
           startTime = parseTime(startTime, this.timeFormat);
           endTime = parseTime(endTime, this.timeFormat);
-          obejct.assign(obj, {
+          Object.assign(obj, {
             startTime: startTime + ':00',
             endTime: endTime + ':00',
             playTime: [startTime, endTime]

@@ -13,7 +13,7 @@ export function loginByUsername(data) {
 export function logOut() {
   return request({
     url: logout,
-    method: 'post'
+    method: 'get'
   });
 }
 
