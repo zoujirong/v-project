@@ -164,10 +164,17 @@ export default {
               : getEditBanner(this.banner);
           addtype
             .then(res => {
-              this.$message({
-                message: '添加成功',
-                type: 'success'
-              });
+              if (this.type == 1) {
+                this.$message({
+                  message: '添加成功',
+                  type: 'success'
+                });
+              } else {
+                this.$message({
+                  message: '编辑成功',
+                  type: 'success'
+                });
+              }
               this.getBannerList();
             })
             .catch(res => {
@@ -249,8 +256,8 @@ export default {
       var tail = options.slice(index + 1);
       this.tableData = prev.concat(curr).concat(tail);
       let banners = {
-        bannerId: this.tableData[index].id,
-        weight: calcuWeight(this.tableData, index)
+        bannerId: this.tableData[index - 1].id,
+        weight: calcuWeight(this.tableData, index - 1)
       };
       console.log(banners.weight);
       getSetBannerSort({ banners: JSON.stringify([banners]) })
@@ -318,14 +325,7 @@ img {
 }
 .form-tips {
   display: inline-block;
-  /* float: left; */
   padding-left: 10px;
 }
-/* .v-modal {
-  z-index: 1997 !important;
-} */
-/* .el-dialog__wrapper {
-  z-index: 2003 !important;
-} */
 </style>
 

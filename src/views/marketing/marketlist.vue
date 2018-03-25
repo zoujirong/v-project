@@ -5,7 +5,7 @@
       <el-form-item prop='courseParam'>
         <el-input placeholder="输入课程id或课程名称" v-model.trim="courseSearch.courseParam" clearable></el-input>
       </el-form-item>
-      <el-button type="primary" class="check" @click="queryCourse">查询</el-button>
+      <el-button type="primary" class="check" @click="getList">查询</el-button>
       <el-button @click="resetForm('courseSearch')">重置</el-button>
     </el-form>
     <!-- 表格部分 -->
@@ -31,7 +31,8 @@ export default {
       courseSearch: {
         courseParam: '',
         pageNo: 1,
-        pageSize: 10
+        pageSize: 10,
+        marketingWay: ''
       },
       loading: false,
       pagination: {
@@ -51,22 +52,25 @@ export default {
       ]
     };
   },
+  computed: {
+    marketingId() {
+      return this.$route.params.id;
+    }
+  },
   components: {
     TablePager
   },
   methods: {
-    queryCourse() {
-      this.getList();
-    },
     resetForm(formName) {
       this.$refs[formName].resetFields();
       this.getList();
     },
-    getList() {
+    async getList() {
       this.loading = true;
-      debugger;
+      this.courseSearch.marketingWay = this.marketingId;
       getListMarketCourse(this.courseSearch)
         .then(res => {
+          this.loading = false;
           this.tableData = res.data.data;
         })
         .catch(res => {
@@ -83,7 +87,7 @@ export default {
         type: 'warning'
       })
         .then(() => {
-          getCancelCourseMarketWay({ courseId: cancelId, marketWay: mark })
+          getCancelCourseMarketWay({ courseId: cancelId, marketingWay: mark })
             .then(res => {
               this.getList();
               this.$message({
@@ -106,6 +110,7 @@ export default {
   },
   mounted() {
     this.getList();
+    console.log(this.marketingId);
   }
 };
 </script>
