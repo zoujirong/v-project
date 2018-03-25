@@ -58,7 +58,7 @@
       <el-table :data="marketingList" border>
         <el-table-column label="选择">
           <template slot-scope="{row}">
-            <el-radio :label="row.marketWayId" v-model="choosedRow.marketingWay"></el-radio>
+            <el-radio :label="row.marketWayId" v-model="marketingWay"></el-radio>
           </template>
         </el-table-column>
         <el-table-column label="营销方式名称" prop="marketWayName"></el-table-column>
@@ -137,7 +137,7 @@ export default {
     },
     async getMarketing() {
       let res = await getMarketWay(this.commonParam);
-      this.marketingList = res.data.marketWay;
+      this.marketingList = res.data.data;
     },
     reset() {
       let form = this.$refs.searchForm;
@@ -157,6 +157,7 @@ export default {
     },
     setMarketing(row) {
       this.choosedRow = row;
+      this.marketingWay = row.marketingWay;
       this.marketingList.length === 0 && this.getMarketing();
       this.marketing = true;
     },
@@ -244,12 +245,12 @@ export default {
       });
     },
     async updateMarkting() {
-      /* await setCourseMarketWay({
+      await setCourseMarketWay({
         courseId: this.choosedRow.courseId,
         marketingWay: this.marketingWay
       });
       this.$message.success('营销方式设置成功');
-      this.choosedRow.marketingWay = this.marketingWay; */
+      this.choosedRow.marketingWay = this.marketingWay;
     }
   },
   created() {
