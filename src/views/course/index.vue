@@ -245,12 +245,17 @@ export default {
       });
     },
     async updateMarkting() {
+      if (this.marketingWay == this.choosedRow.marketWayId) {
+        this.marketing = false;
+        return;
+      }
       await setCourseMarketWay({
         courseId: this.choosedRow.courseId,
         marketingWay: this.marketingWay
       });
       this.$message.success('营销方式设置成功');
       this.choosedRow.marketWayId = this.marketingWay;
+      this.marketing = false;
     }
   },
   created() {
