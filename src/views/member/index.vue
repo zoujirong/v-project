@@ -16,10 +16,10 @@
         <span>{{index+1}}</span>
       </template>
       <template slot="lastLoginTime" slot-scope="{row,index}">
-        <span>{{startDate[index].lastLoginTime}}</span>
+        <span>{{row.lastLoginTime | parseTime(timeFormat)}}</span>
       </template>
       <template slot="firstLoginTime" slot-scope="{row,index}">
-        <span>{{startDate[index].firstLoginTime}}</span>
+        <span>{{row.firstLoginTime | parseTime(timeFormat)}}</span>
       </template>
       <template slot="handle" slot-scope="{row}">
         <span @click="getUserApplyCourse(row)">【查看报名课程】</span>
@@ -107,17 +107,7 @@ export default {
   created() {
     this.getList();
   },
-  computed: {
-    startDate() {
-      return this.list.map(s => {
-        return {
-          ...s,
-          lastLoginTime: parseTime(s.lastLoginTime),
-          firstLoginTime: parseTime(s.firstLoginTime)
-        };
-      });
-    }
-  },
+  computed: {},
   methods: {
     //获取会员管理列表
     async getList() {

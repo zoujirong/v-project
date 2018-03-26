@@ -2,8 +2,8 @@
     <!-- 查看报名课程弹框 -->
     <el-dialog title="查看报名课程" :visible.sync='dialogVisible' @close='onDialogClose' @open="getUserApplyCourse">
         <el-form inline ref="checkForm" :model="checkParam">
-            <el-form-item prop="courseName">
-                <el-input v-model="checkParam.courseName" placeholder="输入课程名称查询"></el-input>
+            <el-form-item prop="courseParam">
+                <el-input v-model="checkParam.courseParam" placeholder="输入课程名称查询"></el-input>
             </el-form-item>
             <el-form-item prop="presentWay">
                 <el-select placeholder="免费报名" v-model="checkParam.presentWay">
@@ -14,7 +14,7 @@
             <el-button type="primary" @click='getUserApplyCourse'>查询</el-button>&nbsp;&nbsp;
             <el-button @click='resetCheck'>重置</el-button>
         </el-form>
-        <TablePager :data='data' :pagination="pagination" :columns="columns1" :loading="listLoading">
+        <TablePager :data='data' :pagination="{currentPage:this.pagination1.pageNo,pageSize:this.pagination1.pageSize,total:total}" :columns="columns1" :loading="listLoading" @change="onTableChange">
             <template slot-scope="{row,index}" slot="numberId">
                 <span>{{index+1}}</span>
             </template>
@@ -31,14 +31,13 @@ export default {
       listLoading: true,
       //查看报名课程
       checkParam: {
-        courseName: '',
+        courseParam: '',
         presentWay: '',
         pageNo: 1,
         pageSize: 10
       },
-      pagination: {
-        currentPage: 1,
-        total: 100,
+      pagination1: {
+        pageNo: 1,
         pageSize: 10
       },
       columns1: [
@@ -60,7 +59,8 @@ export default {
           value: '1',
           label: '验证购买'
         }
-      ]
+      ],
+      total: 0
     };
   },
   props: {
@@ -83,7 +83,8 @@ export default {
       }).finally(() => {
         this.listLoading = false;
       });
-      this.data = res.data;
+      this.data = res.data.data;
+      this.total = res.data.total;
     },
     onDialogClose() {
       let form = this.$refs.checkForm;
@@ -94,6 +95,18 @@ export default {
     resetCheck() {
       let form = this.$refs.checkForm;
       form.resetFields();
+      this.getUserApplyCourse();
+    },
+    //切换分页
+    onTableChange({ pagination }) {
+      let {
+        page: pageNo = this.pagination1.pageNo,
+        pageSize = this.pagination1.pageSize
+      } = pagination;
+      Object.assign(this.pagination1, {
+        pageNo,
+        pageSize
+      });
       this.getUserApplyCourse();
     }
   }
