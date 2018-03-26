@@ -15,7 +15,11 @@
       <el-button type="primary" @click="getList">查询</el-button>
       <el-button @click="reset">重置</el-button>
     </el-form>
-    <table-pager :data="users" :loading="loading" :columns="columns" :pagination="pagination" @change="onTableChange">
+    <table-pager :data="users" :loading="loading" :columns="columns" :pagination="{
+        currentPage: searchParam.pageNo,
+        total: total,
+        pageSize: searchParam.pageSize
+      }" @change="onTableChange">
       <template slot="lastLoginTime" slot-scope="{row}">
         <span>{{row.lastLoginTime | parseTime(timeFormat)}}</span>
       </template>
@@ -57,31 +61,12 @@ export default {
         applyStartTime: '',
         applyEndTime: '',
         lastLoginStartTime: '',
-        lastLoginEndTime: ''
+        lastLoginEndTime: '',
+        pageNo: 1,
+        pageSize: 10
       },
-      users: [
-        {
-          uid: 123,
-          userNick: 'livetest001',
-          userPhone: '123456',
-          marketWay: '1',
-          lastLoginTime: 1521123175297,
-          courseApplyTime: 1521183175297
-        },
-        {
-          uid: 2222,
-          userNick: 'livetest001',
-          userPhone: '123456',
-          marketWay: '1',
-          lastLoginTime: 1521123175297,
-          courseApplyTime: 1521183175297
-        }
-      ],
-      pagination: {
-        currentPage: 1,
-        total: 400,
-        pageSize: 100
-      },
+      users: [],
+      total: 0,
       columns: [
         { title: '用户ID', key: 'uid' },
         { title: '微信昵称', key: 'userNick' },
@@ -110,7 +95,9 @@ export default {
       this.loading = true;
       await getCourseStudent(this.searchParam)
         .then(res => {
-          this.users = res.data.user;
+          let { data, total } = res.data;
+          this.users = data;
+          this.total = total;
         })
         .finally(() => {
           this.loading = false;

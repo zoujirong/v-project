@@ -52,12 +52,8 @@ export default {
       });
     },
     async upload(file) {
+      console.log(file);
       let res = await getUploadParam();
-      /* let pro = this.uploadParam
-        ? Promise.resolve(this.uploadParam)
-        : this.$store.dispatch('GetUploadParam');
-      let option = await pro;
-      console.log(option); */
       let random = Array.from({ length: 6 })
         .map(() => getRandom(1, 10))
         .join('');
@@ -76,8 +72,6 @@ export default {
       });
     },
     onChange(file, fileList) {
-      // console.log(file, fileList);
-      // this.files = fileList;
       this.upload(file.raw).then(res => {
         let files = fileList.slice();
         files[files.length - 1].url = res;
@@ -90,16 +84,11 @@ export default {
       this.showPreview = true;
     },
     onExceed(files, fileList) {
-      this.getFileUrl(files[0]).then(url => {
-        this.files.splice(this.files.length - 1, 1, {
-          url
-        });
-        this.upload();
-      });
+      this.onChange({ raw: files[0] }, fileList);
     },
     onRemove(file, fileList) {
       this.files = fileList;
-      this.upload();
+      this.$emit('onSuccess', fileList.map(file => file.url));
     }
   }
 };

@@ -13,7 +13,6 @@ export function getMarketWay(query) {
 
 //营销管理获取营销课程列表
 export function getListMarketCourse(query) {
-  debugger;
   return request({
     url: marketCourse,
     method: 'get',
