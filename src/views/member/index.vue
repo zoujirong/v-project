@@ -11,15 +11,20 @@
       <el-button type="primary" @click="getList">查询</el-button>
       <el-button @click="reset">重置</el-button>
     </el-form>
-    <TablePager :data="list" :pagination="pagination" :columns="columns" @change="onTableChange">
+    <TablePager :data="list" :pagination="{currentPage:searchParam.pageNo,pageNo:searchParam.pageSize,total:total}" :columns="columns" @change="onTableChange">
       <template slot='numberId' slot-scope="{row,index}">
         <span>{{index+1}}</span>
+      </template>
+      <template slot="lastLoginTime" slot-scope="{row,index}">
+        <span>{{startDate[index].lastLoginTime}}</span>
+      </template>
+      <template slot="firstLoginTime" slot-scope="{row,index}">
+        <span>{{startDate[index].firstLoginTime}}</span>
       </template>
       <template slot="handle" slot-scope="{row}">
         <span @click="getUserApplyCourse(row)">【查看报名课程】</span>
       </template>
     </TablePager>
-
     <CheckCourse :userId='checkMumber' :visible='dialogTableVisible' @close='CheckCourseStatus'></CheckCourse>
 
   </div>
@@ -45,18 +50,13 @@ export default {
       dialogTableVisible: false,
       timeFormat: '{y}-{m}-{d} {h}:{i}',
       loginTime: '',
-      pagination: {
-        currentPage: 1,
-        total: 100,
-        pageSize: 10
-      },
       searchParam: {
         sort: '',
         userParam: '',
         lastLoginStartTime: '',
         lastLoginEndTime: '',
-        pageNo: '',
-        pageSize: ''
+        pageNo: 1,
+        pageSize: 10
       },
       options: [
         {
@@ -73,39 +73,17 @@ export default {
         }
       ],
       value: '',
-      pagination: {
-        currentPage: 1,
-        total: 100,
-        pageSize: 10
-      },
       columns: [
         { title: '序号', slot: 'numberId' },
         { title: '微信昵称', key: 'userNick' },
         { title: '手机号码', key: 'userPhone' },
-        { title: '最近登录时间', key: 'lastLoginTime', sortable: 'custom' },
-        { title: '首次登录时间', key: 'firstLoginTime', sortable: 'custom' },
+        { title: '最近登录时间', slot: 'lastLoginTime', sortable: 'custom' },
+        { title: '首次登录时间', slot: 'firstLoginTime', sortable: 'custom' },
         { title: '报名课程数量', key: 'userApplyCourseNum' },
         { title: '付费课程数', key: 'userBuyCourseNum' },
         { title: '操作', slot: 'handle' }
       ],
-      list: [
-        {
-          userNick: '红领巾',
-          userPhone: '16546451284',
-          lastLoginTime: '1521123175297',
-          firstLoginTime: '2018.3.19',
-          userApplyCourseNum: '1',
-          userBuyCourseNum: '1'
-        },
-        {
-          userNick: '红领巾',
-          userPhone: '16546451284',
-          lastLoginTime: '2018.4.20',
-          firstLoginTime: '2018.4.19',
-          userApplyCourseNum: '1',
-          userBuyCourseNum: '1'
-        }
-      ],
+      list: [],
       columns1: [
         { title: '序号', slot: 'numberId' },
         { title: '课程名称', key: 'courseName' },
@@ -120,13 +98,25 @@ export default {
         presentWay: '',
         pageNo: '',
         pageSize: ''
-      }
+      },
+      total: 0
     };
   },
   components: { TablePager, CheckCourse },
   filters: {},
   created() {
-    // this.getList()
+    this.getList();
+  },
+  computed: {
+    startDate() {
+      return this.list.map(s => {
+        return {
+          ...s,
+          lastLoginTime: parseTime(s.lastLoginTime),
+          firstLoginTime: parseTime(s.firstLoginTime)
+        };
+      });
+    }
   },
   methods: {
     //获取会员管理列表
@@ -134,7 +124,9 @@ export default {
       this.listLoading = true;
       getlistUser(this.searchParam).then(res => {
         this.listLoading = false;
-        this.list = res.data.user;
+        let { data, total } = res.data;
+        this.list = data;
+        this.total = total;
       });
     },
 
@@ -143,13 +135,13 @@ export default {
       this.dialogTableVisible = true;
       this.listLoading = true;
       this.checkMumber = row.uid;
-      // this.checkParam = {
-      //   uid: row.uid
-      // };
-      // getApplyCourse(this.checkParam).then(res => {
-      // this.listLoading = false;
-      // this.data = res.data.course;
-      // });
+      this.checkParam = {
+        uid: row.uid
+      };
+      getApplyCourse(this.checkParam).then(res => {
+        this.listLoading = false;
+        this.data = res.data.data;
+      });
     },
     //组件监听的回调函数
     changeLoginTime(time) {
@@ -161,8 +153,17 @@ export default {
         lastLoginEndTime: parseTime(end, timeFormat)
       });
     },
-    //排序
-    onTableChange({ sort = {} }) {
+    //排序 //切换分页
+    onTableChange({ sort = {}, pagination }) {
+      let {
+        page: pageNo = this.searchParam.pageNo,
+        pageSize = this.searchParam.pageSize
+      } = pagination;
+      Object.assign(this.searchParam, {
+        pageNo,
+        pageSize
+      });
+      this.getList();
       let sortKey = Object.keys(sort)[0];
       console.log(sortKey);
       if (sortKey) {
@@ -170,6 +171,7 @@ export default {
           sort: sortMap[`${sortKey}-${sort[sortKey]}`]
         });
       }
+
       console.log(this.searchParam);
     },
     CheckCourseStatus(val) {

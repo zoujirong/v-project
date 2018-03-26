@@ -3,7 +3,7 @@
     <div class='category-nav'>
       <el-button type="success" @click="dialogTableVisible = true">新增类目</el-button>
     </div>
-    <TablePager :data="list" :pagination="{currentPage:this.pagination1.pageNo,pageSize:this.pagination1.pageNo,total:total}" :columns="columns1" @change="onTableChange">
+    <TablePager :data="list" :pagination="{currentPage:Parameter.pageNo,pageSize:Parameter.pageSize,total:total}" :columns="columns1" @change="onTableChange">
       <template slot="handle" slot-scope="{row,index}">
         <el-button @click="jump('getCategoryList',row.categoryId)" type='text' v-if='index==0'>编辑课程</el-button>
         <el-button type='text' v-else @click="editCategory(index,row)">编辑类目名称</el-button>
@@ -62,10 +62,6 @@ export default {
       },
       Parameter: {
         pageNo: 1,
-        pageSize: 10
-      },
-      pagination1: {
-        currentPage: 1,
         pageSize: 10
       },
       columns1: [
