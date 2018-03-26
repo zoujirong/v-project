@@ -40,10 +40,10 @@ import CheckApplyCourse from '@/views/member/checkApplyCourse';
 import { parseTime } from '@/filters';
 import { getCourseStudent } from '@/api/course';
 const sortMap = {
-  'lastLoginTime-0': 1, //降序
-  'lastLoginTime-1': 2, //升序
-  'courseApplyTime-0': 3, //降序
-  'courseApplyTime-1': 4 //升序
+  'lastLoginTime-0': 0, //降序
+  'lastLoginTime-1': 1, //升序
+  'courseApplyTime-0': 2, //降序
+  'courseApplyTime-1': 3 //升序
 };
 export default {
   data() {
@@ -135,14 +135,18 @@ export default {
         lastLoginEndTime: ''
       });
     },
-    onTableChange({ sort = {} }) {
+    onTableChange({ sort = {}, pagination = {} }) {
       let sortKey = Object.keys(sort)[0];
+      let {
+        page: pageNo = this.searchParam.pageNo,
+        pageSize = this.searchParam.pageSize
+      } = pagination;
+      let obj = { pageNo, pageSize };
+
       if (sortKey) {
-        Object.assign(this.searchParam, {
-          sort: sortMap[`${sortKey}-${sort[sortKey]}`]
-        });
+        obj.sort = sortMap[`${sortKey}-${sort[sortKey]}`];
       }
-      console.log(this.searchParam);
+      Object.assign(this.searchParam, obj);
       this.getList();
     },
     showApply(row) {
