@@ -120,14 +120,15 @@ export default {
   },
   methods: {
     //获取会员管理列表
-    getList() {
+    async getList() {
       this.listLoading = true;
-      getlistUser(this.searchParam).then(res => {
-        this.listLoading = false;
-        let { data, total } = res.data;
-        this.list = data;
-        this.total = total;
-      });
+      console.log(this.searchParam);
+      let res = await getlistUser(this.searchParam);
+
+      this.listLoading = false;
+      let { data, total } = res.data;
+      this.list = data;
+      this.total = total;
     },
 
     //查看报名课程
