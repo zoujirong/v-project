@@ -21,10 +21,10 @@
         pageSize: searchParam.pageSize
       }" @change="onTableChange">
       <template slot="lastLoginTime" slot-scope="{row}">
-        <span>{{row.lastLoginTime | parseTime(timeFormat)}}</span>
+        <span>{{row.lastLoginTime | parseTime(showTimeFormat)}}</span>
       </template>
       <template slot="courseApplyTime" slot-scope="{row}">
-        <span>{{row.courseApplyTime | parseTime(timeFormat)}}</span>
+        <span>{{row.courseApplyTime | parseTime(showTimeFormat)}}</span>
       </template>
       <template slot="operate" slot-scope="{row}">
         <el-button type="text" @click="showApply(row)">【查看报名课程】</el-button>
@@ -48,7 +48,8 @@ const sortMap = {
 export default {
   data() {
     return {
-      timeFormat: '{y}-{m}-{d} {h}:{i}',
+      showTimeFormat: '{y}-{m}-{d} {h}:{i}',
+      actualTimeFormat: '{y}-{m}-{d} {h}:{i}:{s}',
       applyTime: '',
       loginTime: '',
       loading: false,
@@ -104,7 +105,7 @@ export default {
         });
     },
     changeApplyTime(time) {
-      let timeFormat = this.timeFormat;
+      let timeFormat = this.actualTimeFormat;
       let [start, end] = time;
       Object.assign(this.searchParam, {
         applyStartTime: parseTime(start, timeFormat),
@@ -112,7 +113,7 @@ export default {
       });
     },
     changeLoginTime(time) {
-      let timeFormat = this.timeFormat;
+      let timeFormat = this.actualTimeFormat;
       let [start, end] = time;
       Object.assign(this.searchParam, {
         lastLoginStartTime: parseTime(start, timeFormat),
@@ -121,17 +122,28 @@ export default {
     },
     reset() {
       this.$refs.searchForm.resetFields();
+      this.resetTime();
       this.getList();
+    },
+    resetTime() {
+      this.applyTime = [];
+      this.loginTime = [];
+      Object.assign(this.searchParam, {
+        applyStartTime: '',
+        applyEndTime: '',
+        lastLoginStartTime: '',
+        lastLoginEndTime: ''
+      });
     },
     onTableChange({ sort = {} }) {
       let sortKey = Object.keys(sort)[0];
-      console.log(sortKey);
       if (sortKey) {
         Object.assign(this.searchParam, {
           sort: sortMap[`${sortKey}-${sort[sortKey]}`]
         });
       }
       console.log(this.searchParam);
+      this.getList();
     },
     showApply(row) {
       this.choosedUserId = row.uid;
