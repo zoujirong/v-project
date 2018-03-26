@@ -157,7 +157,7 @@ export default {
     },
     setMarketing(row) {
       this.choosedRow = row;
-      this.marketingWay = row.marketingWay;
+      this.marketingWay = row.marketWayId;
       this.marketingList.length === 0 && this.getMarketing();
       this.marketing = true;
     },
@@ -250,7 +250,7 @@ export default {
         marketingWay: this.marketingWay
       });
       this.$message.success('营销方式设置成功');
-      this.choosedRow.marketingWay = this.marketingWay;
+      this.choosedRow.marketWayId = this.marketingWay;
     }
   },
   created() {
