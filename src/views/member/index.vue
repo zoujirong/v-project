@@ -11,15 +11,15 @@
       <el-button type="primary" @click="getList">查询</el-button>
       <el-button @click="reset">重置</el-button>
     </el-form>
-    <TablePager :data="list" :pagination="{currentPage:searchParam.pageNo,pageNo:searchParam.pageSize,total:total}" :columns="columns" @change="onTableChange">
+    <TablePager :data="list" :pagination="{currentPage:searchParam.pageNo,pageSize:searchParam.pageSize,total:total}" :columns="columns" @change="onTableChange">
       <template slot='numberId' slot-scope="{row,index}">
         <span>{{index+1}}</span>
       </template>
       <template slot="lastLoginTime" slot-scope="{row,index}">
-        <span>{{row.lastLoginTime | parseTime(timeFormat)}}</span>
+        <span>{{row.lastLoginTime | parseTime(showTimeFormat)}}</span>
       </template>
       <template slot="firstLoginTime" slot-scope="{row,index}">
-        <span>{{row.firstLoginTime | parseTime(timeFormat)}}</span>
+        <span>{{row.firstLoginTime | parseTime(showTimeFormat)}}</span>
       </template>
       <template slot="handle" slot-scope="{row}">
         <span @click="getUserApplyCourse(row)">【查看报名课程】</span>
@@ -48,15 +48,16 @@ export default {
       checkMumber: '',
       listLoading: true,
       dialogTableVisible: false,
-      timeFormat: '{y}-{m}-{d} {h}:{i}',
+      showTimeFormat: '{y}-{m}-{d} {h}:{i}',
+      actualTimeFormat: '{y}-{m}-{d} {h}:{i}:{s}',
       loginTime: '',
       searchParam: {
-        sort: '',
+        sort: 0,
         userParam: '',
         lastLoginStartTime: '',
         lastLoginEndTime: '',
         pageNo: 1,
-        pageSize: 10
+        pageSize: 3
       },
       options: [
         {
@@ -77,8 +78,18 @@ export default {
         { title: '序号', slot: 'numberId' },
         { title: '微信昵称', key: 'userNick' },
         { title: '手机号码', key: 'userPhone' },
-        { title: '最近登录时间', slot: 'lastLoginTime', sortable: 'custom' },
-        { title: '首次登录时间', slot: 'firstLoginTime', sortable: 'custom' },
+        {
+          title: '最近登录时间',
+          slot: 'lastLoginTime',
+          sortable: 'custom',
+          key: 'lastLoginTime'
+        },
+        {
+          title: '首次登录时间',
+          slot: 'firstLoginTime',
+          sortable: 'custom',
+          key: 'firstLoginTime'
+        },
         { title: '报名课程数量', key: 'userApplyCourseNum' },
         { title: '付费课程数', key: 'userBuyCourseNum' },
         { title: '操作', slot: 'handle' }
@@ -112,8 +123,7 @@ export default {
     //获取会员管理列表
     async getList() {
       this.listLoading = true;
-      console.log(this.searchParam);
-      let res = await getlistUser(this.searchParam);
+      let res = await getlistUser({ ...this.searchParam });
 
       this.listLoading = false;
       let { data, total } = res.data;
@@ -136,7 +146,7 @@ export default {
     },
     //组件监听的回调函数
     changeLoginTime(time) {
-      let timeFormat = this.timeFormat;
+      let timeFormat = this.actualTimeFormat;
       //time是一个数组，用户选择的最近登录时间段
       let [start, end] = time;
       Object.assign(this.searchParam, {
@@ -145,23 +155,24 @@ export default {
       });
     },
     //排序 //切换分页
-    onTableChange({ sort = {}, pagination }) {
+    onTableChange({ sort = {}, pagination = {} }) {
       let {
         page: pageNo = this.searchParam.pageNo,
-        pageSize = this.searchParam.pageSize
+        pageSize: pageSize = this.searchParam.pageSize
       } = pagination;
       Object.assign(this.searchParam, {
         pageNo,
         pageSize
       });
-      this.getList();
       let sortKey = Object.keys(sort)[0];
-      console.log(sortKey);
       if (sortKey) {
         Object.assign(this.searchParam, {
           sort: sortMap[`${sortKey}-${sort[sortKey]}`]
         });
       }
+
+      console.log(this.searchParam);
+      this.getList();
 
       console.log(this.searchParam);
     },

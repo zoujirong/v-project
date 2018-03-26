@@ -89,7 +89,7 @@ export default {
     onTableChange({ pagination }) {
       let {
         page: pageNo = this.Parameter.pageNo,
-        pageSize = this.Parameter.pageSize
+        pageSize: pageSize = this.Parameter.pageSize
       } = pagination;
       Object.assign(this.Parameter, {
         pageNo,
