@@ -63,6 +63,7 @@
 import TablePager from '@/components/TablePager';
 import { teacherList, teacherAdd, teacherEdit } from '@/api/teacher';
 import UploadImage from '@/components/UploadImage';
+import utils from '@/utils/index.js';
 export default {
   data() {
     return {
@@ -70,7 +71,6 @@ export default {
       dialogTableVisible: false,
       dialogTableVisible2: false,
       textarea: '',
-
       editPopup: {
         teacherName: '',
         teacherIntro: '',
