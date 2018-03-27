@@ -6,13 +6,8 @@
         <el-input v-model.trim="checkParam.courseParam" placeholder="输入课程名称查询"></el-input>
       </el-form-item>
       <el-form-item prop="presentWay">
-<<<<<<< HEAD
         <el-select placeholder="免费报名" v-model.trim="checkParam.presentWay">
           <el-option v-for="(value,key) in options" :key="key" :label="value" :value="key">
-=======
-        <el-select placeholder="免费报名" v-model="checkParam.presentWay">
-          <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
->>>>>>> 870c24c892aac85b6b1579e008d122484e6942df
           </el-option>
         </el-select>
       </el-form-item>
@@ -23,12 +18,9 @@
       <template slot-scope="{row,index}" slot="numberId">
         <span>{{index+1}}</span>
       </template>
-<<<<<<< HEAD
       <template slot-scope="{row,index}" slot="presentWay">
         <span>{{options[row.marketWay]}}</span>
       </template>
-=======
->>>>>>> 870c24c892aac85b6b1579e008d122484e6942df
     </TablePager>
   </el-dialog>
 </template>
