@@ -2,13 +2,13 @@
   <div class="app-container">
     <el-form inline :model="searchParam" ref="searchForm">
       <el-form-item label="课程" prop="courseParam">
-        <el-input placeholder="输入课程id或课程名称" v-model="searchParam.courseParam"></el-input>
+        <el-input placeholder="输入课程id或课程名称" v-model.trim="searchParam.courseParam"></el-input>
       </el-form-item>
       <el-form-item label="用户" prop="nick">
-        <el-input placeholder="输入用户微信名" v-model="searchParam.nick"></el-input>
+        <el-input placeholder="输入用户微信名" v-model.trim="searchParam.nick"></el-input>
       </el-form-item>
       <el-form-item label="支付方式" prop="presentWay">
-        <el-select placeholder="全部" v-model="searchParam.presentWay">
+        <el-select placeholder="全部" v-model.trim="searchParam.presentWay">
           <el-option :value="1" label="验证手机"></el-option>
           <el-option :value="0" label="直接购买"></el-option>
         </el-select>
