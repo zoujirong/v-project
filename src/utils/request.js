@@ -10,7 +10,7 @@ axios.defaults.headers.post['Content-Type'] =
   'application/x-www-form-urlencoded';
 // create an axios instance
 const service = axios.create({
-  baseURL: env[process.env.ENV_CONFIG].base + '/manager', // api的base_url ///api/minApp
+  baseURL: process.env.BASE_API + '/api/manager', // api的base_url ///api/minApp
   timeout: 30e3 // request timeout
 });
 
