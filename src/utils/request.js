@@ -4,6 +4,7 @@ import store from '@/store';
 import { getToken } from '@/utils/auth';
 import qs from 'qs';
 import env from './env';
+import router from '@/router';
 
 axios.defaults.headers.post['Content-Type'] =
   'application/x-www-form-urlencoded';
@@ -37,7 +38,14 @@ service.interceptors.request.use(
 // respone interceptor
 service.interceptors.response.use(
   ({ data }) => {
-    if (data.status != 0) return Promise.reject(data);
+    let { status } = data;
+    if (status != 0) {
+      if (status == 2) {
+        router.replace('/login');
+        return Promise.reject(data);
+      }
+      return Promise.reject(data);
+    }
     return data;
   },
   error => {
