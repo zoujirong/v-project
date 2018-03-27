@@ -16,7 +16,7 @@
     <el-dialog title="新增类目" :visible.sync="dialogTableVisible" width='35%' ref='dataForm'>
       <div class=''>
         类目名称：
-        <el-input v-model="categoryParam.categoryName" placeholder="" clearable size="small"></el-input>
+        <el-input v-model.trim="categoryParam.categoryName" placeholder="" clearable size="small"></el-input>
         <br><br>
         <el-button type="primary" @click="updateData">保存</el-button>&nbsp;&nbsp;
         <el-button @click="dialogTableVisible = false">返回</el-button>
@@ -27,7 +27,7 @@
     <el-dialog title="编辑类目名称" :visible.sync="dialogTableVisible2" width='35%' ref='dataForm'>
       <div class=''>
         类目名称：
-        <el-input v-model="name" placeholder="" clearable size="small"></el-input>
+        <el-input v-model.trim="name" placeholder="" clearable size="small"></el-input>
         <br><br>
         <el-button type="primary" @click="hold()">保存</el-button>&nbsp;&nbsp;
         <el-button @click="dialogTableVisible2 = false">返回</el-button>
