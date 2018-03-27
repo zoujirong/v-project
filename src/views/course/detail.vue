@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-form ref="editForm" label-suffix="：" label-width="150px" :model="course" :rules="rules" :inline-message="true">
       <el-form-item label="课程标题" prop="title">
-        <el-input v-model="course.title" class="short-input"></el-input>
+        <el-input v-model.trim="course.title" class="short-input"></el-input>
       </el-form-item>
       <el-form-item label="课程类型" prop="teachingMethod" required>
         <el-radio-group v-model="course.teachingMethod" @change="changeMethod">
@@ -17,11 +17,11 @@
         <span class="form-tips" v-if="categoryList.length === 0">暂无类目，请先去添加相应类目吧！</span>
       </el-form-item>
       <el-form-item label="潭州课堂ID" prop="tzCourseId" :rules="[{required: course.teachingMethod === 0,message: '潭州课程ID不能为空'}]">
-        <el-input placeholder="填写潭州课程的课程ID（数字）" v-model="course.tzCourseId"></el-input>
+        <el-input placeholder="填写潭州课程的课程ID（数字）" v-model.trim="course.tzCourseId"></el-input>
         <span class="form-tips">提示：录播课程不必填写课程id</span>
       </el-form-item>
-      <el-form-item label="主讲老师" prop="mainTeacherId" :rules="[{required: true,message: '请选择主讲老师！'}]">
-        <el-select v-model="course.mainTeacherId" placeholder="请选择主讲老师">
+      <el-form-item label="主讲老师" prop="mainTeacher" :rules="[{required: true,message: '请选择主讲老师！'}]">
+        <el-select v-model="course.mainTeacher" placeholder="请选择主讲老师">
           <template v-for="teacher in teacherList">
             <el-option :key="teacher.teacherId" :value="teacher.teacherId" :label="teacher.teacherName"></el-option>
           </template>
@@ -40,7 +40,7 @@
         <span class="form-tips">要求：价格精确到小数点后两位，填写0.00即为免费课程</span>
       </el-form-item>
       <el-form-item label="客服微信" prop="customerWx" :rules="[{required: true, message: '请填写客服微信！'}]">
-        <el-input v-model="course.customerWx"></el-input>
+        <el-input v-model.trim="course.customerWx"></el-input>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="submit" :loading="loading">保存</el-button>
@@ -72,7 +72,7 @@ export default {
         teachingMethod: 0, //0直播,1录播
         categoryId: '',
         tzCourseId: '',
-        mainTeacherId: '',
+        mainTeacher: '',
         courseCover: '',
         courseDesc: '',
         coursePrice: 0.0,
@@ -83,8 +83,12 @@ export default {
           { required: true, message: '请填写课程标题！' },
           {
             validator: (field, value, callback) => {
-              if (value && +value == value) callback('课程标题不能是纯数字');
-              callback();
+              let msg = '';
+              if (value) {
+                if (value.length > 40) msg = '课程标题不能超过40个字符';
+                else if (+value == value) msg = '课程标题不能是纯数字';
+              }
+              callback(msg);
             }
           }
         ]

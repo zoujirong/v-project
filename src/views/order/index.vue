@@ -2,13 +2,13 @@
   <div class="app-container">
     <el-form inline :model="searchParam" ref="searchForm">
       <el-form-item label="课程" prop="courseParam">
-        <el-input placeholder="输入课程id或课程名称" v-model="searchParam.courseParam"></el-input>
+        <el-input placeholder="输入课程id或课程名称" v-model.trim="searchParam.courseParam"></el-input>
       </el-form-item>
       <el-form-item label="用户" prop="nick">
-        <el-input placeholder="输入用户微信名" v-model="searchParam.nick"></el-input>
+        <el-input placeholder="输入用户微信名" v-model.trim="searchParam.nick"></el-input>
       </el-form-item>
       <el-form-item label="支付方式" prop="presentWay">
-        <el-select placeholder="全部" v-model="searchParam.presentWay">
+        <el-select placeholder="全部" v-model.trim="searchParam.presentWay">
           <el-option :value="1" label="验证手机"></el-option>
           <el-option :value="0" label="直接购买"></el-option>
         </el-select>
@@ -42,10 +42,10 @@ export default {
         pageSize: 10
       },
       pagination: {
-        total: 200,
-        currentPage: 2,
+        currentPage: 1,
         pageSize: 10
       },
+      total: 0,
       columns: [
         { title: '订单ID', key: 'orderId' },
         { title: '订单对应课程', key: 'courseName' },
@@ -55,26 +55,7 @@ export default {
         { title: '订单报名用户', key: 'userNick' },
         { title: '订单支付时间', key: 'payTime' }
       ],
-      data: [
-        {
-          orderId: 123,
-          courseName: '用户体验的要素',
-          coursePrice: 19.81,
-          paidAmount: 11.6,
-          marketWay: '0',
-          userNick: '江郎春雨',
-          payTime: '2018.03.16'
-        },
-        {
-          orderId: 2345,
-          courseName: 'erer',
-          coursePrice: 50,
-          paidAmount: '0',
-          marketWay: '1',
-          userNick: '江郎春雨',
-          payTime: '2018.03.16'
-        }
-      ]
+      data: []
     };
   },
   components: {
@@ -83,11 +64,18 @@ export default {
   methods: {
     async getList() {
       this.loading = true;
-      let res = await orderList(this.searchParam).finally(() => {
-        this.loading = false;
-      });
-      this.data = res.data.order;
+      let res = await orderList(this.searchParam)
+        .then(res => {
+          let { data, total } = res.data;
+          this.data = data;
+          this.total = total;
+        })
+        .finally(() => {
+          this.loading = false;
+        });
+      // this.data = res.data.order;
     },
+
     reset() {
       let form = this.$refs.searchForm;
       form.resetFields();

@@ -2,7 +2,7 @@
   <div class="app-container calendar-list-container">
     <el-form inline>
       <el-form-item label="讲师：">
-        <el-input placeholder="输入老师名称" ref="teacherName" prop="teacherName" clearable size="small" v-model="pagination.teacherName">
+        <el-input placeholder="输入老师名称" ref="teacherName" prop="teacherName" clearable size="small" v-model.trim="pagination.teacherName">
         </el-input>
       </el-form-item>
       <el-button type="primary" @click="getteacherList">查询</el-button>
@@ -23,10 +23,10 @@
     <el-dialog title="新增讲师" width='35%' :visible.sync="dialogTableVisible">
       <el-form>
         <el-form-item label="讲师名称：">
-          <el-input placeholder=" " clearable size="small " v-model="editPopup.teacherName"></el-input>
+          <el-input placeholder=" " clearable size="small " v-model.trim="editPopup.teacherName"></el-input>
         </el-form-item>
         <el-form-item label="讲师简介：">
-          <el-input type="textarea" width="100" placeholder="请输入内容 " v-model="editPopup.teacherIntro">
+          <el-input type="textarea" width="100" placeholder="请输入内容 " v-model.trim="editPopup.teacherIntro">
           </el-input>
         </el-form-item>
         <el-form-item label="讲师照片：">
@@ -42,10 +42,10 @@
     <el-dialog title="编辑讲师" width='35%' :visible.sync="dialogTableVisible2">
       <el-form action="" ref='dataForm' @close="resetForm('dataForm')" :model="Parameter1">
         <el-form-item prop='teacherName' label="讲师名称：">
-          <el-input placeholder="请输入老师姓名" clearable size="small " v-model="Parameter1.teacherName"></el-input>
+          <el-input placeholder="请输入老师姓名" clearable size="small " v-model.trim="Parameter1.teacherName"></el-input>
         </el-form-item>
         <el-form-item prop='teacherIntro' label="讲师简介:">
-          <el-input type="textarea " :rows="2" placeholder="请输入内容 " v-model="Parameter1.teacherIntro">
+          <el-input type="textarea " :rows="2" placeholder="请输入内容 " v-model.trim="Parameter1.teacherIntro">
           </el-input>
         </el-form-item>
         <el-form-item prop='teacherIcon' label="讲师照片:">
@@ -63,6 +63,7 @@
 import TablePager from '@/components/TablePager';
 import { teacherList, teacherAdd, teacherEdit } from '@/api/teacher';
 import UploadImage from '@/components/UploadImage';
+import utils from '@/utils/index.js';
 export default {
   data() {
     return {
@@ -70,7 +71,6 @@ export default {
       dialogTableVisible: false,
       dialogTableVisible2: false,
       textarea: '',
-
       editPopup: {
         teacherName: '',
         teacherIntro: '',
@@ -119,7 +119,6 @@ export default {
         .finally(() => {
           this.loading = false;
         });
-      // this.data = res.data.data;
     },
     resetList() {
       this.pagination.teacherName = '';

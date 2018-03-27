@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-form inline :model="searchParam" ref="searchForm">
       <el-form-item label="课程" prop="courseParam">
-        <el-input placeholder="输入课程id或课程名称" v-model="searchParam.courseParam"></el-input>
+        <el-input placeholder="输入课程id或课程名称" v-model.trim="searchParam.courseParam"></el-input>
       </el-form-item>
       <el-form-item label="类目" prop="categoryId">
         <el-select placeholder="选择类目" v-model="searchParam.categoryId">
