@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-form :model="searchParam" ref="searchForm" inline>
       <el-form-item label="学员" prop="userNick">
-        <el-input v-model="searchParam.userNick" placeholder="输入学员的微信昵称"></el-input>
+        <el-input v-model.trim="searchParam.userNick" placeholder="输入学员的微信昵称"></el-input>
       </el-form-item>
       <el-form-item label="报名时间" prop="applyTime">
         <el-date-picker type="datetimerange" format="yyyy-MM-dd HH:mm" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" v-model="applyTime" @change="changeApplyTime">

@@ -2,7 +2,7 @@
   <el-form class="app-container chapter-container" ref="editChapter" :model="form">
     <template v-if="!isLiving">
       <el-form-item label="课时数量" prop="chapterNum" :inline-message="true" :rules="[{required: true, message: '不能为空'}]">
-        <el-input class="short-input" placeholder="该课程的总共课时数量" v-model="form.chapterNum"></el-input>
+        <el-input class="short-input" placeholder="该课程的总共课时数量" v-model.trim="form.chapterNum"></el-input>
       </el-form-item>
     </template>
 
