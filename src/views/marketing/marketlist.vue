@@ -5,12 +5,14 @@
       <el-form-item prop='courseParam'>
         <el-input placeholder="输入课程id或课程名称" v-model.trim="courseSearch.courseParam" clearable></el-input>
       </el-form-item>
-      <el-button type="primary" class="check" @click="getList">查询</el-button>
+      <el-button type="primary" class="check" @click="queryCourse">查询</el-button>
       <el-button @click="resetForm('courseSearch')">重置</el-button>
     </el-form>
     <!-- 表格部分 -->
     <template v-if="tableData">
-      <TablePager :data="tableData" :columns="columns" :pagination="pagination" :loading=loading>
+      <TablePager :loading="loading" :data="tableData" :columns="columns" :pagination="{currentPage: courseSearch.pageNo,
+      pageSize: courseSearch.pageSize,
+      total: total}" @change="onTableChange">
         <template slot="number" slot-scope="{row,index}">
           <span>{{index+1}}</span>
         </template>
@@ -35,11 +37,11 @@ export default {
         marketingWay: ''
       },
       loading: false,
-      pagination: {
-        currentPage: 1,
-        total: 400,
+      commonParam: {
+        pageNo: 1,
         pageSize: 100
       },
+      total: 0,
       columns: [
         { title: '序号', slot: 'number' },
         { title: '课程名称', key: 'courseName' },
@@ -47,9 +49,7 @@ export default {
         { title: '课程价格', key: 'coursePrice' },
         { title: '操作', slot: 'operate' }
       ],
-      tableData: [
-        // { courseName: '产品入门到猝死1', courseId: 260, coursePrice: 250 }
-      ]
+      tableData: []
     };
   },
   computed: {
@@ -61,6 +61,9 @@ export default {
     TablePager
   },
   methods: {
+    queryCourse() {
+      this.getList();
+    },
     resetForm(formName) {
       this.$refs[formName].resetFields();
       this.getList();
@@ -72,11 +75,23 @@ export default {
         .then(res => {
           this.loading = false;
           this.tableData = res.data.data;
+          this.total = res.data.total;
         })
         .catch(res => {
           this.loading = false;
           console.log(res);
         });
+    },
+    onTableChange({ pagination }) {
+      let {
+        page: pageNo = this.courseSearch.pageNo,
+        pageSize = this.courseSearch.pageSize
+      } = pagination;
+      Object.assign(this.courseSearch, {
+        pageNo,
+        pageSize
+      });
+      this.getList();
     },
     cancel(index) {
       let cancelId = this.tableData[index].courseId;
@@ -87,7 +102,7 @@ export default {
         type: 'warning'
       })
         .then(() => {
-          getCancelCourseMarketWay({ courseId: cancelId, marketingWay: mark })
+          getCancelCourseMarketWay({ courseId: cancelId, marketWay: mark })
             .then(res => {
               this.getList();
               this.$message({
