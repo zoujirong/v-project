@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-form :model="searchParam" ref="searchForm" inline>
       <el-form-item label="学员" prop="userNick">
-        <el-input v-model="searchParam.userNick" placeholder="输入学员的微信昵称"></el-input>
+        <el-input v-model.trim="searchParam.userNick" placeholder="输入学员的微信昵称"></el-input>
       </el-form-item>
       <el-form-item label="报名时间" prop="applyTime">
         <el-date-picker type="datetimerange" format="yyyy-MM-dd HH:mm" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" v-model="applyTime" @change="changeApplyTime">
@@ -21,10 +21,10 @@
         pageSize: searchParam.pageSize
       }" @change="onTableChange">
       <template slot="lastLoginTime" slot-scope="{row}">
-        <span>{{row.lastLoginTime | parseTime(timeFormat)}}</span>
+        <span>{{row.lastLoginTime | parseTime(showTimeFormat)}}</span>
       </template>
       <template slot="courseApplyTime" slot-scope="{row}">
-        <span>{{row.courseApplyTime | parseTime(timeFormat)}}</span>
+        <span>{{row.courseApplyTime | parseTime(showTimeFormat)}}</span>
       </template>
       <template slot="operate" slot-scope="{row}">
         <el-button type="text" @click="showApply(row)">【查看报名课程】</el-button>
@@ -40,15 +40,16 @@ import CheckApplyCourse from '@/views/member/checkApplyCourse';
 import { parseTime } from '@/filters';
 import { getCourseStudent } from '@/api/course';
 const sortMap = {
-  'lastLoginTime-0': 1, //降序
-  'lastLoginTime-1': 2, //升序
-  'courseApplyTime-0': 3, //降序
-  'courseApplyTime-1': 4 //升序
+  'lastLoginTime-0': 0, //降序
+  'lastLoginTime-1': 1, //升序
+  'courseApplyTime-0': 2, //降序
+  'courseApplyTime-1': 3 //升序
 };
 export default {
   data() {
     return {
-      timeFormat: '{y}-{m}-{d} {h}:{i}',
+      showTimeFormat: '{y}-{m}-{d} {h}:{i}',
+      actualTimeFormat: '{y}-{m}-{d} {h}:{i}:{s}',
       applyTime: '',
       loginTime: '',
       loading: false,
@@ -104,7 +105,7 @@ export default {
         });
     },
     changeApplyTime(time) {
-      let timeFormat = this.timeFormat;
+      let timeFormat = this.actualTimeFormat;
       let [start, end] = time;
       Object.assign(this.searchParam, {
         applyStartTime: parseTime(start, timeFormat),
@@ -112,7 +113,7 @@ export default {
       });
     },
     changeLoginTime(time) {
-      let timeFormat = this.timeFormat;
+      let timeFormat = this.actualTimeFormat;
       let [start, end] = time;
       Object.assign(this.searchParam, {
         lastLoginStartTime: parseTime(start, timeFormat),
@@ -121,17 +122,32 @@ export default {
     },
     reset() {
       this.$refs.searchForm.resetFields();
+      this.resetTime();
       this.getList();
     },
-    onTableChange({ sort = {} }) {
+    resetTime() {
+      this.applyTime = [];
+      this.loginTime = [];
+      Object.assign(this.searchParam, {
+        applyStartTime: '',
+        applyEndTime: '',
+        lastLoginStartTime: '',
+        lastLoginEndTime: ''
+      });
+    },
+    onTableChange({ sort = {}, pagination = {} }) {
       let sortKey = Object.keys(sort)[0];
-      console.log(sortKey);
+      let {
+        page: pageNo = this.searchParam.pageNo,
+        pageSize = this.searchParam.pageSize
+      } = pagination;
+      let obj = { pageNo, pageSize };
+
       if (sortKey) {
-        Object.assign(this.searchParam, {
-          sort: sortMap[`${sortKey}-${sort[sortKey]}`]
-        });
+        obj.sort = sortMap[`${sortKey}-${sort[sortKey]}`];
       }
-      console.log(this.searchParam);
+      Object.assign(this.searchParam, obj);
+      this.getList();
     },
     showApply(row) {
       this.choosedUserId = row.uid;

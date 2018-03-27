@@ -2,7 +2,7 @@
   <el-form class="app-container chapter-container" ref="editChapter" :model="form">
     <template v-if="!isLiving">
       <el-form-item label="课时数量" prop="chapterNum" :inline-message="true" :rules="[{required: true, message: '不能为空'}]">
-        <el-input class="short-input" placeholder="该课程的总共课时数量" v-model="form.chapterNum"></el-input>
+        <el-input class="short-input" placeholder="该课程的总共课时数量" v-model.trim="form.chapterNum"></el-input>
       </el-form-item>
     </template>
 
@@ -11,7 +11,7 @@
       </el-table-column>
       <el-table-column label="课时名称" min-width="200">
         <template slot-scope="{row, $index: index}">
-          <el-form-item :rules="[{required: true, message: '不能为空'}]" :prop="'chapter['+index+'].chapterTitle'">
+          <el-form-item :rules="chapterTitleRules" :prop="'chapter['+index+'].chapterTitle'">
             <el-input v-model.trim="row.chapterTitle" :disabled="row.disabled"></el-input>
           </el-form-item>
         </template>
@@ -19,13 +19,13 @@
       <el-table-column label="直播时间" width="420" v-if="isLiving">
         <template slot-scope="{row, $index: index}">
           <el-form-item :rules="[{required: true, message: '不能为空'}]" :prop="'chapter['+index+'].playTime'">
-            <el-date-picker v-model="row.playTime" format="yyyy-MM-dd HH:mm" type="datetimerange" start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="{disabledDate: disabledDate.bind(null, index)}" :disabled="row.disabled" @change="onChangeTime(index, $event)"></el-date-picker>
+            <el-date-picker v-model="row.playTime" format="yyyy-MM-dd HH:mm" type="datetimerange" start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="{disabledDate: disabledDate.bind(null, index)}" :disabled="row.disabled" @change="onChangeTime(index, $event)" @focus="onFocus(index)"></el-date-picker>
           </el-form-item>
         </template>
       </el-table-column>
       <el-table-column label="视频ID" min-width="200">
         <template slot-scope="{row, $index: index}">
-          <el-form-item :rules="[{required: true, message: '不能为空'}]" :prop="'chapter['+index+'].playUrl'">
+          <el-form-item :rules="[{required: !isLiving, message: '不能为空'}]" :prop="'chapter['+index+'].playUrl'">
             <el-input v-model.trim="row.playUrl" :disabled="row.disabled"></el-input>
           </el-form-item>
         </template>
@@ -74,7 +74,19 @@ export default {
       form: {
         chapterNum: this.$route.query.num,
         chapter: []
-      }
+      },
+      chapterTitleRules: [
+        { required: true, message: '不能为空' },
+        {
+          validator: (field, value, callback) => {
+            let msg = '';
+            if (value.length > 30) msg = '课时名称不能超过30个字符';
+            callback(msg);
+          }
+        }
+      ],
+      prevTimeByIndex: '',
+      nexrTimeByIndex: ''
     };
   },
   components: { TablePager },
@@ -122,18 +134,24 @@ export default {
       }
       this.form.chapter.splice(index, 1);
     },
+    onFocus(index) {
+      this.prevTimeByIndex = this.getPrevDate(index);
+      this.nexrTimeByIndex = this.getNextDate(index);
+    },
     disabledDate(index, date) {
-      let list = this.form.chapter;
-      let prev = list[index - 1];
-      return date < this.getPrevDate(index);
+      if (index < this.form.chapter.length) {
+        return (
+          date < this.prevTimeByIndex ||
+          (this.nexrTimeByIndex && date > this.nexrTimeByIndex)
+        );
+      }
     },
     getPrevDate(index) {
-      let list = this.form.chapter;
-      let prev = list[index - 1];
-
       if (index === 0) {
         return this.getStartOfDate(parseTime(new Date()));
       } else {
+        let list = this.form.chapter;
+        let prev = list[index - 1];
         if (prev.endTime) {
           return this.getStartOfDate(prev.endTime);
         } else {
@@ -145,6 +163,20 @@ export default {
       let arr = dateStr.split(' ');
       arr.splice(1, 1, '00:00:00');
       return new Date(arr.join(' '));
+    },
+    getNextDate(index) {
+      let list = this.form.chapter;
+      let len = list.length;
+      if (index + 1 === len) {
+        return '';
+      } else {
+        let next = list[index + 1];
+        if (next.startTime) {
+          return this.getStartOfDate(next.startTime);
+        } else {
+          return this.getNextDate(index + 1);
+        }
+      }
     },
     onChangeTime(index, time) {
       let timeFormat = this.timeFormat;

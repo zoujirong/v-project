@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-form inline :model="searchParam" ref="searchForm">
       <el-form-item label="课程" prop="courseParam">
-        <el-input placeholder="输入课程id或课程名称" v-model="searchParam.courseParam"></el-input>
+        <el-input placeholder="输入课程id或课程名称" v-model.trim="searchParam.courseParam"></el-input>
       </el-form-item>
       <el-form-item label="类目" prop="categoryId">
         <el-select placeholder="选择类目" v-model="searchParam.categoryId">
@@ -157,7 +157,7 @@ export default {
     },
     setMarketing(row) {
       this.choosedRow = row;
-      this.marketingWay = row.marketingWay;
+      this.marketingWay = row.marketWayId;
       this.marketingList.length === 0 && this.getMarketing();
       this.marketing = true;
     },
@@ -245,12 +245,17 @@ export default {
       });
     },
     async updateMarkting() {
+      if (this.marketingWay == this.choosedRow.marketWayId) {
+        this.marketing = false;
+        return;
+      }
       await setCourseMarketWay({
         courseId: this.choosedRow.courseId,
         marketingWay: this.marketingWay
       });
       this.$message.success('营销方式设置成功');
-      this.choosedRow.marketingWay = this.marketingWay;
+      this.choosedRow.marketWayId = this.marketingWay;
+      this.marketing = false;
     }
   },
   created() {

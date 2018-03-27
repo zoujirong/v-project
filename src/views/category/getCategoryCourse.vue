@@ -3,7 +3,7 @@
   <div ref='dataForm' class="addCourse">
     <el-form inline class='marginBottom' :model="searchParam" ref='searchForm'>
       <el-form-item label="编辑推荐课程" prop="courseParam">
-        <el-input v-model="searchParam.courseParam" placeholder="课程名或课程id进行查询" clearable size="small" @keyup.enter='getList'></el-input>
+        <el-input v-model.trim="searchParam.courseParam" placeholder="课程名或课程id进行查询" clearable size="small" @keyup.enter='getList'></el-input>
       </el-form-item>
       <el-button type="primary" @click="getList">查询</el-button>
       &nbsp;&nbsp;

@@ -2,12 +2,12 @@
   <div class="app-container">
     <el-form ref="editForm" label-suffix="：" label-width="150px" :model="course" :rules="rules" :inline-message="true">
       <el-form-item label="课程标题" prop="title">
-        <el-input v-model="course.title" class="short-input"></el-input>
+        <el-input v-model.trim="course.title" class="short-input"></el-input>
       </el-form-item>
       <el-form-item label="课程类型" prop="teachingMethod" required>
         <el-radio-group v-model="course.teachingMethod" @change="changeMethod">
-          <el-radio :label="0">直播课</el-radio>
-          <el-radio :label="1">录播课</el-radio>
+          <el-radio :label="0" :disabled="!!courseId">直播课</el-radio>
+          <el-radio :label="1" :disabled="!!courseId">录播课</el-radio>
         </el-radio-group>
       </el-form-item>
       <el-form-item label="课程类目" prop="categoryId" :rules="[{required: true,message: '请选择课程类目！'}]">
@@ -17,7 +17,7 @@
         <span class="form-tips" v-if="categoryList.length === 0">暂无类目，请先去添加相应类目吧！</span>
       </el-form-item>
       <el-form-item label="潭州课堂ID" prop="tzCourseId" :rules="[{required: course.teachingMethod === 0,message: '潭州课程ID不能为空'}]">
-        <el-input placeholder="填写潭州课程的课程ID（数字）" v-model="course.tzCourseId"></el-input>
+        <el-input placeholder="填写潭州课程的课程ID（数字）" v-model.trim="course.tzCourseId"></el-input>
         <span class="form-tips">提示：录播课程不必填写课程id</span>
       </el-form-item>
       <el-form-item label="主讲老师" prop="mainTeacher" :rules="[{required: true,message: '请选择主讲老师！'}]">
@@ -40,7 +40,7 @@
         <span class="form-tips">要求：价格精确到小数点后两位，填写0.00即为免费课程</span>
       </el-form-item>
       <el-form-item label="客服微信" prop="customerWx" :rules="[{required: true, message: '请填写客服微信！'}]">
-        <el-input v-model="course.customerWx"></el-input>
+        <el-input v-model.trim="course.customerWx"></el-input>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="submit" :loading="loading">保存</el-button>
@@ -66,8 +66,8 @@ export default {
       teacherList: [],
       categoryList: [],
       loading: false,
+      courseId: this.$route.query.id,
       course: {
-        id: this.$route.query.id,
         title: '',
         teachingMethod: 0, //0直播,1录播
         categoryId: '',
@@ -83,8 +83,12 @@ export default {
           { required: true, message: '请填写课程标题！' },
           {
             validator: (field, value, callback) => {
-              if (value && +value == value) callback('课程标题不能是纯数字');
-              callback();
+              let msg = '';
+              if (value) {
+                if (value.length > 40) msg = '课程标题不能超过40个字符';
+                else if (+value == value) msg = '课程标题不能是纯数字';
+              }
+              callback(msg);
             }
           }
         ]
@@ -94,7 +98,7 @@ export default {
   components: { UploadImage },
   methods: {
     async getCourseDetailById() {
-      let res = await getCourseDetail(this.course.id);
+      let res = await getCourseDetail(this.courseId);
       this.course = res.data;
     },
     async getTeacher() {
@@ -126,13 +130,19 @@ export default {
         .then(res => {
           if (!res) return Promise.reject({ msg: '信息填写有误' });
           this.loading = true;
-          return (this.course.id ? updateCourse : addCourse)(this.course);
+          if (this.courseId) {
+            return updateCourse({
+              id: this.courseId,
+              ...this.course
+            });
+          }
+          return addCourse(this.course);
         })
         .finally(res => {
           this.loading = false;
         });
       //修改课程
-      if (this.course.id) {
+      if (this.courseId) {
         this.$message.success('修改课程成功');
         this.$router.push({ name: 'courseList' });
       } else {
@@ -145,7 +155,7 @@ export default {
     }
   },
   created() {
-    this.course.id && this.getCourseDetailById();
+    this.courseId && this.getCourseDetailById();
     this.getCategory();
     this.getTeacher();
   }
