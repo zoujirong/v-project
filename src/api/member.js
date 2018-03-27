@@ -3,10 +3,11 @@ import api from './api';
 const { listUser, applyCourse } = api;
 
 //获取会员列表
-export function getlistUser() {
+export function getlistUser(query) {
   return request({
     url: listUser,
-    method: 'get'
+    method: 'get',
+    params: query
   });
 }
 

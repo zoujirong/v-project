@@ -6,8 +6,8 @@
       </el-form-item>
       <el-form-item label="课程类型" prop="teachingMethod" required>
         <el-radio-group v-model="course.teachingMethod" @change="changeMethod">
-          <el-radio :label="0">直播课</el-radio>
-          <el-radio :label="1">录播课</el-radio>
+          <el-radio :label="0" :disabled="!!courseId">直播课</el-radio>
+          <el-radio :label="1" :disabled="!!courseId">录播课</el-radio>
         </el-radio-group>
       </el-form-item>
       <el-form-item label="课程类目" prop="categoryId" :rules="[{required: true,message: '请选择课程类目！'}]">
@@ -20,8 +20,8 @@
         <el-input placeholder="填写潭州课程的课程ID（数字）" v-model="course.tzCourseId"></el-input>
         <span class="form-tips">提示：录播课程不必填写课程id</span>
       </el-form-item>
-      <el-form-item label="主讲老师" prop="mainTeacher" :rules="[{required: true,message: '请选择主讲老师！'}]">
-        <el-select v-model="course.mainTeacher" placeholder="请选择主讲老师">
+      <el-form-item label="主讲老师" prop="mainTeacherId" :rules="[{required: true,message: '请选择主讲老师！'}]">
+        <el-select v-model="course.mainTeacherId" placeholder="请选择主讲老师">
           <template v-for="teacher in teacherList">
             <el-option :key="teacher.teacherId" :value="teacher.teacherId" :label="teacher.teacherName"></el-option>
           </template>
@@ -66,13 +66,13 @@ export default {
       teacherList: [],
       categoryList: [],
       loading: false,
+      courseId: this.$route.query.id,
       course: {
-        id: this.$route.query.id,
         title: '',
         teachingMethod: 0, //0直播,1录播
         categoryId: '',
         tzCourseId: '',
-        mainTeacher: '',
+        mainTeacherId: '',
         courseCover: '',
         courseDesc: '',
         coursePrice: 0.0,
@@ -94,7 +94,7 @@ export default {
   components: { UploadImage },
   methods: {
     async getCourseDetailById() {
-      let res = await getCourseDetail(this.course.id);
+      let res = await getCourseDetail(this.courseId);
       this.course = res.data;
     },
     async getTeacher() {
@@ -126,13 +126,19 @@ export default {
         .then(res => {
           if (!res) return Promise.reject({ msg: '信息填写有误' });
           this.loading = true;
-          return (this.course.id ? updateCourse : addCourse)(this.course);
+          if (this.courseId) {
+            return updateCourse({
+              id: this.courseId,
+              ...this.course
+            });
+          }
+          return addCourse(this.course);
         })
         .finally(res => {
           this.loading = false;
         });
       //修改课程
-      if (this.course.id) {
+      if (this.courseId) {
         this.$message.success('修改课程成功');
         this.$router.push({ name: 'courseList' });
       } else {
@@ -145,7 +151,7 @@ export default {
     }
   },
   created() {
-    this.course.id && this.getCourseDetailById();
+    this.courseId && this.getCourseDetailById();
     this.getCategory();
     this.getTeacher();
   }

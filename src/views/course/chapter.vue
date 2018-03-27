@@ -25,7 +25,7 @@
       </el-table-column>
       <el-table-column label="视频ID" min-width="200">
         <template slot-scope="{row, $index: index}">
-          <el-form-item :rules="[{required: true, message: '不能为空'}]" :prop="'chapter['+index+'].playUrl'">
+          <el-form-item :rules="[{required: !isLiving, message: '不能为空'}]" :prop="'chapter['+index+'].playUrl'">
             <el-input v-model.trim="row.playUrl" :disabled="row.disabled"></el-input>
           </el-form-item>
         </template>
