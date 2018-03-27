@@ -2,7 +2,7 @@
   <el-form class="app-container chapter-container" ref="editChapter" :model="form">
     <template v-if="!isLiving">
       <el-form-item label="课时数量" prop="chapterNum" :inline-message="true" :rules="[{required: true, message: '不能为空'}]">
-        <el-input class="short-input" placeholder="该课程的总共课时数量" v-model="form.chapterNum"></el-input>
+        <el-input class="short-input" placeholder="该课程的总共课时数量" v-model.trim="form.chapterNum"></el-input>
       </el-form-item>
     </template>
 
@@ -11,7 +11,7 @@
       </el-table-column>
       <el-table-column label="课时名称" min-width="200">
         <template slot-scope="{row, $index: index}">
-          <el-form-item :rules="[{required: true, message: '不能为空'}]" :prop="'chapter['+index+'].chapterTitle'">
+          <el-form-item :rules="chapterTitleRules" :prop="'chapter['+index+'].chapterTitle'">
             <el-input v-model.trim="row.chapterTitle" :disabled="row.disabled"></el-input>
           </el-form-item>
         </template>
@@ -74,7 +74,17 @@ export default {
       form: {
         chapterNum: this.$route.query.num,
         chapter: []
-      }
+      },
+      chapterTitleRules: [
+        { required: true, message: '不能为空' },
+        {
+          validator: (field, value, callback) => {
+            let msg = '';
+            if (value.length > 30) msg = '课时名称不能超过30个字符';
+            callback(msg);
+          }
+        }
+      ]
     };
   },
   components: { TablePager },

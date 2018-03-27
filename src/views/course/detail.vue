@@ -83,8 +83,12 @@ export default {
           { required: true, message: '请填写课程标题！' },
           {
             validator: (field, value, callback) => {
-              if (value && +value == value) callback('课程标题不能是纯数字');
-              callback();
+              let msg = '';
+              if (value) {
+                if (value.length > 40) msg = '课程标题不能超过40个字符';
+                else if (+value == value) msg = '课程标题不能是纯数字';
+              }
+              callback(msg);
             }
           }
         ]
