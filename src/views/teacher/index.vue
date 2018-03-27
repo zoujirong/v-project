@@ -119,7 +119,6 @@ export default {
         .finally(() => {
           this.loading = false;
         });
-      // this.data = res.data.data;
     },
     resetList() {
       this.pagination.teacherName = '';
