@@ -11,8 +11,8 @@
       </el-table-column>
       <el-table-column label="课时名称" min-width="200">
         <template slot-scope="{row, $index: index}">
-          <el-form-item :rules="chapterTitleRules" :prop="'chapter['+index+'].chapterTitle'">
-            <el-input v-model.trim="row.chapterTitle" :disabled="row.disabled"></el-input>
+          <el-form-item :rules="[{ required: true, message: '不能为空' }]" :prop="'chapter['+index+'].chapterTitle'">
+            <el-input v-model.trim="row.chapterTitle" :disabled="row.disabled" :maxlength="30"></el-input>
           </el-form-item>
         </template>
       </el-table-column>
@@ -75,16 +75,6 @@ export default {
         chapterNum: this.$route.query.num,
         chapter: []
       },
-      chapterTitleRules: [
-        { required: true, message: '不能为空' },
-        {
-          validator: (field, value, callback) => {
-            let msg = '';
-            if (value.length > 30) msg = '课时名称不能超过30个字符';
-            callback(msg);
-          }
-        }
-      ],
       prevTimeByIndex: '',
       nexrTimeByIndex: ''
     };
