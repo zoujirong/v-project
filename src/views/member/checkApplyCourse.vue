@@ -1,25 +1,25 @@
 <template>
-    <!-- 查看报名课程弹框 -->
-    <el-dialog title="查看报名课程" :visible.sync='dialogVisible' @close='onDialogClose' @open="getUserApplyCourse">
-        <el-form inline ref="checkForm" :model="checkParam">
-            <el-form-item prop="courseParam">
-                <el-input v-model="checkParam.courseParam" placeholder="输入课程名称查询"></el-input>
-            </el-form-item>
-            <el-form-item prop="presentWay">
-                <el-select placeholder="免费报名" v-model="checkParam.presentWay">
-                    <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
-                    </el-option>
-                </el-select>
-            </el-form-item>
-            <el-button type="primary" @click='getUserApplyCourse'>查询</el-button>&nbsp;&nbsp;
-            <el-button @click='resetCheck'>重置</el-button>
-        </el-form>
-        <TablePager :data='data' :pagination="{currentPage:this.pagination1.pageNo,pageSize:this.pagination1.pageSize,total:total}" :columns="columns1" :loading="listLoading" @change="onTableChange">
-            <template slot-scope="{row,index}" slot="numberId">
-                <span>{{index+1}}</span>
-            </template>
-        </TablePager>
-    </el-dialog>
+  <!-- 查看报名课程弹框 -->
+  <el-dialog title="查看报名课程" :visible.sync='dialogVisible' @close='onDialogClose' @open="getUserApplyCourse">
+    <el-form inline ref="checkForm" :model="checkParam">
+      <el-form-item prop="courseParam">
+        <el-input v-model.trim="checkParam.courseParam" placeholder="输入课程名称查询"></el-input>
+      </el-form-item>
+      <el-form-item prop="presentWay">
+        <el-select placeholder="免费报名" v-model="checkParam.presentWay">
+          <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+          </el-option>
+        </el-select>
+      </el-form-item>
+      <el-button type="primary" @click='getUserApplyCourse'>查询</el-button>&nbsp;&nbsp;
+      <el-button @click='resetCheck'>重置</el-button>
+    </el-form>
+    <TablePager :data='data' :pagination="{currentPage:this.pagination1.pageNo,pageSize:this.pagination1.pageSize,total:total}" :columns="columns1" :loading="listLoading" @change="onTableChange">
+      <template slot-scope="{row,index}" slot="numberId">
+        <span>{{index+1}}</span>
+      </template>
+    </TablePager>
+  </el-dialog>
 </template>
 <script>
 import { getApplyCourse } from '@/api/member.js';
