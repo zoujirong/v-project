@@ -6,8 +6,8 @@
         <el-input v-model.trim="checkParam.courseParam" placeholder="输入课程名称查询"></el-input>
       </el-form-item>
       <el-form-item prop="presentWay">
-        <el-select placeholder="免费报名" v-model="checkParam.presentWay">
-          <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+        <el-select placeholder="免费报名" v-model.trim="checkParam.presentWay">
+          <el-option v-for="(value,key) in options" :key="key" :label="value" :value="key">
           </el-option>
         </el-select>
       </el-form-item>
@@ -17,6 +17,9 @@
     <TablePager :data='data' :pagination="{currentPage:this.pagination1.pageNo,pageSize:this.pagination1.pageSize,total:total}" :columns="columns1" :loading="listLoading" @change="onTableChange">
       <template slot-scope="{row,index}" slot="numberId">
         <span>{{index+1}}</span>
+      </template>
+      <template slot-scope="{row,index}" slot="presentWay">
+        <span>{{options[row.marketWay]}}</span>
       </template>
     </TablePager>
   </el-dialog>
@@ -43,23 +46,14 @@ export default {
       columns1: [
         { title: '序号', slot: 'numberId' },
         { title: '课程名称', key: 'courseName' },
-        { title: '学员行为', key: 'presentWay' }
+        { title: '学员行为', slot: 'presentWay' }
       ],
-      data: [{ courseName: 'java初级班', presentWay: '免费报名' }],
-      options: [
-        {
-          value: '选项1',
-          label: '免费报名'
-        },
-        {
-          value: '0',
-          label: '购买'
-        },
-        {
-          value: '1',
-          label: '验证购买'
-        }
-      ],
+      data: [],
+      options: {
+        3: '免费报名',
+        2: '购买',
+        1: '验证购买'
+      },
       total: 0
     };
   },
