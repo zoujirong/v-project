@@ -17,10 +17,13 @@
       <el-button @click="reset">重置</el-button>
     </el-form>
 
-    <TablePager :data="data" :columns="columns" :loading="loading" :pagination="pagination" @change="onChange">
+    <TablePager :data="data" :columns="columns" :loading="loading" :pagination="{currentPage: pagination.pageNo,
+      pageSize: pagination.pageSize,
+      total: total}" @change="onChange ">
 
-      <template slot="marketWay" slot-scope="{row}">
-        <span>{{row.marketWay == 0 ? '直接购买' : '手机验证'}}</span>
+      <template slot="marketWay " slot-scope="{row} ">
+        <!-- row.marketWay == 0 ? '直接购买' : '手机验证' -->
+        <span>{{row.marketWay}}</span>
       </template>
 
     </TablePager>

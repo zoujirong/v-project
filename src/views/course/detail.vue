@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-form ref="editForm" label-suffix="：" label-width="150px" :model="course" :rules="rules" :inline-message="true">
       <el-form-item label="课程标题" prop="title">
-        <el-input v-model.trim="course.title" class="short-input"></el-input>
+        <el-input v-model.trim="course.title" class="short-input" :maxlength="40"></el-input>
       </el-form-item>
       <el-form-item label="课程类型" prop="teachingMethod" required>
         <el-radio-group v-model="course.teachingMethod" @change="changeMethod">
@@ -84,10 +84,7 @@ export default {
           {
             validator: (field, value, callback) => {
               let msg = '';
-              if (value) {
-                if (value.length > 40) msg = '课程标题不能超过40个字符';
-                else if (+value == value) msg = '课程标题不能是纯数字';
-              }
+              if (value && +value == value) msg = '课程标题不能是纯数字';
               callback(msg);
             }
           }
