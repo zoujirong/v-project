@@ -66,6 +66,7 @@ let CHAPTER_FLAG = {
 };
 export default {
   data() {
+    let self = this;
     return {
       loading: false,
       timeFormat: '{y}-{m}-{d} {h}:{i}',
@@ -83,7 +84,10 @@ export default {
         {
           validator(field, value, callback) {
             let msg;
-            if (parseInt(value) != value) msg = '课时数量必须是整数';
+            let num = parseInt(value);
+            if (num != value) msg = '课时数量必须是整数';
+            else if (num < self.form.chapter.length)
+              msg = '课时数量不能小于课时总条数';
             callback(msg);
           }
         }
