@@ -28,7 +28,7 @@
         <el-table-column label="视频ID" min-width="200">
           <template slot-scope="{row, $index: index}">
             <el-form-item :rules="[{required: !isLiving, message: '不能为空'}]" :prop="'chapter['+index+'].playUrl'">
-              <el-input v-model.trim="row.playUrl"></el-input>
+              <el-input v-model.trim="row.playUrl" :maxlength="40"></el-input>
             </el-form-item>
           </template>
         </el-table-column>
@@ -216,7 +216,7 @@ export default {
     async submit() {
       let chapter = this.form.chapter;
       if (chapter.length === 0) {
-        this.$message.error('请先添加课时信息');
+        this.$router.push({ name: 'courseList' });
         return;
       }
       let form = this.$refs.editChapter;
