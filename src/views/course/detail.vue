@@ -83,7 +83,7 @@ export default {
           { required: true, message: '请填写课程标题！' },
           {
             validator: (field, value, callback) => {
-              let msg = '';
+              let msg;
               if (value && +value == value) msg = '课程标题不能是纯数字';
               callback(msg);
             }
