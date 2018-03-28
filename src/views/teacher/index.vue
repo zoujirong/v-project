@@ -26,7 +26,7 @@
           <el-input placeholder=" " :maxlength="10" clearable size="small " v-model.trim="editPopup.teacherName"></el-input>
         </el-form-item>
         <el-form-item label="讲师简介：">
-          <el-input type="textarea" width="100" :maxlength="50" placeholder="请输入内容 " v-model.trim="editPopup.teacherIntro">
+          <el-input type="textarea" :maxlength="50" placeholder="请输入内容 " v-model.trim="editPopup.teacherIntro">
           </el-input>
         </el-form-item>
         <el-form-item label="讲师照片：">
@@ -45,7 +45,7 @@
           <el-input placeholder="请输入老师姓名" :maxlength="10" clearable size="small " v-model.trim="Parameter1.teacherName"></el-input>
         </el-form-item>
         <el-form-item prop='teacherIntro' label="讲师简介:">
-          <el-input type="textarea " width="100" :maxlength="50" placeholder="请输入内容 " v-model.trim="Parameter1.teacherIntro">
+          <el-input type="textarea" class="el-textarea" width="100" :maxlength="50" placeholder="请输入内容 " v-model.trim="Parameter1.teacherIntro">
           </el-input>
         </el-form-item>
         <el-form-item label="讲师照片:">
