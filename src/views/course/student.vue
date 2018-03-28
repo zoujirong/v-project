@@ -20,6 +20,9 @@
         total: total,
         pageSize: searchParam.pageSize
       }" @change="onTableChange">
+      <template slot="marketWay" slot-scope="{row}">
+        <span>{{row.marketWay == 1 ? '手机验证送课' : '无营销'}}</span>
+      </template>
       <template slot="lastLoginTime" slot-scope="{row}">
         <span>{{row.lastLoginTime | parseTime(showTimeFormat)}}</span>
       </template>
@@ -72,7 +75,7 @@ export default {
         { title: '用户ID', key: 'uid' },
         { title: '微信昵称', key: 'userNick' },
         { title: '手机号码', key: 'userPhone' },
-        { title: '营销方式', key: 'marketWay' }, //0无营销，1手机验证送课
+        { title: '营销方式', slot: 'marketWay' }, //0无营销，1手机验证送课
         {
           title: '最近登陆时间',
           key: 'lastLoginTime',

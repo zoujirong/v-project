@@ -4,8 +4,6 @@
       <el-button type="success" @click="dialogTableVisible = true">新增类目</el-button>
     </div>
     <TablePager :data="list" :pagination="{currentPage:Parameter.pageNo,pageSize:Parameter.pageSize,total:total}" :columns="columns1" @change="onTableChange">
-      <!-- <template slot="categoryName" slot-scope="{row,index}">
-      </template> -->
       <template slot="handle" slot-scope="{row,index}">
         <el-button @click="jump('getCategoryList',row.categoryId)" type='text' v-if='index==0'>编辑课程</el-button>
         <el-button type='text' v-else @click="editCategory(index,row)">编辑类目名称</el-button>
@@ -68,7 +66,7 @@ export default {
       },
       columns1: [
         { title: '类目ID', key: 'categoryId' },
-        { title: '类目名称', slot: 'categoryName' },
+        { title: '类目名称', key: 'categoryName' },
         { title: '操作管理', slot: 'handle' }
       ],
       categoryId: '',
@@ -107,8 +105,10 @@ export default {
         let { data, total } = res.data;
         this.list = data;
         this.total = total;
-        this.list = this.list.sort(i => {
-          return !i.isDel ? -1 : 0;
+        this.list = this.list.sort((a, b) => {
+          if (!a.isDel) return -1;
+          else if (!b.isDel) return 1;
+          else return 0;
         });
       });
     },
@@ -131,16 +131,15 @@ export default {
       this.getList();
     },
     //删除类目
-    del(index, categoryId) {
-      CategoryDel({ categoryId: categoryId }).then(res => {
-        this.getList();
-      });
+    async del(index, categoryId) {
+      await CategoryDel({ categoryId: categoryId });
       this.$notify({
         title: '成功',
         message: '删除成功',
         type: 'success',
         duration: 2000
       });
+      this.getList();
     },
     //编辑类目
     editCategory(index, row) {
