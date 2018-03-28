@@ -118,7 +118,12 @@ export default {
       tableData: [],
       rules: {
         bannerTitle: [
-          { required: true, message: '请输入推荐位名称', trigger: 'blur' }
+          {
+            required: true,
+            message: '请输入推荐位名称(20个字符以内)',
+            trigger: 'blur',
+            max: 20
+          }
         ],
         bannerCover: [
           { required: true, message: '请上传图片', type: 'string' }
