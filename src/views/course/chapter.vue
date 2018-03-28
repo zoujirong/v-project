@@ -1,8 +1,9 @@
 <template>
   <el-form class="app-container chapter-container" ref="editChapter" :model="form">
     <template v-if="!isLiving">
-      <el-form-item label="课时数量" prop="chapterNum" :inline-message="true" :rules="[{required: true, message: '不能为空'}]">
-        <el-input class="short-input" placeholder="该课程的总共课时数量" v-model.trim="form.chapterNum"></el-input>
+      <el-form-item label="课时数量" prop="chapterNum" :inline-message="true" :rules="chapterNumValidate">
+        <el-input-number controls-position="right" :min="0" v-model="form.chapterNum"></el-input-number>
+        <!-- <el-input class="short-input" placeholder="该课程的总共课时数量" v-model.number.trim="form.chapterNum"></el-input> -->
       </el-form-item>
     </template>
 
@@ -26,7 +27,7 @@
       <el-table-column label="视频ID" min-width="200">
         <template slot-scope="{row, $index: index}">
           <el-form-item :rules="[{required: !isLiving, message: '不能为空'}]" :prop="'chapter['+index+'].playUrl'">
-            <el-input v-model.trim="row.playUrl" :disabled="row.disabled"></el-input>
+            <el-input v-model.trim="row.playUrl"></el-input>
           </el-form-item>
         </template>
       </el-table-column>
@@ -76,7 +77,17 @@ export default {
         chapter: []
       },
       prevTimeByIndex: '',
-      nexrTimeByIndex: ''
+      nexrTimeByIndex: '',
+      chapterNumValidate: [
+        { required: true, message: '不能为空' },
+        {
+          validator(field, value, callback) {
+            let msg;
+            if (parseInt(value) != value) msg = '课时数量必须是整数';
+            callback(msg);
+          }
+        }
+      ]
     };
   },
   components: { TablePager },
