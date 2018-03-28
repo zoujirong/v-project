@@ -131,16 +131,15 @@ export default {
       this.getList();
     },
     //删除类目
-    del(index, categoryId) {
-      CategoryDel({ categoryId: categoryId }).then(res => {
-        this.getList();
-      });
+    async del(index, categoryId) {
+      await CategoryDel({ categoryId: categoryId });
       this.$notify({
         title: '成功',
         message: '删除成功',
         type: 'success',
         duration: 2000
       });
+      this.getList();
     },
     //编辑类目
     editCategory(index, row) {
