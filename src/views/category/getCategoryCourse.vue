@@ -12,7 +12,7 @@
       <el-button type="primary" @click='editSort' v-if='EditSort'>编辑排序</el-button>
       <el-button type="success" @click='saveEditSort' v-else>保存</el-button>
     </el-form>
-    <TablePager :data='courses' :columns="columns2" :pagination="false" row-key="courseId">
+    <TablePager :data='courses' :columns="columns2" :pagination="false" row-key="courseId" :loading="listLoading">
       <template slot='position' slot-scope='{row,index}'>
         <span>{{index+1}}</span>
       </template>
@@ -20,7 +20,7 @@
         <svg-icon class='drag-handler' icon-class="drag" style="color:#409EFF"></svg-icon>
       </template>
       <template slot="handle" slot-scope="{row,index}">
-        <el-button type="text" @click="delCourse(row.courseId)"> 取消推荐</el-button>
+        <el-button type="text" @click="delCourse(row.courseId, index)"> 取消推荐</el-button>
       </template>
     </TablePager>
   </div>
@@ -71,14 +71,13 @@ export default {
       oldIndex: '',
       newIndex: '',
       sortCourse: [],
-      SortList: {},
-      weight: ''
+      SortList: {}
     };
   },
   components: { TablePager },
   created() {
     this.getList();
-    this.drag();
+
     console.log(this);
   },
   computed: {
@@ -108,19 +107,30 @@ export default {
     },
     //编辑排序
     editSort() {
+      this.drag();
       this.columns2.splice(3, 0, { title: '排序', slot: 'sort' });
       this.EditSort = !this.EditSort;
     },
     //保存排序
-    saveEditSort() {
+    async saveEditSort() {
       this.columns2.splice(3, 1);
-
-      sortCategoryCourse({
+      let sort = Object.keys(this.SortList)
+        .map(item => ({
+          courseId: item,
+          weight: this.SortList[item]
+        }))
+        .filter(item => {
+          return +item.weight == item.weight;
+        });
+      this.listLoading = true;
+      await sortCategoryCourse({
         categoryId: this.CategoryId,
-        courseSort: JSON.stringify(this.sortCourse)
-      }).then(res => {
-        this.getList();
+        courseSort: JSON.stringify(sort)
+      }).finally(res => {
+        this.listLoading = false;
       });
+
+      this.getList();
       this.EditSort = !this.EditSort;
     },
     //拖拽
@@ -149,30 +159,36 @@ export default {
 
           if (this.oldIndex !== this.newIndex) {
             let key = this.courses[this.newIndex].courseId;
-            this.weight = calcuWeight(this.courses, this.newIndex);
-            this.SortList[key] = this.weight;
-            this.sortCourse = Object.keys(this.SortList).map(item => ({
+            let weight = calcuWeight(this.courses, this.newIndex);
+            this.SortList[key] = weight;
+            this.courses[this.newIndex].weight = weight;
+            /* this.sortCourse = Object.keys(this.SortList).map(item => ({
               courseId: item,
               weight: this.SortList[item]
-            }));
-            console.log(this.sortCourse);
+            })); */
           }
         }
       });
     },
     //取消推荐课程
-    async delCourse(courseId) {
+    async delCourse(courseId, index) {
       await updateCourseRecommend({
         courseId: courseId,
         isRecommend: 0
       });
-      this.getList();
-      this.$notify({
-        title: '成功',
-        message: '取消成功',
-        type: 'success',
-        duration: 2000
-      });
+      if (this.EditSort) {
+        //非编辑状态
+        this.getList();
+        this.$notify({
+          title: '成功',
+          message: '取消成功',
+          type: 'success',
+          duration: 2000
+        });
+      } else {
+        this.courses.splice(index, 1);
+        this.SortList[courseId] = null;
+      }
     }
   }
 };

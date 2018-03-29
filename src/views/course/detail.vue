@@ -17,7 +17,7 @@
         <span class="form-tips" v-if="categoryList.length === 0">暂无类目，请先去添加相应类目吧！</span>
       </el-form-item>
       <el-form-item label="潭州课堂ID" prop="tzCourseId">
-        <el-input placeholder="填写潭州课程的课程ID（数字）" v-model.trim="course.tzCourseId"></el-input>
+        <el-input placeholder="填写潭州课程的课程ID（数字）" :maxlength="12" v-model.trim="course.tzCourseId"></el-input>
         <span class="form-tips">提示：录播课程不必填写课程id</span>
       </el-form-item>
       <el-form-item label="主讲老师" prop="mainTeacher" :rules="[{required: true,message: '请选择主讲老师！'}]">
@@ -36,7 +36,7 @@
         <span class="form-tips">要求：建议图片宽度为**像素，高度不超过**像素</span>
       </el-form-item>
       <el-form-item label="课程价格" prop="coursePrice">
-        <el-input-number controls-position="right" :min="0.00" :step="0.01" v-model="course.coursePrice"></el-input-number>
+        <el-input-number controls-position="right" :min="0.00" :max="999999" :step="0.01" v-model="course.coursePrice"></el-input-number>
         <span class="form-tips">要求：价格精确到小数点后两位，填写0.00即为免费课程</span>
       </el-form-item>
       <el-form-item label="客服微信" prop="customerWx" :rules="[{required: true, message: '请填写客服微信！'}]">

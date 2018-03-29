@@ -5,16 +5,16 @@
     </div>
     <TablePager :data="list" :pagination="{currentPage:Parameter.pageNo,pageSize:Parameter.pageSize,total:total}" :columns="columns1" @change="onTableChange">
       <template slot="handle" slot-scope="{row,index}">
-        <el-button @click="jump('getCategoryList',row.categoryId)" type='text' v-if='index==0'>编辑课程</el-button>
+        <el-button @click="jump('getCategoryList',row.categoryId)" type='text' v-if='row.isDel==false'>编辑课程</el-button>
         <el-button type='text' v-else @click="editCategory(index,row)">编辑类目名称</el-button>
         &nbsp;&nbsp;&nbsp;
-        <el-button type='text' @click="del(index,row.categoryId)" v-if='index!=0'>删除</el-button>
+        <el-button type='text' @click="del(index,row.categoryId)" v-if='row.isDel==true'>删除</el-button>
       </template>
     </TablePager>
 
     <!-- 新增类目弹窗 -->
-    <el-dialog title="新增类目" :visible.sync="dialogTableVisible" width='35%' @close="resetForm('dataForm')" :close-on-click-modal="false">
-      <el-form :rules="rules" ref='dataForm' :model="categoryParam" :inline-message="true">
+    <el-dialog title="新增类目" :visible.sync="dialogTableVisible" width='35%' @close="resetForm('dataForm1')" :close-on-click-modal="false">
+      <el-form :rules="rules" ref='dataForm1' :model="categoryParam" :inline-message="true">
         <el-form-item label="类目名称：" prop="categoryName">
           <el-input placeholder="" :maxlength="5" clearable size="small" v-model.trim="categoryParam.categoryName"></el-input>
         </el-form-item>
@@ -27,9 +27,9 @@
     <el-dialog title="编辑类目名称" :visible.sync="dialogTableVisible2" width='35%' :close-on-click-modal="false" @close="resetForm('dataForm')">
       <el-form ref='dataForm' :inline-message="true" :model="editName" :rules="rules1">
         <el-form-item label="类目名称：" prop="name">
-          <el-input placeholder="" :maxlength="5" clearable size="small " v-model.trim="editName.name"></el-input>
+          <el-input placeholder="" :maxlength="5" clearable size="small" v-model.trim="editName.name"></el-input>
         </el-form-item>
-        <el-button type="primary" @click="hold()">保存</el-button>&nbsp;&nbsp;
+        <el-button type="primary" @click="hold">保存</el-button>&nbsp;&nbsp;
         <el-button @click="dialogTableVisible2 = false">返回</el-button>
       </el-form>
     </el-dialog>
@@ -51,6 +51,7 @@ export default {
       listLoading: true,
       list: [],
       editName: {
+        categoryId: '',
         name: ''
       },
       reviseName: '',
@@ -117,11 +118,6 @@ export default {
         let { data, total } = res.data;
         this.list = data;
         this.total = total;
-        this.list = this.list.sort((a, b) => {
-          if (!a.isDel) return -1;
-          else if (!b.isDel) return 1;
-          else return 0;
-        });
       });
     },
     resetTemp() {
@@ -133,15 +129,14 @@ export default {
     //新增类目
     async updateData() {
       this.listLoading = true;
-      let form = this.$refs.dataForm;
-      let res = await form.validate().then(res => {
-        if (!res) return Promise.reject({ msg: '信息填写有误' });
-        categoryAdd({ categoryName: this.categoryParam.categoryName });
-        this.listLoading = false;
-        this.dialogTableVisible = false;
-        this.resetTemp();
-        this.getList();
-      });
+      let form = this.$refs.dataForm1;
+      let res = await form.validate();
+      if (!res) return Promise.reject({ msg: '信息填写有误' });
+      await categoryAdd({ categoryName: this.categoryParam.categoryName });
+      this.listLoading = false;
+      this.getList();
+      this.resetTemp();
+      this.dialogTableVisible = false;
     },
     //删除类目
     async del(index, categoryId) {
@@ -164,16 +159,15 @@ export default {
     //保存
     async hold() {
       let form = this.$refs.dataForm;
-      let res = await form.validate().then(res => {
-        if (!res) return Promise.reject({ msg: '信息填写有误' });
-        this.categoryParam = {
-          categoryId: this.categoryId,
-          categoryName: this.editName.name
-        };
-        categoryRevise(this.categoryParam);
-        this.getList();
-        this.dialogTableVisible2 = false;
-      });
+      let res = await form.validate();
+      if (!res) throw { status: -1, msg: '信息填写有误' };
+      this.editName = {
+        categoryId: this.categoryId,
+        categoryName: this.editName.name
+      };
+      let ret = await categoryRevise(this.editName);
+      this.getList();
+      this.dialogTableVisible2 = false;
     }
   }
 };

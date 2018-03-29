@@ -184,6 +184,10 @@ export default {
       let form = this.$refs.searchForm;
       form.resetFields();
       this.loginTime = [];
+      Object.assign(this.searchParam, {
+        lastLoginStartTime: '',
+        lastLoginEndTime: ''
+      });
       this.getList();
     }
   }
