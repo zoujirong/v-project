@@ -5,10 +5,10 @@
     </div>
     <TablePager :data="list" :pagination="{currentPage:Parameter.pageNo,pageSize:Parameter.pageSize,total:total}" :columns="columns1" @change="onTableChange">
       <template slot="handle" slot-scope="{row,index}">
-        <el-button @click="jump('getCategoryList',row.categoryId)" type='text' v-if='index==0'>编辑课程</el-button>
+        <el-button @click="jump('getCategoryList',row.categoryId)" type='text' v-if='row.isDel==false'>编辑课程</el-button>
         <el-button type='text' v-else @click="editCategory(index,row)">编辑类目名称</el-button>
         &nbsp;&nbsp;&nbsp;
-        <el-button type='text' @click="del(index,row.categoryId)" v-if='index!=0'>删除</el-button>
+        <el-button type='text' @click="del(index,row.categoryId)" v-if='row.isDel==true'>删除</el-button>
       </template>
     </TablePager>
 
