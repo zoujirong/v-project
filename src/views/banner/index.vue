@@ -118,7 +118,12 @@ export default {
       tableData: [],
       rules: {
         bannerTitle: [
-          { required: true, message: '请输入推荐位名称', trigger: 'blur' }
+          {
+            required: true,
+            message: '请输入推荐位名称(20个字符以内)',
+            trigger: 'blur',
+            max: 20
+          }
         ],
         bannerCover: [
           { required: true, message: '请上传图片', type: 'string' }
@@ -176,12 +181,12 @@ export default {
                 });
               }
               this.getBannerList();
+              this.addShow = false;
             })
             .catch(res => {
               this.$message.error(res.msg);
               console.log(res);
             });
-          this.addShow = false;
         } else {
           return false;
         }
@@ -198,7 +203,6 @@ export default {
         .then(res => {
           this.loading = false;
           this.tableData = res.data.data;
-          console.log(this.tableData);
         })
         .catch(res => {
           this.loading = false;
@@ -208,7 +212,6 @@ export default {
     //编辑banner信息
     editBanner(index) {
       this.type = 2;
-      console.log(this.type);
       this.addShow = true;
       this.$nextTick(() => {
         this.banner = { ...this.startDate[index] };
@@ -245,7 +248,6 @@ export default {
     },
     resetForm(form) {
       this.$refs[form].resetFields();
-      console.log(this.banner);
     },
     //上下移banner
     up(index) {
@@ -259,7 +261,6 @@ export default {
         bannerId: this.tableData[index - 1].id,
         weight: calcuWeight(this.tableData, index - 1)
       };
-      console.log(banners.weight);
       getSetBannerSort({ banners: JSON.stringify([banners]) })
         .then(res => {})
         .catch(res => {
@@ -272,12 +273,6 @@ export default {
       var curr = options.slice(index, index + 2).reverse();
       var tail = options.slice(index + 2);
       this.tableData = prev.concat(curr).concat(tail);
-      let arr = this.tableData.map(res => {
-        return res.weight;
-      });
-      let w = calcuWeight(this.tableData, index + 1);
-      console.log(w);
-      console.log(arr);
       let banners = {
         bannerId: this.tableData[index + 1].id,
         weight: calcuWeight(this.tableData, index + 1)
@@ -294,7 +289,6 @@ export default {
       this.picVisible = true;
     },
     onUploadCover(urls) {
-      console.log(urls);
       this.banner.bannerCover = urls[0];
     }
   },
