@@ -14,7 +14,7 @@
       <el-button type="primary" @click='getUserApplyCourse'>查询</el-button>&nbsp;&nbsp;
       <el-button @click='resetCheck'>重置</el-button>
     </el-form>
-    <TablePager :data='data' :pagination="{currentPage:this.pagination1.pageNo,pageSize:this.pagination1.pageSize,total:total}" :columns="columns1" :loading="listLoading" @change="onTableChange">
+    <TablePager :data='data' :pagination="{currentPage:checkParam.pageNo,pageSize:checkParam.pageSize,total:total}" :columns="columns1" :loading="listLoading" @change="onTableChange">
       <template slot-scope="{row,index}" slot="numberId">
         <span>{{index+1}}</span>
       </template>
@@ -36,10 +36,6 @@ export default {
       checkParam: {
         courseParam: '',
         presentWay: '',
-        pageNo: 1,
-        pageSize: 10
-      },
-      pagination1: {
         pageNo: 1,
         pageSize: 10
       },
@@ -84,6 +80,7 @@ export default {
       let form = this.$refs.checkForm;
       form.resetFields();
       this.$emit('close', false);
+      this.checkParam.pageNo = 1;
     },
     //重置查看课程列表
     resetCheck() {
@@ -94,10 +91,10 @@ export default {
     //切换分页
     onTableChange({ pagination }) {
       let {
-        page: pageNo = this.pagination1.pageNo,
-        pageSize = this.pagination1.pageSize
+        page: pageNo = this.checkParam.pageNo,
+        pageSize = this.checkParam.pageSize
       } = pagination;
-      Object.assign(this.pagination1, {
+      Object.assign(this.checkParam, {
         pageNo,
         pageSize
       });

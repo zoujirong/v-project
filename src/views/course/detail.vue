@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-form ref="editForm" label-suffix="：" label-width="150px" :model="course" :rules="rules" :inline-message="true">
       <el-form-item label="课程标题" prop="title">
-        <el-input v-model.trim="course.title" class="short-input"></el-input>
+        <el-input v-model.trim="course.title" class="short-input" :maxlength="40"></el-input>
       </el-form-item>
       <el-form-item label="课程类型" prop="teachingMethod" required>
         <el-radio-group v-model="course.teachingMethod" @change="changeMethod">
@@ -17,7 +17,7 @@
         <span class="form-tips" v-if="categoryList.length === 0">暂无类目，请先去添加相应类目吧！</span>
       </el-form-item>
       <el-form-item label="潭州课堂ID" prop="tzCourseId" :rules="[{required: course.teachingMethod === 0,message: '潭州课程ID不能为空'}]">
-        <el-input placeholder="填写潭州课程的课程ID（数字）" v-model.trim="course.tzCourseId"></el-input>
+        <el-input placeholder="填写潭州课程的课程ID（数字）" v-model.number.trim="course.tzCourseId"></el-input>
         <span class="form-tips">提示：录播课程不必填写课程id</span>
       </el-form-item>
       <el-form-item label="主讲老师" prop="mainTeacher" :rules="[{required: true,message: '请选择主讲老师！'}]">
@@ -83,11 +83,8 @@ export default {
           { required: true, message: '请填写课程标题！' },
           {
             validator: (field, value, callback) => {
-              let msg = '';
-              if (value) {
-                if (value.length > 40) msg = '课程标题不能超过40个字符';
-                else if (+value == value) msg = '课程标题不能是纯数字';
-              }
+              let msg;
+              if (value && +value == value) msg = '课程标题不能是纯数字';
               callback(msg);
             }
           }

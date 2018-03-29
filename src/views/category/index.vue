@@ -16,7 +16,7 @@
     <el-dialog title="新增类目" :visible.sync="dialogTableVisible" width='35%' ref='dataForm'>
       <div class=''>
         类目名称：
-        <el-input v-model.trim="categoryParam.categoryName" placeholder="" clearable size="small"></el-input>
+        <el-input v-model.trim="categoryParam.categoryName" placeholder="" clearable size="small" :maxlength="5"></el-input>
         <br><br>
         <el-button type="primary" @click="updateData">保存</el-button>&nbsp;&nbsp;
         <el-button @click="dialogTableVisible = false">返回</el-button>
@@ -102,10 +102,14 @@ export default {
       this.listLoading = true;
       listCategory(this.Parameter).then(res => {
         this.listLoading = false;
-
         let { data, total } = res.data;
         this.list = data;
         this.total = total;
+        this.list = this.list.sort((a, b) => {
+          if (!a.isDel) return -1;
+          else if (!b.isDel) return 1;
+          else return 0;
+        });
       });
     },
     resetTemp() {
@@ -127,16 +131,15 @@ export default {
       this.getList();
     },
     //删除类目
-    del(index, categoryId) {
-      CategoryDel({ categoryId: categoryId }).then(res => {
-        this.getList();
-      });
+    async del(index, categoryId) {
+      await CategoryDel({ categoryId: categoryId });
       this.$notify({
         title: '成功',
         message: '删除成功',
         type: 'success',
         duration: 2000
       });
+      this.getList();
     },
     //编辑类目
     editCategory(index, row) {

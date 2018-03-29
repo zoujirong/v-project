@@ -2,7 +2,7 @@
   <div class="app-container calendar-list-container">
     <el-form inline>
       <el-form-item label="讲师：">
-        <el-input placeholder="输入老师名称" ref="teacherName" prop="teacherName" clearable size="small" v-model.trim="pagination.teacherName">
+        <el-input placeholder="输入老师名称" :maxlength="10" ref="teacherName" prop="teacherName" clearable size="small" v-model.trim="pagination.teacherName">
         </el-input>
       </el-form-item>
       <el-button type="primary" @click="getteacherList">查询</el-button>
@@ -23,10 +23,10 @@
     <el-dialog title="新增讲师" width='35%' :visible.sync="dialogTableVisible">
       <el-form>
         <el-form-item label="讲师名称：">
-          <el-input placeholder=" " clearable size="small " v-model.trim="editPopup.teacherName"></el-input>
+          <el-input placeholder=" " :maxlength="10" clearable size="small " v-model.trim="editPopup.teacherName"></el-input>
         </el-form-item>
         <el-form-item label="讲师简介：">
-          <el-input type="textarea" width="100" placeholder="请输入内容 " v-model.trim="editPopup.teacherIntro">
+          <el-input type="textarea" :maxlength="50" placeholder="请输入内容 " v-model.trim="editPopup.teacherIntro">
           </el-input>
         </el-form-item>
         <el-form-item label="讲师照片：">
@@ -42,14 +42,14 @@
     <el-dialog title="编辑讲师" width='35%' :visible.sync="dialogTableVisible2">
       <el-form action="" ref='dataForm' @close="resetForm('dataForm')" :model="Parameter1">
         <el-form-item prop='teacherName' label="讲师名称：">
-          <el-input placeholder="请输入老师姓名" clearable size="small " v-model.trim="Parameter1.teacherName"></el-input>
+          <el-input placeholder="请输入老师姓名" :maxlength="10" clearable size="small " v-model.trim="Parameter1.teacherName"></el-input>
         </el-form-item>
         <el-form-item prop='teacherIntro' label="讲师简介:">
-          <el-input type="textarea " :rows="2" placeholder="请输入内容 " v-model.trim="Parameter1.teacherIntro">
+          <el-input type="textarea" class="el-textarea" width="100" :maxlength="50" placeholder="请输入内容 " v-model.trim="Parameter1.teacherIntro">
           </el-input>
         </el-form-item>
-        <el-form-item prop='teacherIcon' label="讲师照片:">
-          <upload-image class="upload-demo " size="small" :limit="1" :fileList="Parameter1.teacherIcon ? [{url: Parameter1.teacherIcon}] : []" @onSuccess="onUploadIcon" type="primary "></upload-image>
+        <el-form-item label="讲师照片:">
+          <upload-image class="upload-demo " size="small" :limit="1" :fileList="Parameter1.teacherIcon ? [{url: Parameter1.teacherIcon}] : []" @onSuccess="onUploadIcon1" type="primary "></upload-image>
           <div slot="tip " class="el-upload__tip ">只能上传jpg/png文件，且不超过500kb</div>
         </el-form-item>
         <el-button type="primary " @click="hold">保存</el-button>&nbsp;&nbsp;
@@ -71,11 +71,6 @@ export default {
       dialogTableVisible: false,
       dialogTableVisible2: false,
       textarea: '',
-      editPopup: {
-        teacherName: '',
-        teacherIntro: '',
-        teacherIcon: ''
-      },
       pagination: {
         teacherName: '',
         pageNo: 1,
@@ -90,8 +85,13 @@ export default {
         { title: '管理操作', slot: 'operation' }
       ],
       data: [],
+      editPopup: {
+        teacherName: '',
+        teacherIntro: '',
+        teacherIcon: ''
+      },
       Parameter1: {
-        teacherId: '',
+        // teacherId: '',
         teacherName: '',
         teacherIntro: '',
         teacherIcon: ''
@@ -166,14 +166,20 @@ export default {
     //编辑保存
     async hold() {
       Object.assign(this.Parameter, this.Parameter1);
-      console.log(this.Parameter);
+      // console.log(this.Parameter);
       await teacherEdit(this.Parameter);
       this.dialogTableVisible2 = false;
       this.getteacherList();
     },
+    //监听新增图片上传
     onUploadIcon(urls) {
-      console.log('老师头像', urls);
-      this.editPopup.teacherIcon = urls[0];
+      // console.log('老师头像', urls);
+      this.editPopup.teacherIcon = urls[0] || '';
+    },
+    //监听编辑新增图片上传
+    onUploadIcon1(urls) {
+      // console.log('老师头像', urls);
+      this.Parameter1.teacherIcon = urls[0] || '';
     },
     onChange({ pagination }) {
       let {

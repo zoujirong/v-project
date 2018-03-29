@@ -58,7 +58,7 @@
       <el-table class="text-center" :data="marketingList" border>
         <el-table-column label="选择">
           <template slot-scope="{row}">
-            <el-radio :label="row.marketWayId" v-model="marketingWay">{{''}}</el-radio>
+            <el-checkbox :label="row.marketWayId" v-model="marketingWay">{{''}}</el-checkbox>
           </template>
         </el-table-column>
         <el-table-column label="营销方式名称" prop="marketWayName"></el-table-column>
@@ -79,7 +79,11 @@ import {
   updateCourseRecommend
 } from '@/api/course';
 import { listCategory } from '@/api/category';
-import { getMarketWay, setCourseMarketWay } from '@/api/market';
+import {
+  getMarketWay,
+  setCourseMarketWay,
+  getCancelCourseMarketWay
+} from '@/api/market';
 export default {
   data() {
     return {
@@ -88,7 +92,7 @@ export default {
       categoryList: [],
       marketingList: [],
       choosedRow: {},
-      marketingWay: '', //设置营销方式时选择的参数
+      marketingWay: [], //设置营销方式时选择的参数
       searchParam: {
         courseParam: '',
         categoryId: '',
@@ -157,7 +161,7 @@ export default {
     },
     setMarketing(row) {
       this.choosedRow = row;
-      this.marketingWay = row.marketWayId;
+      row.marketWayId && (this.marketingWay = [row.marketWayId]);
       this.marketingList.length === 0 && this.getMarketing();
       this.marketing = true;
     },
@@ -245,16 +249,17 @@ export default {
       });
     },
     async updateMarkting() {
-      if (this.marketingWay == this.choosedRow.marketWayId) {
+      let marketWay = this.marketingWay[0];
+      if (marketWay == this.choosedRow.marketWayId) {
         this.marketing = false;
         return;
       }
-      await setCourseMarketWay({
+      await (marketWay ? setCourseMarketWay : getCancelCourseMarketWay)({
         courseId: this.choosedRow.courseId,
-        marketingWay: this.marketingWay
+        marketingWay: marketWay || this.choosedRow.marketWayId
       });
-      this.$message.success('营销方式设置成功');
-      this.choosedRow.marketWayId = this.marketingWay;
+      this.$message.success('营销方式修改成功');
+      this.choosedRow.marketWayId = marketWay;
       this.marketing = false;
     }
   },

@@ -57,7 +57,7 @@ export default {
         lastLoginStartTime: '',
         lastLoginEndTime: '',
         pageNo: 1,
-        pageSize: 3
+        pageSize: 10
       },
       options: [
         {

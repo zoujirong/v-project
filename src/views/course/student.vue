@@ -20,6 +20,9 @@
         total: total,
         pageSize: searchParam.pageSize
       }" @change="onTableChange">
+      <template slot="marketWay" slot-scope="{row}">
+        <span>{{row.marketWay == 1 ? '手机验证送课' : '无营销'}}</span>
+      </template>
       <template slot="lastLoginTime" slot-scope="{row}">
         <span>{{row.lastLoginTime | parseTime(showTimeFormat)}}</span>
       </template>
@@ -40,9 +43,9 @@ import CheckApplyCourse from '@/views/member/checkApplyCourse';
 import { parseTime } from '@/filters';
 import { getCourseStudent } from '@/api/course';
 const sortMap = {
-  'lastLoginTime-0': 0, //降序
+  'lastLoginTime-0': 2, //降序
   'lastLoginTime-1': 1, //升序
-  'courseApplyTime-0': 2, //降序
+  'courseApplyTime-0': 4, //降序
   'courseApplyTime-1': 3 //升序
 };
 export default {
@@ -72,7 +75,7 @@ export default {
         { title: '用户ID', key: 'uid' },
         { title: '微信昵称', key: 'userNick' },
         { title: '手机号码', key: 'userPhone' },
-        { title: '营销方式', key: 'marketWay' }, //0无营销，1手机验证送课
+        { title: '营销方式', slot: 'marketWay' }, //0无营销，1手机验证送课
         {
           title: '最近登陆时间',
           key: 'lastLoginTime',

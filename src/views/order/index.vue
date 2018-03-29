@@ -17,9 +17,14 @@
       <el-button @click="reset">重置</el-button>
     </el-form>
 
-    <TablePager :data="data" :columns="columns" :loading="loading" :pagination="pagination" @change="onChange">
-
-      <template slot="marketWay" slot-scope="{row}">
+    <TablePager :data="data" :columns="columns" :loading="loading" :pagination="{currentPage: pagination.pageNo,
+      pageSize: pagination.pageSize,
+      total: total}" @change="onChange ">
+      <template slot='payTime' slot-scope="{row}">
+        <span>{{ row.payTime | parseTime(showTimeFormat)}}</span>
+      </template>
+      <template slot="marketWay" slot-scope="{row} ">
+        <!--    row.marketWay-->
         <span>{{row.marketWay == 0 ? '直接购买' : '手机验证'}}</span>
       </template>
 
@@ -30,10 +35,13 @@
 <script>
 import TablePager from '@/components/TablePager';
 import { orderList } from '@/api/order';
+import parseTime from '@/utils/index.js';
 export default {
   data() {
     return {
+      payTime: '',
       loading: false,
+      showTimeFormat: '{y}-{m}-{d} {h}:{i}',
       searchParam: {
         courseName: '',
         nick: '',
@@ -53,14 +61,16 @@ export default {
         { title: '实际支付金额', key: 'paidAmount' },
         { title: '订单支付方式', slot: 'marketWay' },
         { title: '订单报名用户', key: 'userNick' },
-        { title: '订单支付时间', key: 'payTime' }
+        { title: '订单支付时间', slot: 'payTime' }
       ],
-      data: []
+      data: [],
+      timePay: []
     };
   },
   components: {
     TablePager
   },
+  computed: {},
   methods: {
     async getList() {
       this.loading = true;
