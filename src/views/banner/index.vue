@@ -37,7 +37,7 @@
       <img :src="tableData[picSrc].bannerCover" alt="">
     </el-dialog>
     <!-- 弹窗部分 -->
-    <el-dialog :visible.sync="addShow" width="35%" center @close="resetForm('banner')">
+    <el-dialog :visible.sync="addShow" width="35%" center @close="resetForm('banner')" :close-on-click-modal=false>
       <div class="bannerform">
         <el-form :model="banner" :rules="rules" ref="banner" label-width="140px" class="demo-ruleForm">
           <el-form-item label="推荐位名称" prop='bannerTitle'>
@@ -129,7 +129,20 @@ export default {
           { required: true, message: '请上传图片', type: 'string' }
         ],
         courseId: [
-          { required: true, message: '请输入课程id', trigger: 'blur' }
+          {
+            required: true,
+            message: '请填写正确的潭州课程ID',
+            trigger: 'blur'
+          },
+          {
+            validator: (field, value, callback) => {
+              let msg;
+              if (parseInt(value) != value) {
+                msg = '请填写正确的潭州课程ID';
+              }
+              callback(msg);
+            }
+          }
         ],
         startTime: [
           { required: true, message: '请选择开始时间', trigger: 'blur' }
