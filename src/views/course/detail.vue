@@ -29,11 +29,11 @@
       </el-form-item>
       <el-form-item label="课程封面" prop="courseCover" :rules="[{required: true,message: '请上传课程封面！'}]">
         <upload-image :limit="1" :fileList="course.courseCover ? [{url: course.courseCover}] : []" @onSuccess="onUploadCover"></upload-image>
-        <span class="form-tips">要求：图片宽高像素分别为 X * Y</span>
+        <!-- <span class="form-tips">要求：图片宽高像素分别为 X * Y</span> -->
       </el-form-item>
       <el-form-item label="课程介绍" prop="courseDesc" :rules="[{required: true,message: '请上传课程介绍！'}]">
         <upload-image :limit="1" :fileList="course.courseDesc ? [{url: course.courseDesc}] : []" @onSuccess="onUploadDetail"></upload-image>
-        <span class="form-tips">要求：建议图片宽度为**像素，高度不超过**像素</span>
+        <!-- <span class="form-tips">要求：建议图片宽度为**像素，高度不超过**像素</span> -->
       </el-form-item>
       <el-form-item label="课程价格" prop="coursePrice">
         <el-input-number controls-position="right" :min="0.00" :max="999999" :step="0.01" v-model="course.coursePrice"></el-input-number>
