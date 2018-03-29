@@ -16,8 +16,8 @@
         </template>
         <span class="form-tips" v-if="categoryList.length === 0">暂无类目，请先去添加相应类目吧！</span>
       </el-form-item>
-      <el-form-item label="潭州课堂ID" prop="tzCourseId" :rules="[{required: course.teachingMethod === 0,message: '潭州课程ID不能为空'}]">
-        <el-input placeholder="填写潭州课程的课程ID（数字）" v-model.number.trim="course.tzCourseId"></el-input>
+      <el-form-item label="潭州课堂ID" prop="tzCourseId">
+        <el-input placeholder="填写潭州课程的课程ID（数字）" v-model.trim="course.tzCourseId"></el-input>
         <span class="form-tips">提示：录播课程不必填写课程id</span>
       </el-form-item>
       <el-form-item label="主讲老师" prop="mainTeacher" :rules="[{required: true,message: '请选择主讲老师！'}]">
@@ -58,6 +58,7 @@ import { teacherList } from '@/api/teacher';
 
 export default {
   data() {
+    let self = this;
     return {
       commonParam: {
         pageNo: 1,
@@ -85,6 +86,19 @@ export default {
             validator: (field, value, callback) => {
               let msg;
               if (value && +value == value) msg = '课程标题不能是纯数字';
+              callback(msg);
+            }
+          }
+        ],
+        tzCourseId: [
+          {
+            validator: (field, value, callback) => {
+              let msg;
+              if (self.course.teachingMethod === 0) {
+                if (!value) msg = '潭州课程ID不能为空';
+                else if (parseInt(value) != value)
+                  msg = '请填写正确的潭州课程ID';
+              }
               callback(msg);
             }
           }

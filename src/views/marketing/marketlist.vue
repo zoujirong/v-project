@@ -102,7 +102,7 @@ export default {
         type: 'warning'
       })
         .then(() => {
-          getCancelCourseMarketWay({ courseId: cancelId, marketWay: mark })
+          getCancelCourseMarketWay({ courseId: cancelId, marketingWay: mark })
             .then(res => {
               this.getList();
               this.$message({
@@ -115,11 +115,12 @@ export default {
               console.log(res);
             });
         })
-        .catch(() => {
-          this.$message({
-            type: 'info',
-            message: '取消失败'
-          });
+        .catch(res => {
+          console.log(res);
+          // this.$message({
+          //   type: 'info',
+          //   message: '取消失败'
+          // });
         });
     }
   },

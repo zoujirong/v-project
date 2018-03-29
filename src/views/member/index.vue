@@ -57,7 +57,7 @@ export default {
         lastLoginStartTime: '',
         lastLoginEndTime: '',
         pageNo: 1,
-        pageSize: 3
+        pageSize: 10
       },
       options: [
         {
@@ -90,8 +90,8 @@ export default {
           sortable: 'custom',
           key: 'firstLoginTime'
         },
-        { title: '报名课程数量', key: 'userApplyCourseNum' },
-        { title: '付费课程数', key: 'userBuyCourseNum' },
+        { title: '免费课程数量', key: 'userApplyCourseNum' },
+        { title: '付费课程数量', key: 'userBuyCourseNum' },
         { title: '操作', slot: 'handle' }
       ],
       list: [],

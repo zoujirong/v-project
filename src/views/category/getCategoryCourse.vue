@@ -41,7 +41,8 @@ export default {
       EditSort: true,
       searchParam: {
         categoryId: '',
-        courseParam: ''
+        courseParam: '',
+        pageSize: 100
       },
       columns2: [
         { title: '位置', slot: 'position' },
@@ -91,7 +92,8 @@ export default {
       this.listLoading = true;
       categoryCourse({
         categoryId: this.CategoryId,
-        courseParam: this.searchParam.courseParam
+        courseParam: this.searchParam.courseParam,
+        pageSize: this.searchParam.pageSize
       }).then(res => {
         this.listLoading = false;
         this.courses = res.data.data;
@@ -142,12 +144,12 @@ export default {
         onEnd: evt => {
           const targetRow = this.courses.splice(evt.oldIndex, 1)[0];
           this.courses.splice(evt.newIndex, 0, targetRow);
-          this.oldIndex = evt.oldIndex; //被拖动后的位置
-          this.newIndex = evt.newIndex; //被拖动的元素的位置
+          this.oldIndex = evt.oldIndex; //被拖动的位置
+          this.newIndex = evt.newIndex; //被拖动的元素新的位置
 
           if (this.oldIndex !== this.newIndex) {
             let key = this.courses[this.newIndex].courseId;
-            this.weight = calcuWeight(this.courses, this.oldIndex);
+            this.weight = calcuWeight(this.courses, this.newIndex);
             this.SortList[key] = this.weight;
             this.sortCourse = Object.keys(this.SortList).map(item => ({
               courseId: item,
