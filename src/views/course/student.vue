@@ -43,9 +43,9 @@ import CheckApplyCourse from '@/views/member/checkApplyCourse';
 import { parseTime } from '@/filters';
 import { getCourseStudent } from '@/api/course';
 const sortMap = {
-  'lastLoginTime-0': 0, //降序
+  'lastLoginTime-0': 2, //降序
   'lastLoginTime-1': 1, //升序
-  'courseApplyTime-0': 2, //降序
+  'courseApplyTime-0': 4, //降序
   'courseApplyTime-1': 3 //升序
 };
 export default {
