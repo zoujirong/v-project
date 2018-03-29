@@ -80,6 +80,7 @@ export default {
       let form = this.$refs.checkForm;
       form.resetFields();
       this.$emit('close', false);
+      this.checkParam.pageNo = 1;
     },
     //重置查看课程列表
     resetCheck() {
