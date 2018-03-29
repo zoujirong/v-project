@@ -112,7 +112,7 @@ export default {
       ],
       pickr: {
         disabledDate(time) {
-          return Date.now() > time.getTime();
+          return Date.now() - 86400000 > time.getTime();
         }
       },
       tableData: [],
