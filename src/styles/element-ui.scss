@@ -76,10 +76,12 @@
 }
 
 tr.el-table__row .el-form-item__error {
-  position: absolute;
+  /* position: absolute;
   left: auto;
   right: 10px;
-  top: 7px;
+  top: 7px; */
+  position: static;
+  text-align: left;
 }
 .el-table__header th {
   text-align: center;
