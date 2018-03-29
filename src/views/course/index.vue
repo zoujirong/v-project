@@ -125,15 +125,12 @@ export default {
     async getList() {
       let form = this.$refs.searchForm;
       this.loading = true;
-      await queryCourseList(this.searchParam)
-        .then(res => {
-          let { data, total } = res.data;
-          this.data = data;
-          this.total = total;
-        })
-        .finally(() => {
-          this.loading = false;
-        });
+      let res = await queryCourseList(this.searchParam).finally(() => {
+        this.loading = false;
+      });
+      let { data, total } = res.data;
+      this.data = data;
+      this.total = total;
     },
     async getCategory() {
       let res = await listCategory(this.commonParam);
