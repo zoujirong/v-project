@@ -45,7 +45,6 @@
           </el-form-item>
           <el-form-item label="图片" prop='bannerCover'>
             <upload-image :limit="1" :fileList="banner.bannerCover?[{url:banner.bannerCover}]:[]" @onSuccess="onUploadCover"></upload-image>
-            <span class="form-tips">建议上传X*Y尺寸像素图片</span>
           </el-form-item>
           <el-form-item label="对应跳转的课程id" prop='courseId'>
             <el-input v-model.trim="banner.courseId"></el-input>
@@ -131,14 +130,15 @@ export default {
         courseId: [
           {
             required: true,
-            message: '请填写正确的潭州课程ID',
-            trigger: 'blur'
+            message: '请填写正确的潭州课程ID(12个字符以内)',
+            trigger: 'blur',
+            max: 12
           },
           {
             validator: (field, value, callback) => {
               let msg;
               if (parseInt(value) != value) {
-                msg = '请填写正确的潭州课程ID';
+                msg = '请填写正确的潭州课程ID(12个字符以内)';
               }
               callback(msg);
             }
