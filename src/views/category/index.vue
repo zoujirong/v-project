@@ -13,25 +13,25 @@
     </TablePager>
 
     <!-- 新增类目弹窗 -->
-    <el-dialog title="新增类目" :visible.sync="dialogTableVisible" width='35%' ref='dataForm'>
-      <div class=''>
-        类目名称：
-        <el-input v-model.trim="categoryParam.categoryName" placeholder="" clearable size="small" :maxlength="5"></el-input>
-        <br><br>
+    <el-dialog title="新增类目" :visible.sync="dialogTableVisible" width='35%' @close="resetForm('dataForm')" :close-on-click-modal="false">
+      <el-form :rules="rules" ref='dataForm' :model="categoryParam" :inline-message="true">
+        <el-form-item label="类目名称：" prop="categoryName">
+          <el-input placeholder="" :maxlength="5" clearable size="small" v-model.trim="categoryParam.categoryName"></el-input>
+        </el-form-item>
         <el-button type="primary" @click="updateData">保存</el-button>&nbsp;&nbsp;
         <el-button @click="dialogTableVisible = false">返回</el-button>
-      </div>
+      </el-form>
     </el-dialog>
 
     <!-- 修改类目名称弹窗 -->
-    <el-dialog title="编辑类目名称" :visible.sync="dialogTableVisible2" width='35%' ref='dataForm'>
-      <div class=''>
-        类目名称：
-        <el-input v-model.trim="name" placeholder="" clearable size="small"></el-input>
-        <br><br>
+    <el-dialog title="编辑类目名称" :visible.sync="dialogTableVisible2" width='35%' :close-on-click-modal="false" @close="resetForm('dataForm')">
+      <el-form ref='dataForm' :inline-message="true" :model="editName" :rules="rules1">
+        <el-form-item label="类目名称：" prop="name">
+          <el-input placeholder="" :maxlength="5" clearable size="small " v-model.trim="editName.name"></el-input>
+        </el-form-item>
         <el-button type="primary" @click="hold()">保存</el-button>&nbsp;&nbsp;
         <el-button @click="dialogTableVisible2 = false">返回</el-button>
-      </div>
+      </el-form>
     </el-dialog>
   </div>
 </template>
@@ -50,7 +50,9 @@ export default {
     return {
       listLoading: true,
       list: [],
-      name: '',
+      editName: {
+        name: ''
+      },
       reviseName: '',
       dialogTableVisible: false,
       dialogTableVisible2: false,
@@ -70,7 +72,13 @@ export default {
         { title: '操作管理', slot: 'handle' }
       ],
       categoryId: '',
-      total: 0
+      total: 0,
+      rules: {
+        categoryName: [{ required: true, message: '类目不能为空！' }]
+      },
+      rules1: {
+        name: [{ required: true, message: '类目不能为空！' }]
+      }
     };
   },
   components: {
@@ -81,6 +89,10 @@ export default {
     this.getList();
   },
   methods: {
+    //清除
+    resetForm(form) {
+      this.$refs[form] && this.$refs[form].resetFields();
+    },
     //  页面跳转
     jump(pageType, query) {
       this.$router.push({ name: pageType, query: { categoryId: query } });
@@ -121,14 +133,15 @@ export default {
     //新增类目
     async updateData() {
       this.listLoading = true;
-      await categoryAdd({ categoryName: this.categoryParam.categoryName }).then(
-        res => {
-          this.listLoading = false;
-          this.dialogTableVisible = false;
-          this.resetTemp();
-        }
-      );
-      this.getList();
+      let form = this.$refs.dataForm;
+      let res = await form.validate().then(res => {
+        if (!res) return Promise.reject({ msg: '信息填写有误' });
+        categoryAdd({ categoryName: this.categoryParam.categoryName });
+        this.listLoading = false;
+        this.dialogTableVisible = false;
+        this.resetTemp();
+        this.getList();
+      });
     },
     //删除类目
     async del(index, categoryId) {
@@ -144,20 +157,23 @@ export default {
     //编辑类目
     editCategory(index, row) {
       this.dialogTableVisible2 = true;
-      this.name = row.categoryName;
+      this.editName.name = row.categoryName;
       this.reviseName = index;
       this.categoryId = row.categoryId;
     },
     //保存
-    hold() {
-      this.categoryParam = {
-        categoryId: this.categoryId,
-        categoryName: this.name
-      };
-      categoryRevise(this.categoryParam).then(res => {
+    async hold() {
+      let form = this.$refs.dataForm;
+      let res = await form.validate().then(res => {
+        if (!res) return Promise.reject({ msg: '信息填写有误' });
+        this.categoryParam = {
+          categoryId: this.categoryId,
+          categoryName: this.editName.name
+        };
+        categoryRevise(this.categoryParam);
         this.getList();
+        this.dialogTableVisible2 = false;
       });
-      this.dialogTableVisible2 = false;
     }
   }
 };

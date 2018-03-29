@@ -7,7 +7,7 @@
         <span>选择图片并上传</span>
       </div>
     </el-upload>
-    <el-dialog :visible.sync="showPreview">
+    <el-dialog :visible.sync="showPreview" append-to-body>
       <img width="100%" :src="previewUrl">
     </el-dialog>
   </div>
