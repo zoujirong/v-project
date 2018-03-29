@@ -20,8 +20,8 @@
         </el-table-column>
         <el-table-column label="直播时间" width="420" v-if="isLiving">
           <template slot-scope="{row, $index: index}">
-            <el-form-item :rules="[{required: true, message: '不能为空'}]" :prop="'chapter['+index+'].playTime'">
-              <el-date-picker v-model="row.playTime" format="yyyy-MM-dd HH:mm" type="datetimerange" start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="{disabledDate: disabledDate.bind(null, index)}" :disabled="row.disabled" @change="onChangeTime(index, $event)" @focus="onFocus(index)"></el-date-picker>
+            <el-form-item :rules="[{required: true, message: '不能为空'}, {validator: validateTime.bind(null, index)}]" :prop="'chapter['+index+'].playTime'">
+              <el-date-picker v-model="row.playTime" format="yyyy-MM-dd HH:mm" type="datetimerange" start-placeholder="开始日期" end-placeholder="结束日期" :disabled="row.disabled" @change="onChangeTime(index, $event)" @focus="onFocus(index)"></el-date-picker>
             </el-form-item>
           </template>
         </el-table-column>
@@ -175,21 +175,16 @@ export default {
     },
     getPrevDate(index) {
       if (index === 0) {
-        return this.getStartOfDate(parseTime(new Date()));
+        return +new Date();
       } else {
         let list = this.form.chapter;
         let prev = list[index - 1];
         if (prev.endTime) {
-          return this.getStartOfDate(prev.endTime);
+          return +new Date(prev.endTime);
         } else {
           return this.getPrevDate(index - 1);
         }
       }
-    },
-    getStartOfDate(dateStr) {
-      let arr = dateStr.split(' ');
-      arr.splice(1, 1, '00:00:00');
-      return new Date(arr.join(' '));
     },
     getNextDate(index) {
       let list = this.form.chapter;
@@ -199,19 +194,42 @@ export default {
       } else {
         let next = list[index + 1];
         if (next.startTime) {
-          return this.getStartOfDate(next.startTime);
+          return +new Date(next.startTime);
         } else {
           return this.getNextDate(index + 1);
         }
       }
     },
     onChangeTime(index, time) {
+      let chapter = this.form.chapter;
       let timeFormat = this.timeFormat;
       let [start, end] = time || [];
-      Object.assign(this.form.chapter[index], {
+      Object.assign(chapter[index], {
         startTime: start ? parseTime(start, timeFormat + ':{s}') : '',
         endTime: end ? parseTime(end, timeFormat + ':{s}') : ''
       });
+      let form = this.$refs.editChapter;
+      chapter.forEach((value, index) => {
+        if (value.startTime)
+          form.validateField('chapter[' + index + '].playTime');
+      });
+    },
+    validateTime(index, field, value, callback) {
+      let list = this.form.chapter;
+      let [start, end] = value;
+      let prevDate = this.getPrevDate(index);
+      let nextDate = this.getNextDate(index);
+      let msg;
+      start = +new Date(start);
+      end = +new Date(end);
+      if (!list[index].disabled) {
+        if (start < +new Date()) msg = '开始日期不能小于当前日期';
+        else if (start < prevDate) msg = '开始日期不能小于之前章节的结束日期';
+        else if (nextDate && end > nextDate)
+          msg = '结束日期不能大于其后章节的开始日期';
+        else if (start === end) msg = '开始日期不能等于结束日期';
+      }
+      callback(msg);
     },
     async submit() {
       let chapter = this.form.chapter;
