@@ -1,6 +1,6 @@
 <template>
   <!-- 查看报名课程弹框 -->
-  <el-dialog title="查看报名课程" :visible.sync='dialogVisible' @close='onDialogClose' @open="getUserApplyCourse">
+  <el-dialog title="查看报名课程" :visible.sync='dialogVisible' @close='onDialogClose' @open="getUserApplyCourse" :close-on-click-modal="false">
     <el-form inline ref="checkForm" :model="checkParam">
       <el-form-item prop="courseParam">
         <el-input v-model.trim="checkParam.courseParam" placeholder="输入课程名称查询"></el-input>
