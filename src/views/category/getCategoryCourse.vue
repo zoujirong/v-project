@@ -78,7 +78,7 @@ export default {
   components: { TablePager },
   created() {
     this.getList();
-    this.drag();
+
     console.log(this);
   },
   computed: {
@@ -108,6 +108,7 @@ export default {
     },
     //编辑排序
     editSort() {
+      this.drag();
       this.columns2.splice(3, 0, { title: '排序', slot: 'sort' });
       this.EditSort = !this.EditSort;
     },
