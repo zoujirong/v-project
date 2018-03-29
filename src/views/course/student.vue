@@ -20,8 +20,8 @@
         total: total,
         pageSize: searchParam.pageSize
       }" @change="onTableChange">
-      <template slot="marketWay" slot-scope="{row}">
-        <span>{{row.marketWay == 1 ? '手机验证送课' : '无营销'}}</span>
+      <template slot="applyType" slot-scope="{row}">
+        <span>{{applyTypes[row.applyType]}}</span>
       </template>
       <template slot="lastLoginTime" slot-scope="{row}">
         <span>{{row.lastLoginTime | parseTime(showTimeFormat)}}</span>
@@ -58,6 +58,11 @@ export default {
       loading: false,
       apply: false,
       choosedUserId: '',
+      applyTypes: {
+        1: '验证手机赠送',
+        2: '原价购买',
+        3: '直接报名'
+      },
       searchParam: {
         courseId: this.$route.query.id,
         sort: 0,
@@ -75,7 +80,7 @@ export default {
         { title: '用户ID', key: 'uid' },
         { title: '微信昵称', key: 'userNick' },
         { title: '手机号码', key: 'userPhone' },
-        { title: '营销方式', slot: 'marketWay' }, //0无营销，1手机验证送课
+        { title: '报名方式', slot: 'applyType' }, //0无营销，1手机验证送课
         {
           title: '最近登陆时间',
           key: 'lastLoginTime',
