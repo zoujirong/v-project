@@ -115,7 +115,8 @@ export default {
               console.log(res);
             });
         })
-        .catch(() => {
+        .catch(res => {
+          console.log(res);
           // this.$message({
           //   type: 'info',
           //   message: '取消失败'
