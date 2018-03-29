@@ -20,16 +20,16 @@
     </TablePager>
 
     <!-- 新增老师 -->
-    <el-dialog title="新增讲师" width='35%' :visible.sync="dialogTableVisible">
-      <el-form>
-        <el-form-item label="讲师名称：">
-          <el-input placeholder=" " :maxlength="10" clearable size="small " v-model.trim="editPopup.teacherName"></el-input>
+    <el-dialog title="新增讲师" width='35%' :visible.sync="dialogTableVisible" :close-on-click-modal="false" @close="resetForm('addTeacher')">
+      <el-form ref="addTeacher" :rules="rules" :inline-message="true" :model="editPopup">
+        <el-form-item label="讲师名称：" prop="teacherName">
+          <el-input placeholder="" :maxlength="10" clearable size="small " v-model.trim="editPopup.teacherName"></el-input>
         </el-form-item>
-        <el-form-item label="讲师简介：">
+        <el-form-item label="讲师简介：" prop="teacherIntro">
           <el-input type="textarea" :maxlength="50" placeholder="请输入内容 " v-model.trim="editPopup.teacherIntro">
           </el-input>
         </el-form-item>
-        <el-form-item label="讲师照片：">
+        <el-form-item label="讲师照片：" prop="teacherIcon">
           <UploadImage class="upload-demo " size="small" :limit="1" :fileList="editPopup.teacherIcon ? [{url: editPopup.teacherIcon}] : []" @onSuccess="onUploadIcon" type="primary "></UploadImage>
           <div slot="tip " class="el-upload__tip ">只能上传jpg/png文件，且不超过500kb</div>
         </el-form-item>
@@ -39,8 +39,8 @@
     </el-dialog>
 
     <!-- 编辑老师 -->
-    <el-dialog title="编辑讲师" width='35%' :visible.sync="dialogTableVisible2">
-      <el-form action="" ref='dataForm' @close="resetForm('dataForm')" :model="Parameter1">
+    <el-dialog title="编辑讲师" width='35%' :visible.sync="dialogTableVisible2" :close-on-click-modal="false" @close="resetForm('dataForm')">
+      <el-form action="" ref='dataForm' :model="Parameter1">
         <el-form-item prop='teacherName' label="讲师名称：">
           <el-input placeholder="请输入老师姓名" :maxlength="10" clearable size="small " v-model.trim="Parameter1.teacherName"></el-input>
         </el-form-item>
@@ -101,6 +101,11 @@ export default {
         teacherName: '',
         teacherIntro: '',
         teacherIcon: ''
+      },
+      rules: {
+        teacherName: [{ required: true, message: '请输入老师名称！' }],
+        teacherIntro: [{ required: true, message: '请输入老师简介！' }],
+        teacherIcon: [{ required: true, message: '请添加老师照片！' }]
       }
     };
   },
@@ -124,8 +129,9 @@ export default {
       this.pagination.teacherName = '';
       this.getteacherList();
     },
+    //清除
     resetForm(form) {
-      this.$refs.form.resetField();
+      this.$refs[form] && this.$refs[form].resetFields();
     },
     reset() {
       (this.editPopup = {
@@ -138,19 +144,24 @@ export default {
     success(response, file, fileList) {
       console.log(response, file, fileList);
     },
-    //新增保存
+    //新增保存 if (!res) return Promise.reject({ msg: '信息填写有误' });
     async updateTeach() {
-      this.Parameter = {
-        teacher: this.editPopup.teacher,
-        teacherName: this.editPopup.teacherName,
-        teacherIntro: this.editPopup.teacherIntro,
-        teacherIcon: this.editPopup.teacherIcon
-      };
-      await teacherAdd(this.Parameter);
-      this.dialogTableVisible = false;
-      this.getteacherList();
-      this.reset();
+      let form = this.$refs.addTeacher;
+      let res = await form.validate().then(res => {
+        if (!res) return Promise.reject({ msg: '信息填写有误' });
+        this.Parameter = {
+          teacher: this.editPopup.teacher,
+          teacherName: this.editPopup.teacherName,
+          teacherIntro: this.editPopup.teacherIntro,
+          teacherIcon: this.editPopup.teacherIcon
+        };
+        teacherAdd(this.Parameter);
+        this.dialogTableVisible = false;
+        this.getteacherList();
+        this.reset();
+      });
     },
+
     //编辑老师
     editTeacher(row, index) {
       console.log(row);
