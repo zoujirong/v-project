@@ -116,10 +116,10 @@ export default {
             });
         })
         .catch(() => {
-          this.$message({
-            type: 'info',
-            message: '取消失败'
-          });
+          // this.$message({
+          //   type: 'info',
+          //   message: '取消失败'
+          // });
         });
     }
   },
