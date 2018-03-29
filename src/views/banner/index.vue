@@ -12,12 +12,12 @@
         <template slot='bannerCover' slot-scope="{row,index}">
           <img :src="tableData[index].bannerCover" alt="" @click="picBig(index)">
         </template>
-        <!-- <template slot="startTime" slot-scope="{row,index}">
+        <template slot="startTime" slot-scope="{row,index}">
           {{startDate[index].startTime}}
         </template>
         <template slot="endTime" slot-scope="{row,index}">
           {{startDate[index].endTime}}
-        </template> -->
+        </template>
         <template slot="createTime" slot-scope="{row,index}">
           {{startDate[index].createTime}}
         </template>
@@ -50,12 +50,12 @@
           <el-form-item label="对应跳转的课程id" prop='courseId'>
             <el-input v-model.trim="banner.courseId"></el-input>
           </el-form-item>
-          <!-- <el-form-item label="开始时间" prop='startTime'>
+          <el-form-item label="开始时间" prop='startTime'>
             <el-date-picker value-format="yyyy-MM-dd HH:mm:ss" v-model.trim="banner.startTime" type="datetime" placeholder="选择日期" :picker-options="pickr"></el-date-picker>
           </el-form-item>
           <el-form-item label="结束时间" prop='endTime'>
             <el-date-picker value-format="yyyy-MM-dd HH:mm:ss" v-model.trim="banner.endTime" type="datetime" placeholder="选择日期" :picker-options="pickr"></el-date-picker>
-          </el-form-item> -->
+          </el-form-item>
         </el-form>
       </div>
       <span slot="footer" class="dialog-footer">
@@ -85,8 +85,8 @@ export default {
         bannerTitle: '',
         bannerCover: '',
         courseId: '',
-        // startTime: '',
-        // endTime: '',
+        startTime: '',
+        endTime: '',
         bannerId: ''
       },
       bannerPage: {
@@ -104,8 +104,8 @@ export default {
         { title: '图片', slot: 'bannerCover' },
         { title: '课程id', key: 'courseId' },
         { title: '课程名称', key: 'courseName' },
-        // { title: '开始时间', slot: 'startTime' },
-        // { title: '结束时间', slot: 'endTime' },
+        { title: '开始时间', slot: 'startTime' },
+        { title: '结束时间', slot: 'endTime' },
         { title: '创建时间', slot: 'createTime' },
         { title: '修改时间', slot: 'modifiedTime' },
         { title: '操作', slot: 'operate' }
@@ -128,13 +128,15 @@ export default {
         bannerCover: [
           { required: true, message: '请上传图片', type: 'string' }
         ],
-        courseId: [{ required: true, message: '请输入课程id', trigger: 'blur' }]
-        // startTime: [
-        //   { required: true, message: '请选择开始时间', trigger: 'blur' }
-        // ],
-        // endTime: [
-        //   { required: true, message: '请选择结束时间', trigger: 'blur' }
-        // ]
+        courseId: [
+          { required: true, message: '请输入课程id', trigger: 'blur' }
+        ],
+        startTime: [
+          { required: true, message: '请选择开始时间', trigger: 'blur' }
+        ],
+        endTime: [
+          { required: true, message: '请选择结束时间', trigger: 'blur' }
+        ]
       }
     };
   },
@@ -147,8 +149,8 @@ export default {
       return this.tableData.map(s => {
         return {
           ...s,
-          // startTime: parseTime(s.startTime),
-          // endTime: parseTime(s.endTime),
+          startTime: parseTime(s.startTime),
+          endTime: parseTime(s.endTime),
           createTime: parseTime(s.createTime),
           modifiedTime: parseTime(s.modifiedTime)
         };
@@ -179,12 +181,12 @@ export default {
                 });
               }
               this.getBannerList();
+              this.addShow = false;
             })
             .catch(res => {
               this.$message.error(res.msg);
               console.log(res);
             });
-          this.addShow = false;
         } else {
           return false;
         }
@@ -201,7 +203,6 @@ export default {
         .then(res => {
           this.loading = false;
           this.tableData = res.data.data;
-          console.log(this.tableData);
         })
         .catch(res => {
           this.loading = false;
@@ -211,7 +212,6 @@ export default {
     //编辑banner信息
     editBanner(index) {
       this.type = 2;
-      console.log(this.type);
       this.addShow = true;
       this.$nextTick(() => {
         this.banner = { ...this.startDate[index] };
@@ -248,7 +248,6 @@ export default {
     },
     resetForm(form) {
       this.$refs[form].resetFields();
-      console.log(this.banner);
     },
     //上下移banner
     up(index) {
@@ -262,7 +261,6 @@ export default {
         bannerId: this.tableData[index - 1].id,
         weight: calcuWeight(this.tableData, index - 1)
       };
-      console.log(banners.weight);
       getSetBannerSort({ banners: JSON.stringify([banners]) })
         .then(res => {})
         .catch(res => {
@@ -275,12 +273,6 @@ export default {
       var curr = options.slice(index, index + 2).reverse();
       var tail = options.slice(index + 2);
       this.tableData = prev.concat(curr).concat(tail);
-      let arr = this.tableData.map(res => {
-        return res.weight;
-      });
-      let w = calcuWeight(this.tableData, index + 1);
-      console.log(w);
-      console.log(arr);
       let banners = {
         bannerId: this.tableData[index + 1].id,
         weight: calcuWeight(this.tableData, index + 1)
@@ -297,7 +289,6 @@ export default {
       this.picVisible = true;
     },
     onUploadCover(urls) {
-      console.log(urls);
       this.banner.bannerCover = urls[0];
     }
   },

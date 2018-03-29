@@ -102,7 +102,7 @@ export default {
         type: 'warning'
       })
         .then(() => {
-          getCancelCourseMarketWay({ courseId: cancelId, marketWay: mark })
+          getCancelCourseMarketWay({ courseId: cancelId, marketingWay: mark })
             .then(res => {
               this.getList();
               this.$message({
