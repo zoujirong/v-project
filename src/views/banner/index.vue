@@ -274,11 +274,8 @@ export default {
         bannerId: this.tableData[index - 1].id,
         weight: calcuWeight(this.tableData, index - 1)
       };
-      getSetBannerSort({ banners: JSON.stringify([banners]) })
-        .then(res => {})
-        .catch(res => {
-          console.log(res);
-        });
+      this.tableData[index - 1].weight = banners.weight;
+      this.setBannerSort(banners);
     },
     down(index) {
       var options = this.tableData;
@@ -290,11 +287,17 @@ export default {
         bannerId: this.tableData[index + 1].id,
         weight: calcuWeight(this.tableData, index + 1)
       };
-      getSetBannerSort({ banners: JSON.stringify([banners]) })
-        .then(res => {})
-        .catch(res => {
-          console.log(res);
-        });
+
+      this.tableData[index + 1].weight = banners.weight;
+      this.setBannerSort(banners);
+    },
+    setBannerSort(banners) {
+      this.loading = true;
+      return getSetBannerSort({ banners: JSON.stringify([banners]) }).finally(
+        res => {
+          this.loading = false;
+        }
+      );
     },
     //图片放大
     picBig(index) {
