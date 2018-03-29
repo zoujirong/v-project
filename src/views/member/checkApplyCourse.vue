@@ -14,7 +14,7 @@
       <el-button type="primary" @click='getUserApplyCourse'>查询</el-button>&nbsp;&nbsp;
       <el-button @click='resetCheck'>重置</el-button>
     </el-form>
-    <TablePager :data='data' :pagination="{currentPage:this.pagination1.pageNo,pageSize:this.pagination1.pageSize,total:total}" :columns="columns1" :loading="listLoading" @change="onTableChange">
+    <TablePager :data='data' :pagination="{currentPage:pagination1.pageNo,pageSize:pagination1.pageSize,total:total}" :columns="columns1" :loading="listLoading" @change="onTableChange">
       <template slot-scope="{row,index}" slot="numberId">
         <span>{{index+1}}</span>
       </template>
@@ -95,7 +95,7 @@ export default {
     onTableChange({ pagination }) {
       let {
         page: pageNo = this.pagination1.pageNo,
-        pageSize = this.pagination1.pageSize
+        pageSize: pageSize = this.pagination1.pageSize
       } = pagination;
       Object.assign(this.pagination1, {
         pageNo,
