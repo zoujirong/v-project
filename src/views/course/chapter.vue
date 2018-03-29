@@ -132,7 +132,7 @@ export default {
           Object.assign(obj, {
             startTime: startTime + ':00',
             endTime: endTime + ':00',
-            playTime: [startTime, endTime]
+            playTime: [new Date(startTime), new Date(endTime)]
           });
         }
         return {
