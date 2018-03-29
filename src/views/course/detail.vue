@@ -40,7 +40,7 @@
         <span class="form-tips">要求：价格精确到小数点后两位，填写0.00即为免费课程</span>
       </el-form-item>
       <el-form-item label="客服微信" prop="customerWx" :rules="[{required: true, message: '请填写客服微信！'}]">
-        <el-input v-model.trim="course.customerWx"></el-input>
+        <el-input v-model.trim="course.customerWx" :maxlength="20"></el-input>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="submit" :loading="loading">保存</el-button>
