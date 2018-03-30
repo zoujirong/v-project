@@ -1,5 +1,5 @@
 module.exports = {
   NODE_ENV: '"production"',
   ENV_CONFIG: '"prod"',
-  BASE_API: '"https://www.prod.com"'
+  BASE_API: '"https://micro.shiguangkey.com"'
 };
