@@ -94,11 +94,10 @@ export default {
           {
             validator: (field, value, callback) => {
               let msg;
-              if (self.course.teachingMethod === 0) {
-                if (!value) msg = '潭州课程ID不能为空';
-                else if (parseInt(value) != value)
-                  msg = '请填写正确的潭州课程ID';
-              }
+              if (self.course.teachingMethod === 0 && !value)
+                msg = '潭州课程ID不能为空';
+              else if (value && parseInt(value) != value)
+                msg = '请填写正确的潭州课程ID';
               callback(msg);
             }
           }
