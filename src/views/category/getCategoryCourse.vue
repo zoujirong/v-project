@@ -113,6 +113,7 @@ export default {
     },
     //保存排序
     async saveEditSort() {
+      this.sortable.option('disabled', true);
       this.columns2.splice(3, 1);
       let sort = Object.keys(this.SortList)
         .map(item => ({
@@ -138,14 +139,17 @@ export default {
       this.oldList = this.courses.map(v => v.courseId);
       this.newList = this.oldList.slice();
       this.$nextTick(() => {
-        this.setSort();
+        if (this.sortable) {
+          this.sortable.option('disabled', false);
+        } else {
+          this.setSort();
+        }
       });
     },
     setSort() {
       const el = document.querySelectorAll(
         '.el-table__body-wrapper > table > tbody'
       )[0];
-      console.log(el);
       this.sortable = Sortable.create(el, {
         ghostClass: 'sortable-ghost',
         setData: function(dataTransfer) {
@@ -162,10 +166,6 @@ export default {
             let weight = calcuWeight(this.courses, this.newIndex);
             this.SortList[key] = weight;
             this.courses[this.newIndex].weight = weight;
-            /* this.sortCourse = Object.keys(this.SortList).map(item => ({
-              courseId: item,
-              weight: this.SortList[item]
-            })); */
           }
         }
       });
