@@ -87,16 +87,15 @@ export default {
   },
   methods: {
     //获取推荐课程列表
-    getList() {
+    async getList() {
       this.listLoading = true;
-      categoryCourse({
+      let res = await categoryCourse({
         categoryId: this.CategoryId,
         courseParam: this.searchParam.courseParam,
         pageSize: this.searchParam.pageSize
-      }).then(res => {
-        this.listLoading = false;
-        this.courses = res.data.data;
       });
+      this.listLoading = false;
+      this.courses = res.data.data;
     },
 
     //重置

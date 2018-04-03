@@ -111,14 +111,13 @@ export default {
       this.getList();
     },
     //获取类目列表
-    getList() {
+    async getList() {
       this.listLoading = true;
-      listCategory(this.Parameter).then(res => {
-        this.listLoading = false;
-        let { data, total } = res.data;
-        this.list = data;
-        this.total = total;
-      });
+      let res = await listCategory(this.Parameter);
+      this.listLoading = false;
+      let { data, total } = res.data;
+      this.list = data;
+      this.total = total;
     },
     resetTemp() {
       this.categoryParam = {
