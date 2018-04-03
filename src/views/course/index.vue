@@ -158,7 +158,7 @@ export default {
     },
     setMarketing(row) {
       this.choosedRow = row;
-      row.marketWayId && (this.marketingWay = [row.marketWayId]);
+      this.marketingWay = row.marketWayId ? [row.marketWayId] : [];
       this.marketingList.length === 0 && this.getMarketing();
       this.marketing = true;
     },
