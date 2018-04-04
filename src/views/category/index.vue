@@ -157,6 +157,7 @@ export default {
     },
     //保存
     async hold() {
+      console.log('yy');
       let form = this.$refs.dataForm;
       let res = await form.validate();
       if (!res) throw { status: -1, msg: '信息填写有误' };
