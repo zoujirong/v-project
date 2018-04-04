@@ -132,17 +132,16 @@ export default {
     },
 
     //查看报名课程
-    getUserApplyCourse(row) {
+    async getUserApplyCourse(row) {
       this.dialogTableVisible = true;
       this.listLoading = true;
       this.checkMumber = row.uid;
       this.checkParam = {
         uid: row.uid
       };
-      getApplyCourse(this.checkParam).then(res => {
-        this.listLoading = false;
-        this.data = res.data.data;
-      });
+      let res = await getApplyCourse(this.checkParam);
+      this.listLoading = false;
+      this.data = res.data.data;
     },
     //组件监听的回调函数
     changeLoginTime(time) {
@@ -170,11 +169,7 @@ export default {
           sort: sortMap[`${sortKey}-${sort[sortKey]}`]
         });
       }
-
-      console.log(this.searchParam);
       this.getList();
-
-      console.log(this.searchParam);
     },
     CheckCourseStatus(val) {
       this.dialogTableVisible = val;
