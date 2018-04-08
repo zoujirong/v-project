@@ -220,9 +220,8 @@ export default {
     },
     async recommend(row, index) {
       this.loading = true;
-      this.updateRecommend(row, index).then(res => {
-        this.loading = false;
-      });
+      await this.updateRecommend(row, index);
+      this.loading = false;
     },
     async unRecommend(row, index) {
       let { isRecommend } = row;
