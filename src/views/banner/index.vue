@@ -90,7 +90,7 @@ export default {
       },
       bannerPage: {
         pageNo: 1,
-        pageSize: 10
+        pageSize: 100
       },
       loading: false,
       type: 1,
@@ -212,15 +212,12 @@ export default {
     // 获取banner信息列表
     async getBannerList() {
       this.loading = true;
-      getListBanner(this.bannerPage)
-        .then(res => {
-          this.loading = false;
-          this.tableData = res.data.data;
-        })
-        .catch(res => {
-          this.loading = false;
-          console.log(res);
-        });
+      let res = await getListBanner(this.bannerPage).catch(res => {
+        this.loading = false;
+        console.log(res);
+      });
+      this.loading = false;
+      this.tableData = res.data.data;
     },
     //编辑banner信息
     editBanner(index) {
@@ -234,30 +231,28 @@ export default {
     //删除
     async delBanner(index) {
       let delCourseId = this.tableData[index].id;
-      this.$confirm('是否删除该信息?', '提示', {
+      let confirm = await this.$confirm('是否删除该信息?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
-      })
-        .then(() => {
-          getDelBanner({ bannerId: delCourseId })
-            .then(res => {
-              this.getBannerList();
-              this.$message({
-                type: 'success',
-                message: '删除成功!'
-              });
-            })
-            .catch(res => {
-              this.$message.error(res.msg);
-            });
-        })
-        .catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          });
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
         });
+      });
+      if (confirm == 'confirm') {
+        let res = await getDelBanner({ bannerId: delCourseId }).catch(res => {
+          this.$message.error(res.msg);
+        });
+        if (res.status == 0) {
+          this.getBannerList();
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+        }
+      }
     },
     resetForm(form) {
       this.$refs[form].resetFields();
