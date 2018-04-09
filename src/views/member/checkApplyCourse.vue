@@ -7,6 +7,7 @@
       </el-form-item>
       <el-form-item prop="presentWay">
         <el-select placeholder="免费报名" v-model.trim="checkParam.presentWay">
+          <el-option value="" label="全部"></el-option>
           <el-option v-for="(value,key) in options" :key="key" :label="value" :value="key">
           </el-option>
         </el-select>
