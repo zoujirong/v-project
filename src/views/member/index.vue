@@ -22,7 +22,7 @@
         <span>{{row.firstLoginTime | parseTime(showTimeFormat)}}</span>
       </template>
       <template slot="handle" slot-scope="{row}">
-        <span @click="getUserApplyCourse(row)">【查看报名课程】</span>
+        <el-button type="text" @click="getUserApplyCourse(row)">【查看报名课程】</el-button>
       </template>
     </TablePager>
     <CheckCourse :userId='checkMumber' :visible='dialogTableVisible' @close='CheckCourseStatus'></CheckCourse>
