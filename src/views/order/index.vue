@@ -8,7 +8,8 @@
         <el-input placeholder="输入用户微信名" v-model.trim="searchParam.nick"></el-input>
       </el-form-item>
       <el-form-item label="支付方式" prop="presentWay">
-        <el-select placeholder="全部" v-model.trim="searchParam.presentWay">
+        <el-select placeholder="支付方式" v-model.trim="searchParam.presentWay">
+          <el-option value="" label="全部"></el-option>
           <el-option :value="1" label="验证手机"></el-option>
           <el-option :value="0" label="直接购买"></el-option>
         </el-select>
@@ -70,7 +71,6 @@ export default {
   components: {
     TablePager
   },
-  computed: {},
   methods: {
     async getList() {
       this.loading = true;
