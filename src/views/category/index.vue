@@ -139,14 +139,21 @@ export default {
     },
     //删除类目
     async del(index, categoryId) {
-      await CategoryDel({ categoryId: categoryId });
-      this.$notify({
-        title: '成功',
-        message: '删除成功',
-        type: 'success',
-        duration: 2000
-      });
-      this.getList();
+      try {
+        await this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        });
+        await CategoryDel({ categoryId: categoryId });
+        this.$message({
+          type: 'success',
+          message: '删除成功!'
+        });
+        this.getList();
+      } catch (res) {
+        if (res !== 'cancel') throw res;
+      }
     },
     //编辑类目
     editCategory(index, row) {
