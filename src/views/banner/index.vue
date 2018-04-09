@@ -47,7 +47,7 @@
             <upload-image :limit="1" :fileList="banner.bannerCover?[{url:banner.bannerCover}]:[]" @onSuccess="onUploadCover"></upload-image>
           </el-form-item>
           <el-form-item label="对应跳转的课程id" prop='courseId'>
-            <el-input v-model.trim="banner.courseId"></el-input>
+            <el-input v-model.trim="banner.courseId" :maxlength="12"></el-input>
           </el-form-item>
           <el-form-item label="开始时间" prop='startTime'>
             <el-date-picker value-format="yyyy-MM-dd HH:mm:ss" v-model.trim="banner.startTime" type="datetime" placeholder="选择日期" :picker-options="pickr"></el-date-picker>
@@ -90,7 +90,7 @@ export default {
       },
       bannerPage: {
         pageNo: 1,
-        pageSize: 10
+        pageSize: 100
       },
       loading: false,
       type: 1,
@@ -129,17 +129,12 @@ export default {
         ],
         courseId: [
           {
-            required: true,
-            message: '请填写正确的潭州课程ID(12个字符以内)',
-            trigger: 'blur',
-            max: 12
-          },
-          {
             validator: (field, value, callback) => {
               let msg;
-              if (parseInt(value) != value) {
-                msg = '请填写正确的潭州课程ID(12个字符以内)';
-              }
+              if (this.banner.courseId === '' && !value)
+                msg = '潭州课程ID不能为空';
+              else if (value && parseInt(value) != value)
+                msg = '请填写正确的潭州课程ID';
               callback(msg);
             }
           }
@@ -212,15 +207,12 @@ export default {
     // 获取banner信息列表
     async getBannerList() {
       this.loading = true;
-      getListBanner(this.bannerPage)
-        .then(res => {
-          this.loading = false;
-          this.tableData = res.data.data;
-        })
-        .catch(res => {
-          this.loading = false;
-          console.log(res);
-        });
+      let res = await getListBanner(this.bannerPage).catch(res => {
+        this.loading = false;
+        console.log(res);
+      });
+      this.loading = false;
+      this.tableData = res.data.data;
     },
     //编辑banner信息
     editBanner(index) {
@@ -234,30 +226,28 @@ export default {
     //删除
     async delBanner(index) {
       let delCourseId = this.tableData[index].id;
-      this.$confirm('是否删除该信息?', '提示', {
+      let confirm = await this.$confirm('是否删除该信息?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
-      })
-        .then(() => {
-          getDelBanner({ bannerId: delCourseId })
-            .then(res => {
-              this.getBannerList();
-              this.$message({
-                type: 'success',
-                message: '删除成功!'
-              });
-            })
-            .catch(res => {
-              this.$message.error(res.msg);
-            });
-        })
-        .catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          });
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
         });
+      });
+      if (confirm == 'confirm') {
+        let res = await getDelBanner({ bannerId: delCourseId }).catch(res => {
+          this.$message.error(res.msg);
+        });
+        if (res.status == 0) {
+          this.getBannerList();
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+        }
+      }
     },
     resetForm(form) {
       this.$refs[form].resetFields();

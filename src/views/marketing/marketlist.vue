@@ -71,16 +71,14 @@ export default {
     async getList() {
       this.loading = true;
       this.courseSearch.marketingWay = this.marketingId;
-      getListMarketCourse(this.courseSearch)
-        .then(res => {
-          this.loading = false;
-          this.tableData = res.data.data;
-          this.total = res.data.total;
-        })
-        .catch(res => {
-          this.loading = false;
-          console.log(res);
-        });
+      let res = await getListMarketCourse(this.courseSearch).catch(res => {
+        this.loading = false;
+        console.log(res);
+      });
+
+      this.loading = false;
+      this.tableData = res.data.data;
+      this.total = res.data.total;
     },
     onTableChange({ pagination }) {
       let {
@@ -93,35 +91,35 @@ export default {
       });
       this.getList();
     },
-    cancel(index) {
+    async cancel(index) {
       let cancelId = this.tableData[index].courseId;
       let mark = this.tableData[index].marketWay;
-      this.$confirm('确认取消课程?', '提示', {
+
+      let comfirms = await this.$confirm('确认取消课程?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
-      })
-        .then(() => {
-          getCancelCourseMarketWay({ courseId: cancelId, marketingWay: mark })
-            .then(res => {
-              this.getList();
-              this.$message({
-                type: 'success',
-                message: '取消成功!'
-              });
-            })
-            .catch(res => {
-              this.loading = false;
-              console.log(res);
-            });
-        })
-        .catch(res => {
+      }).catch(res => {
+        console.log(res);
+      });
+
+      if (comfirms == 'confirm') {
+        let res = await getCancelCourseMarketWay({
+          courseId: cancelId,
+          marketingWay: mark
+        }).catch(res => {
+          this.loading = false;
           console.log(res);
-          // this.$message({
-          //   type: 'info',
-          //   message: '取消失败'
-          // });
         });
+
+        if (res.status == 0) {
+          this.getList();
+          this.$message({
+            type: 'success',
+            message: '取消成功!'
+          });
+        }
+      }
     }
   },
   mounted() {

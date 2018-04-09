@@ -6,7 +6,7 @@
       </el-form-item>
       <el-form-item label="类目" prop="categoryId">
         <el-select placeholder="选择类目" v-model="searchParam.categoryId">
-          <el-option value="">全部</el-option>
+          <el-option value="" label="全部"></el-option>
           <template v-for="cate in categoryList">
             <el-option :key="cate.categoryId" :value="cate.categoryId" :label="cate.categoryName"></el-option>
           </template>
@@ -220,9 +220,8 @@ export default {
     },
     async recommend(row, index) {
       this.loading = true;
-      this.updateRecommend(row, index).then(res => {
-        this.loading = false;
-      });
+      await this.updateRecommend(row, index);
+      this.loading = false;
     },
     async unRecommend(row, index) {
       let { isRecommend } = row;
