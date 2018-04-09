@@ -133,7 +133,7 @@ export default {
               let msg;
               if (this.banner.courseId === '' && !value)
                 msg = '潭州课程ID不能为空';
-              else if (value && parseInt(value) != value)
+              else if (value && !/^\d+$/.test(value))
                 msg = '请填写正确的潭州课程ID';
               callback(msg);
             }
