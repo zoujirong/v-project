@@ -47,7 +47,7 @@
             <upload-image :limit="1" :fileList="banner.bannerCover?[{url:banner.bannerCover}]:[]" @onSuccess="onUploadCover"></upload-image>
           </el-form-item>
           <el-form-item label="对应跳转的课程id" prop='courseId'>
-            <el-input v-model.trim="banner.courseId"></el-input>
+            <el-input v-model.trim="banner.courseId" :maxlength="12"></el-input>
           </el-form-item>
           <el-form-item label="开始时间" prop='startTime'>
             <el-date-picker value-format="yyyy-MM-dd HH:mm:ss" v-model.trim="banner.startTime" type="datetime" placeholder="选择日期" :picker-options="pickr"></el-date-picker>
@@ -129,17 +129,12 @@ export default {
         ],
         courseId: [
           {
-            required: true,
-            message: '请填写正确的潭州课程ID(12个字符以内)',
-            trigger: 'blur',
-            max: 12
-          },
-          {
             validator: (field, value, callback) => {
               let msg;
-              if (parseInt(value) != value) {
-                msg = '请填写正确的潭州课程ID(12个字符以内)';
-              }
+              if (this.banner.courseId === '' && !value)
+                msg = '潭州课程ID不能为空';
+              else if (value && parseInt(value) != value)
+                msg = '请填写正确的潭州课程ID';
               callback(msg);
             }
           }
