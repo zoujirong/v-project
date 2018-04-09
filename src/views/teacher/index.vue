@@ -26,11 +26,11 @@
     <!-- 新增讲师 编辑讲师  弹窗 -->
     <el-dialog :visible.sync="addTeacher" @close="resetForm('teacherDetail')" :close-on-click-modal="false">
       <el-form ref='teacherDetail' :model="teacher" :rules="rules" class="demo-dynamic">
-        <el-form-item label="讲师名称：" :maxlength='10' :show-message="true" prop="teacherName">
-          <el-input placeholder="输入讲师名" v-model.trim="teacher.teacherName"></el-input>
+        <el-form-item label="讲师名称：" :show-message="true" prop="teacherName">
+          <el-input :maxlength='10' placeholder="输入讲师名" v-model.trim="teacher.teacherName"></el-input>
         </el-form-item>
-        <el-form-item label="讲师简介：" :maxlength='50' prop="teacherIntro">
-          <el-input type="textarea" placeholder="讲师简介" v-model.trim="teacher.teacherIntro"></el-input>
+        <el-form-item label="讲师简介：" prop="teacherIntro">
+          <el-input type="textarea" :maxlength='50' placeholder="讲师简介" v-model.trim="teacher.teacherIntro"></el-input>
         </el-form-item>
         <el-form-item size="small" label="讲师照片：" prop="teacherIcon">
           <upload-image :limit=1 :fileList="teacher.teacherIcon ? [{url:teacher.teacherIcon}]: []" @onSuccess="onUploadCover"></upload-image>
