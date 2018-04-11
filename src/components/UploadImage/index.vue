@@ -1,6 +1,6 @@
 <template>
   <div class="inline-block">
-    <el-upload action="" accept="image/*" listType="picture-card" :limit="limit" :fileList="files" :autoUpload="false" :onChange="onChange" :onPreview="onPreview" :onExceed="onExceed" :onRemove="onRemove">
+    <el-upload action="" accept="image/jpg,image/jpeg,image/png,image/gif" listType="picture-card" :limit="limit" :fileList="files" :autoUpload="false" :onChange="onChange" :onPreview="onPreview" :onExceed="onExceed" :onRemove="onRemove">
       <div class="upload-tips">
         <i class="el-icon-plus"></i>
         <br>
