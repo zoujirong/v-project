@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <router-link v-for="el in list" :key="el.id" :to="{ name: 'marketlists',params:{id:el.marketWayId}}" class="el-button el-button--primary el-button--medium">{{el.marketWayName}}</router-link>
+    <router-link v-for="el in list" :key="el.id" :to="{ name: 'marketlists',query:{id:el.marketWayId}}" class="el-button el-button--primary el-button--medium">{{el.marketWayName}}</router-link>
   </div>
 </template>
 <script>

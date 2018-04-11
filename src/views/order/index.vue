@@ -18,8 +18,8 @@
       <el-button @click="reset">重置</el-button>
     </el-form>
 
-    <TablePager :data="data" :columns="columns" :loading="loading" :pagination="{currentPage: pagination.pageNo,
-      pageSize: pagination.pageSize,
+    <TablePager :data="data" :columns="columns" :loading="loading" :pagination="{currentPage: searchParam.pageNo,
+      pageSize: searchParam.pageSize,
       total: total}" @change="onChange ">
       <template slot='payTime' slot-scope="{row}">
         <span>{{ row.payTime | parseTime(showTimeFormat)}}</span>
@@ -48,10 +48,6 @@ export default {
         nick: '',
         presentWay: '',
         pageNo: 1,
-        pageSize: 10
-      },
-      pagination: {
-        currentPage: 1,
         pageSize: 10
       },
       total: 0,
@@ -89,6 +85,10 @@ export default {
     reset() {
       let form = this.$refs.searchForm;
       form.resetFields();
+      Object.assign(this.searchParam, {
+        pageNo: 1,
+        pageSize: 10
+      });
       this.getList();
     },
     onChange({ pagination }) {

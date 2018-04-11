@@ -54,7 +54,7 @@ export default {
   },
   computed: {
     marketingId() {
-      return this.$route.params.id;
+      return this.$route.query.id;
     }
   },
   components: {
@@ -66,6 +66,10 @@ export default {
     },
     resetForm(formName) {
       this.$refs[formName].resetFields();
+      Object.assign(this.courseSearch, {
+        pageNo: 1,
+        pageSize: 10
+      });
       this.getList();
     },
     async getList() {

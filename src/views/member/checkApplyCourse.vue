@@ -87,6 +87,10 @@ export default {
     resetCheck() {
       let form = this.$refs.checkForm;
       form.resetFields();
+      Object.assign(this.checkParam, {
+        pageNo: 1,
+        pageSize: 10
+      });
       this.getUserApplyCourse();
     },
     //切换分页
