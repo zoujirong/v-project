@@ -143,6 +143,10 @@ export default {
     reset() {
       let form = this.$refs.searchForm;
       form.resetFields();
+      Object.assign(this.searchParam, {
+        pageNo: 1,
+        pageSize: 10
+      });
       this.getList();
     },
     onTableChange({ pagination }) {
