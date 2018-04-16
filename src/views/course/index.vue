@@ -8,7 +8,7 @@
         <el-select placeholder="选择类目" v-model="searchParam.categoryId">
           <el-option value="" label="全部"></el-option>
           <template v-for="cate in categoryList">
-            <el-option :key="cate.categoryId" :value="cate.categoryId" :label="cate.categoryName"></el-option>
+            <el-option :key="cate.categoryId" :value="cate.isDel ? cate.categoryId : -1" :label="cate.categoryName"></el-option>
           </template>
         </el-select>
       </el-form-item>
