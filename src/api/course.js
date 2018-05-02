@@ -9,7 +9,8 @@ const {
   courseChapter,
   chapterUpdate,
   courseUpdate,
-  courseAdd
+  courseAdd,
+  getCategoryRecommend
 } = api;
 
 export function queryCourseList(params) {
@@ -77,5 +78,13 @@ export function updateCourse(params) {
     url: courseUpdate,
     method: 'post',
     data: params
+  });
+}
+// 设为推荐类目
+export function categoryRecommend(param) {
+  return request({
+    url: getCategoryRecommend,
+    method: 'post',
+    data: param
   });
 }

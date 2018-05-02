@@ -13,11 +13,13 @@ export default {
   courseUpdate: '/course/editCourse', //更新课程信息
   chapterUpdate: '/course/editCourseChapter', //更新课程章节
   //类目管理
-  getListCategory: '/category/listCategory',
+  getListCategory: '/category/listCategory', //类目列表
+  getCategoryRecommend: 'category/setCategoryRecommend', //设为推荐类目
   addCategory: '/category/addCategory',
   reviseCategory: '/category/editCategory',
   delCategory: '/category/delCategory',
-  getCategoryCourse: '/category/listCategoryCourse',
+  getCategoryCourse: '/course/listCourse',
+  // getCategoryCourse: '/category/listCategoryCourse',
   categoryCourseSort: '/category/setCategoryCourseSort',
 
   //会员管理
@@ -42,5 +44,12 @@ export default {
   //订单管理
   listOrder: '/order/listOrder',
   //上传
-  uploadParam: '/oss/getToken'
+  uploadParam: '/oss/getToken',
+
+  //类目推荐位
+  // categoryRecommend: '/admin/categoryRecommend',
+  // 类目选择
+  chooseCate: '/admin/categoryChoose'
+
+  // 取消推荐
 };

@@ -5,10 +5,12 @@
     </div>
     <TablePager :data="list" :pagination="{currentPage:Parameter.pageNo,pageSize:Parameter.pageSize,total:total}" :columns="columns1" @change="onTableChange">
       <template slot="handle" slot-scope="{row,index}">
-        <el-button @click="jump('getCategoryList',row.categoryId)" type='text' v-if='row.isDel==false'>编辑课程</el-button>
-        <el-button type='text' v-else @click="editCategory(index,row)">编辑类目名称</el-button>
+        <!-- <el-button @click="jump('getCategoryList',row.categoryId)" type='text' v-if='row.isDel==false'>编辑课程</el-button> -->
+        <el-button type='text' @click="editCategory(index,row)">编辑类目名称</el-button>
         &nbsp;&nbsp;&nbsp;
-        <el-button type='text' @click="del(index,row.categoryId)" v-if='row.isDel==true'>删除</el-button>
+        <el-button type='text' @click="del(index,row.categoryId)">删除</el-button>
+        <el-button type='text'>设为推荐</el-button>
+
       </template>
     </TablePager>
 
@@ -41,7 +43,8 @@ import {
   listCategory,
   categoryAdd,
   CategoryDel,
-  categoryRevise
+  categoryRevise,
+  categoryRecommend
 } from '@/api/category';
 import TablePager from '@/components/TablePager';
 export default {
@@ -70,7 +73,7 @@ export default {
       columns1: [
         { title: '类目ID', key: 'categoryId' },
         { title: '类目名称', key: 'categoryName' },
-        { title: '操作管理', slot: 'handle' }
+        { title: '管理操作', slot: 'handle' }
       ],
       categoryId: '',
       total: 0,
@@ -95,9 +98,9 @@ export default {
       this.$refs[form] && this.$refs[form].resetFields();
     },
     //  页面跳转
-    jump(pageType, query) {
-      this.$router.push({ name: pageType, query: { categoryId: query } });
-    },
+    // jump(pageType, query) {
+    //   this.$router.push({ name: pageType, query: { categoryId: query } });
+    // },
     //切换分页
     onTableChange({ pagination }) {
       let {
