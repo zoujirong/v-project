@@ -9,14 +9,14 @@
         <span class="svg-container svg-container_login">
           <svg-icon icon-class="user" />
         </span>
-        <el-input name="username" type="text" v-model="loginForm.username" autoComplete="on" placeholder="用户名" />
+        <el-input name="username" type="text" v-model.trim="loginForm.username" autoComplete="on" placeholder="用户名" />
       </el-form-item>
 
       <el-form-item prop="password">
         <span class="svg-container">
           <svg-icon icon-class="password" />
         </span>
-        <el-input name="password" :type="passwordType" @keyup.enter.native="handleLogin" v-model="loginForm.password" autoComplete="on" placeholder="密码" />
+        <el-input name="password" :type="passwordType" @keyup.enter.native="handleLogin" v-model.trim="loginForm.password" autoComplete="on" placeholder="密码" />
         <span class="show-pwd" @click="showPwd">
           <svg-icon icon-class="eye" />
         </span>
@@ -56,33 +56,14 @@ export default {
   components: { LangSelect, SocialSign },
   name: 'login',
   data() {
-    const validateUsername = (rule, value, callback) => {
-      if (!value) {
-        //isvalidUsername(value)
-        callback(new Error('用户名不能为空'));
-      } else {
-        callback();
-      }
-    };
-    const validatePassword = (rule, value, callback) => {
-      if (!value) {
-        callback(new Error('密码不能为空'));
-      } else {
-        callback();
-      }
-    };
     return {
       loginForm: {
         username: '',
         password: ''
       },
       loginRules: {
-        username: [
-          { required: true, trigger: 'blur', validator: validateUsername }
-        ],
-        password: [
-          { required: true, trigger: 'blur', validator: validatePassword }
-        ]
+        username: [{ required: true, message: '用户名不能为空' }],
+        password: [{ required: true, message: '密码不能为空' }]
       },
       passwordType: 'password',
       loading: false,
@@ -98,24 +79,18 @@ export default {
       }
     },
     async handleLogin() {
-      await new Promise((resolve, reject) => {
-        this.$refs.loginForm.validate(valid => {
-          if (valid) resolve();
-          else reject();
-        });
-      })
-        .then(res => {
-          this.loading = true;
-          return this.$store.dispatch('LoginByUsername', this.loginForm);
-        })
-        .finally(() => {
-          this.loading = false;
-        })
-        .catch(res => {
-          if (res) throw res;
-        });
-
-      this.$router.push({ path: '/' });
+      let res = await new Promise((resolve, reject) => {
+        this.$refs.loginForm.validate(res => resolve(res));
+      });
+      if (res) {
+        this.loading = true;
+        await this.$store
+          .dispatch('LoginByUsername', this.loginForm)
+          .finally(() => {
+            this.loading = false;
+          });
+        this.$router.push({ path: '/' });
+      }
     },
     afterQRScan() {
       // const hash = window.location.hash.slice(1)

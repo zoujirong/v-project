@@ -11,9 +11,11 @@
         </el-radio-group>
       </el-form-item>
       <el-form-item label="课程类目" prop="categoryId" :rules="[{required: true,message: '请选择课程类目！'}]">
-        <template v-for="cate in categoryList">
-          <el-radio v-if="cate.isDel" :key="cate.categoryId" v-model="course.categoryId" :label="cate.categoryId">{{cate.categoryName}}</el-radio>
-        </template>
+        <el-radio-group v-model="course.categoryId">
+          <template v-for="cate in categoryList">
+            <el-radio v-if="cate.isDel" :key="cate.categoryId" :label="cate.categoryId">{{cate.categoryName}}</el-radio>
+          </template>
+        </el-radio-group>
         <span class="form-tips" v-if="categoryList.length === 0">暂无类目，请先去添加相应类目吧！</span>
       </el-form-item>
       <el-form-item label="潭州课堂ID" prop="tzCourseId">
@@ -122,10 +124,12 @@ export default {
     onUploadCover(urls) {
       console.log('上传封面', urls);
       this.course.courseCover = urls[0] || '';
+      this.$refs.editForm.validateField('courseCover');
     },
     onUploadDetail(urls) {
       this.course.courseDesc = urls[0] || '';
       console.log('上传详情', urls);
+      this.$refs.editForm.validateField('courseDesc');
     },
     success(response, file, fileList) {
       console.log(response, file, fileList);

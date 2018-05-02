@@ -55,12 +55,13 @@ const user = {
         .slice(0, -2);
       return new Promise((resolve, reject) => {
         loginByUsername({
-          username: username.trim(),
+          username: username,
           password: pass
         })
           .then(response => {
             const data = response.data;
             commit('SET_TOKEN', data.token);
+            commit('SET_NAME', username);
             setToken(response.data.token);
             resolve();
           })
