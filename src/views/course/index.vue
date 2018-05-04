@@ -35,12 +35,17 @@
       </template>
       <template slot="operate" slot-scope="{row, index}">
         <div class="op-btn">
-          <router-link :to="{name: 'courseDetail', query: {id: row.courseId}}">
+          <router-link :to="{name: 'courseDetail', query: {id: row.courseId,num:2}}">
             <el-button type="text">【编辑课程】</el-button>
           </router-link>
           <router-link :to="{name: 'courseChapter', params: {id: row.courseId}, query: {type: row.teachingMethod, num: row.chapterNum}}">
             <el-button type="text">【编辑课时】</el-button>
           </router-link>
+
+          <router-link :to="{name: 'courseDetail', query: {id: row.courseId,num:1}}">
+            <el-button type="text">【复制课程】</el-button>
+          </router-link>
+
           <el-button type="text" @click="setMarketing(row)" v-if="row.coursePrice!=0">【设置营销方式】</el-button>
           <el-button type="text" @click="unShelve(row, index)" v-if="row.unshelve == 1">【课程下架】</el-button>
           <el-button type="text" @click="shelve(row, index)" v-else>【课程上架】</el-button>
@@ -49,8 +54,8 @@
           </router-link>
           <el-button type="text" @click="unRecommend(row, index)" v-if="row.isRecommend==1">【取消推荐】</el-button>
           <el-button type="text" @click="recommend(row, index)" v-else>【设为推荐】</el-button>
-          <el-button type="text" @click="proclamation(row,index)">【公告管理】</el-button>
-          <el-button type="text" @click="repeatCourse(row,index)">【复制课程】</el-button>
+          <el-button type="text" @click="setProcla(row)">【公告管理】</el-button>
+          <!-- <el-button type="text" @click="repeatCourse(row,index)">【复制课程】</el-button> -->
         </div>
       </template>
     </TablePager>
@@ -73,12 +78,12 @@
 
     <!-- 公告管理 -->
     <el-dialog title="公告管理" width="500px" :close-on-click-modal="false" :visible.sync="proclamDialog">
-      <el-form label-width="100px" class="demo-ruleForm">
-        <el-form-item label="活动形式" prop="desc">
-          <el-input type="textarea"></el-input>
+      <el-form label-width="100px" class="demo-ruleForm" ref="announcement" :model="paranProclam">
+        <el-form-item label="活动形式" prop="announcement">
+          <el-input type="textarea" v-model="paranProclam.announcement"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="proclamDialog = false">提交</el-button>
+          <el-button type="primary" @click="proclamation()">提交</el-button>
           <el-button @click="proclamDialog = false">取消</el-button>
         </el-form-item>
       </el-form>
@@ -285,11 +290,16 @@ export default {
       this.choosedRow.marketWayId = marketWay;
       this.marketing = false;
     },
-    //公告管理
-    async proclamation(row, index) {
+    //公告管理 弹窗
+    setProcla(row) {
       this.proclamDialog = true;
-      await adminProclam(this.paranProclam);
-      console.log(adminProclam);
+      this.paranProclam.courseId = row.courseId;
+    },
+    //公告管理 保存
+    async proclamation() {
+      await adminProclam({ ...this.paranProclam });
+      this.$refs.announcement.resetFields();
+      this.proclamDialog = false;
     },
     // 复制课程
     repeatCourse(row, index) {

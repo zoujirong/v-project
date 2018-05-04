@@ -10,7 +10,8 @@
           <el-radio :label="1" :disabled="!!courseId">录播课</el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item label="课程类目" prop="categoryId" :rules="[{required: true,message: '请选择课程类目！'}]">
+      <!-- :rules="[{required: true,message: '请选择课程类目！'}]" -->
+      <el-form-item label="课程类目" prop="categoryId">
         <el-radio-group v-model="course.categoryId">
           <template v-for="cate in categoryList">
             <el-radio v-if="cate.isDel" :key="cate.categoryId" :label="cate.categoryId">{{cate.categoryName}}</el-radio>
@@ -33,17 +34,26 @@
         <upload-image :limit="1" :fileList="course.courseCover ? [{url: course.courseCover}] : []" @onSuccess="onUploadCover"></upload-image>
         <!-- <span class="form-tips">要求：图片宽高像素分别为 X * Y</span> -->
       </el-form-item>
-      <el-form-item label="课程介绍" prop="courseDesc" :rules="[{required: true,message: '请上传课程介绍！'}]">
+      <!-- <el-form-item label="课程介绍" prop="courseDesc" :rules="[{required: true,message: '请上传课程介绍！'}]">
         <upload-image :limit="1" :fileList="course.courseDesc ? [{url: course.courseDesc}] : []" @onSuccess="onUploadDetail"></upload-image>
-        <!-- <span class="form-tips">要求：建议图片宽度为**像素，高度不超过**像素</span> -->
-      </el-form-item>
+        <span class="form-tips">要求：建议图片宽度为**像素，高度不超过**像素</span>
+      </el-form-item> -->
       <el-form-item label="课程价格" prop="coursePrice">
         <el-input-number controls-position="right" :min="0.00" :max="999999" :step="0.01" v-model="course.coursePrice"></el-input-number>
         <span class="form-tips">要求：价格精确到小数点后两位，填写0.00即为免费课程</span>
       </el-form-item>
-      <el-form-item label="客服微信" prop="customerWx" :rules="[{required: true, message: '请填写客服微信！'}]">
-        <el-input v-model.trim="course.customerWx" :maxlength="20"></el-input>
+      <el-form-item label="课程介绍" prop="descContent">
+        <el-input type="textarea" v-model.trim="course.descContent" class="textareatHeight" :maxlength="200"></el-input>
       </el-form-item>
+      <el-form-item label="适用人群" prop="suit">
+        <el-input type="textarea" v-model.trim="course.suit" :maxlength="100" class="short-input"></el-input>
+      </el-form-item>
+      <el-form-item label="你将收获" prop="reward ">
+        <el-input type="textarea" v-model.trim="course.reward" :maxlength="100" class="short-input"></el-input>
+      </el-form-item>
+      <!-- <el-form-item label="客服微信" prop="customerWx" :rules="[{required: true, message: '请填写客服微信！'}]">
+        <el-input v-model.trim="course.customerWx" :maxlength="20"></el-input>
+      </el-form-item> -->
       <el-form-item>
         <el-button type="primary" @click="submit" :loading="loading">保存</el-button>
         <router-link :to="{name: 'courseList'}" tag="el-button">返回</router-link>
@@ -77,10 +87,14 @@ export default {
         tzCourseId: '',
         mainTeacher: '',
         courseCover: '',
-        courseDesc: '',
+        // courseDesc: '',
         coursePrice: 0.0,
-        customerWx: ''
+        reward: '',
+        suit: '',
+        descContent: ''
+        // customerWx: ''
       },
+      num: this.$route.query.num,
       rules: {
         title: [
           { required: true, message: '请填写课程标题！' },
@@ -144,13 +158,28 @@ export default {
         .then(res => {
           if (!res) return Promise.reject({ msg: '信息填写有误' });
           this.loading = true;
-          if (this.courseId) {
+          // if (this.courseId) {
+          //   return updateCourse({
+          //     id: this.courseId,
+          //     ...this.course
+          //   });
+          // }
+          // return addCourse(this.course);
+          if (this.num && this.num == 1) {
+            return addCourse({
+              id: this.courseId
+            });
+            // console.log(this.num);
+          } else if (this.num && this.num == 2) {
             return updateCourse({
               id: this.courseId,
               ...this.course
             });
+            // console.log(this.num);
+          } else {
+            return addCourse(this.course);
+            // console.log('kec');
           }
-          return addCourse(this.course);
         })
         .finally(res => {
           this.loading = false;
@@ -173,6 +202,9 @@ export default {
     this.getCategory();
     this.getTeacher();
   }
+  // mounted() {
+  //   console.log(this.num);
+  // }
 };
 </script>
 <style scoped>
@@ -189,5 +221,24 @@ export default {
 }
 .inline-block {
   display: inline-block;
+}
+
+.short-input {
+  width: 40%;
+}
+/* .textareatHeight {
+  width: 40%;
+} */
+/* .el-textarea__inner {
+} */
+</style>
+<style>
+.el-textarea__inner {
+  padding: 11px 5px 0;
+  height: auto;
+  line-height: 0.9;
+  /* height: ; */
+  /* line-height: 1.5; */
+  resize: none;
 }
 </style>
