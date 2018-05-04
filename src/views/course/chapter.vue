@@ -14,7 +14,7 @@
         <el-table-column label="课时名称" min-width="200">
           <template slot-scope="{row, $index: index}">
             <el-form-item :rules="[{ required: true, message: '不能为空' }]" :prop="'chapter['+index+'].chapterTitle'">
-              <el-input v-model.trim="row.chapterTitle" :disabled="row.disabled" :maxlength="30"></el-input>
+              <el-input v-model.trim="row.chapterTitle" :disabled="row.disabled" :maxlength="30" @change="dsxchange"></el-input>
             </el-form-item>
           </template>
         </el-table-column>
@@ -118,6 +118,16 @@ export default {
   },
   components: { TablePager },
   methods: {
+    dsxchange() {
+      console.log(this.form.chapter);
+      let array = [];
+      this.form.chapter.map((item, index) => {
+        if (array.includes(item.chapterTitle)) {
+          this.$message.error('错了哦，课时名称不能重复！');
+          item.chapterTitle = '';
+        } else array.push(item.chapterTitle);
+      });
+    },
     async getChapter() {
       let res = await getCourseChaper(this.courseId);
       let chapters = res.data.map(chapter => {
@@ -150,6 +160,7 @@ export default {
         flag: CHAPTER_FLAG.ADD
       };
       this.form.chapter.splice(newIndex, 0, obj);
+      console.log(this.form.chapter);
       obj.weight = calcuWeight(this.form.chapter, newIndex);
     },
     removeChapter(index) {
