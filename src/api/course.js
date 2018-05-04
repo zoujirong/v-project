@@ -10,7 +10,8 @@ const {
   chapterUpdate,
   courseUpdate,
   courseAdd,
-  getCategoryRecommend
+  getCategoryRecommend,
+  proclamation
 } = api;
 
 export function queryCourseList(params) {
@@ -84,6 +85,14 @@ export function updateCourse(params) {
 export function categoryRecommend(param) {
   return request({
     url: getCategoryRecommend,
+    method: 'post',
+    data: param
+  });
+}
+// 公告管理
+export function adminProclam(param) {
+  return request({
+    url: proclamation,
     method: 'post',
     data: param
   });

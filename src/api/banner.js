@@ -1,6 +1,13 @@
 import request from '@/utils/request';
 import api from './api';
-const { addBanner, editBanner, listBanner, delBanner, setBannerSort } = api;
+const {
+  addBanner,
+  editBanner,
+  listBanner,
+  delBanner,
+  setBannerSort,
+  getCategoryRecommend
+} = api;
 
 // banner图列表
 export function getListBanner(query) {
@@ -42,6 +49,14 @@ export function getDelBanner(query) {
 export function getSetBannerSort(query) {
   return request({
     url: setBannerSort,
+    method: 'post',
+    data: query
+  });
+}
+//推荐类目 - 设为推荐
+export function setRecommend(query) {
+  return request({
+    url: getCategoryRecommend,
     method: 'post',
     data: query
   });

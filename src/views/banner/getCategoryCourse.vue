@@ -48,7 +48,7 @@ export default {
       columns2: [
         { title: '位置', slot: 'position' },
         { title: '课程id', key: 'courseId' },
-        { title: '课程名称', key: 'categoryName' },
+        { title: '课程名称', key: 'title' },
         { title: '主讲老师', key: 'mainTeacher' }
       ],
       courses: [],

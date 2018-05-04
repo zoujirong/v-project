@@ -8,9 +8,7 @@
         <!-- <el-button @click="jump('getCategoryList',row.categoryId)" type='text' v-if='row.isDel==false'>编辑课程</el-button> -->
         <el-button type='text' @click="editCategory(index,row)">编辑类目名称</el-button>
         &nbsp;&nbsp;&nbsp;
-        <el-button type='text' @click="del(index,row.categoryId)">删除</el-button>
-        <el-button type='text'>设为推荐</el-button>
-
+        <el-button type='text' @click="del(row,index)">删除</el-button>
       </template>
     </TablePager>
 
@@ -44,13 +42,17 @@ import {
   categoryAdd,
   CategoryDel,
   categoryRevise,
-  categoryRecommend
+  categoryRecommend,
+  courseList,
+  recommendCategory
 } from '@/api/category';
 import TablePager from '@/components/TablePager';
 export default {
   name: 'category',
   data() {
     return {
+      recommendNum: 0,
+      // isRecommend: false,
       listLoading: true,
       list: [],
       editName: {
@@ -116,6 +118,7 @@ export default {
     //获取类目列表
     async getList() {
       this.listLoading = true;
+      // this.recommendNum = 0; //刷新清空
       let res = await listCategory(this.Parameter);
       this.listLoading = false;
       let { data, total } = res.data;
@@ -158,6 +161,15 @@ export default {
         if (res !== 'cancel') throw res;
       }
     },
+    //设为推荐类目
+    // async setRecommend(row) {
+    //   await recommendCategory({
+    //     categoryId: row.categoryId,
+    //     isRecommend: !row.isRecommend
+    //   });
+    //   this.getList();
+    // },
+
     //编辑类目
     editCategory(index, row) {
       this.dialogTableVisible2 = true;

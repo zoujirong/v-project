@@ -49,6 +49,8 @@
           </router-link>
           <el-button type="text" @click="unRecommend(row, index)" v-if="row.isRecommend==1">【取消推荐】</el-button>
           <el-button type="text" @click="recommend(row, index)" v-else>【设为推荐】</el-button>
+          <el-button type="text" @click="proclamation(row,index)">【公告管理】</el-button>
+          <el-button type="text" @click="repeatCourse(row,index)">【复制课程】</el-button>
         </div>
       </template>
     </TablePager>
@@ -68,6 +70,20 @@
         <el-button type="primary" @click="updateMarkting">确定</el-button>
       </div>
     </el-dialog>
+
+    <!-- 公告管理 -->
+    <el-dialog title="公告管理" width="500px" :close-on-click-modal="false" :visible.sync="proclamDialog">
+      <el-form label-width="100px" class="demo-ruleForm">
+        <el-form-item label="活动形式" prop="desc">
+          <el-input type="textarea"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="proclamDialog = false">提交</el-button>
+          <el-button @click="proclamDialog = false">取消</el-button>
+        </el-form-item>
+      </el-form>
+
+    </el-dialog>
   </div>
 </template>
 
@@ -76,7 +92,8 @@ import TablePager from '@/components/TablePager';
 import {
   queryCourseList,
   updateCourseShelve,
-  updateCourseRecommend
+  updateCourseRecommend,
+  adminProclam
 } from '@/api/course';
 import { listCategory } from '@/api/category';
 import {
@@ -87,6 +104,7 @@ import {
 export default {
   data() {
     return {
+      proclamDialog: false,
       marketing: false,
       loading: true,
       categoryList: [],
@@ -115,7 +133,12 @@ export default {
         { title: '学员数量', key: 'courseApplyNum' },
         { title: '管理操作', slot: 'operate' }
       ],
-      data: []
+      data: [],
+      // 公告管理
+      paranProclam: {
+        announcement: '',
+        courseId: ''
+      }
     };
   },
   components: {
@@ -261,6 +284,16 @@ export default {
       this.$message.success('营销方式修改成功');
       this.choosedRow.marketWayId = marketWay;
       this.marketing = false;
+    },
+    //公告管理
+    async proclamation(row, index) {
+      this.proclamDialog = true;
+      await adminProclam(this.paranProclam);
+      console.log(adminProclam);
+    },
+    // 复制课程
+    repeatCourse(row, index) {
+      console.log(index);
     }
   },
   created() {

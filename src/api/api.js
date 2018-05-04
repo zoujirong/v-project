@@ -12,9 +12,9 @@ export default {
   courseAdd: '/course/addCourse', //发布课程
   courseUpdate: '/course/editCourse', //更新课程信息
   chapterUpdate: '/course/editCourseChapter', //更新课程章节
+  proclamation: '/course/editCourseAnnouncement', //公告管理
   //类目管理
   getListCategory: '/category/listCategory', //类目列表
-  getCategoryRecommend: 'category/setCategoryRecommend', //设为推荐类目
   addCategory: '/category/addCategory',
   reviseCategory: '/category/editCategory',
   delCategory: '/category/delCategory',
@@ -46,8 +46,8 @@ export default {
   //上传
   uploadParam: '/oss/getToken',
 
-  //类目推荐位
-  // categoryRecommend: '/admin/categoryRecommend',
+  //新增类目推荐位
+  getCategoryRecommend: '/category/setCategoryRecommend',
   // 类目选择
   chooseCate: '/admin/categoryChoose'
 
