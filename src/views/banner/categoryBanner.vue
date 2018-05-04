@@ -158,19 +158,19 @@ export default {
     onUploadCategory(urls) {
       this.addRecomParam.cover = urls[0];
       this.$refs.addRecomParam.validateField('cover');
-    }
+    },
     //分页
-    // onChange({ pagination }) {
-    //   let {
-    //     page = this.requestData.pageNo,
-    //     pageSize = this.requestData.pageSize
-    //   } = pagination;
-    //   Object.assign(this.requestData, {
-    //     pageNo: page,
-    //     pageSize
-    //   });
-    //   this.categoryData();
-    // }
+    onChange({ pagination }) {
+      let {
+        page = this.requestData.pageNo,
+        pageSize = this.requestData.pageSize
+      } = pagination;
+      Object.assign(this.requestData, {
+        pageNo: page,
+        pageSize
+      });
+      this.categoryData();
+    }
   },
   components: {
     TablePager,
