@@ -18,15 +18,15 @@
       <el-button @click="reset">重置</el-button>
     </el-form>
 
-    <TablePager :data="data" :columns="columns" :loading="loading" :pagination="{currentPage: pagination.pageNo,
-      pageSize: pagination.pageSize,
+    <TablePager :data="data" :columns="columns" :loading="loading" :pagination="{currentPage: searchParam.pageNo,
+      pageSize: searchParam.pageSize,
       total: total}" @change="onChange ">
       <template slot='payTime' slot-scope="{row}">
         <span>{{ row.payTime | parseTime(showTimeFormat)}}</span>
       </template>
-      <template slot="marketWay" slot-scope="{row} ">
+      <template slot="payType" slot-scope="{row} ">
         <!--    row.marketWay-->
-        <span>{{row.marketWay == 0 ? '直接购买' : '手机验证'}}</span>
+        <span>{{row.payType == 0 ? '直接购买' : '手机验证'}}</span>
       </template>
 
     </TablePager>
@@ -50,17 +50,13 @@ export default {
         pageNo: 1,
         pageSize: 10
       },
-      pagination: {
-        currentPage: 1,
-        pageSize: 10
-      },
       total: 0,
       columns: [
         { title: '订单ID', key: 'orderId' },
         { title: '订单对应课程', key: 'courseName' },
         { title: '课程价格', key: 'coursePrice' },
         { title: '实际支付金额', key: 'paidAmount' },
-        { title: '订单支付方式', slot: 'marketWay' },
+        { title: '订单支付方式', slot: 'payType' },
         { title: '订单报名用户', key: 'userNick' },
         { title: '订单支付时间', slot: 'payTime' }
       ],
@@ -89,6 +85,10 @@ export default {
     reset() {
       let form = this.$refs.searchForm;
       form.resetFields();
+      Object.assign(this.searchParam, {
+        pageNo: 1,
+        pageSize: 10
+      });
       this.getList();
     },
     onChange({ pagination }) {

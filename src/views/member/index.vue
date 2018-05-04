@@ -181,7 +181,9 @@ export default {
       this.loginTime = [];
       Object.assign(this.searchParam, {
         lastLoginStartTime: '',
-        lastLoginEndTime: ''
+        lastLoginEndTime: '',
+        pageNo: 1,
+        pageSize: 10
       });
       this.getList();
     }

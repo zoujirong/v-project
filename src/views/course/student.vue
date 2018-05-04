@@ -140,7 +140,9 @@ export default {
         applyStartTime: '',
         applyEndTime: '',
         lastLoginStartTime: '',
-        lastLoginEndTime: ''
+        lastLoginEndTime: '',
+        pageNo: 1,
+        pageSize: 10
       });
     },
     onTableChange({ sort = {}, pagination = {} }) {
