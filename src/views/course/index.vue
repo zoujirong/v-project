@@ -16,7 +16,7 @@
       <el-button @click="reset">重置</el-button>
     </el-form>
     <router-link :to="{name: 'courseDetail'}">
-      <el-button type="primary">发布课程</el-button>
+      <el-button class="releaseCourse" type="primary">发布课程</el-button>
     </router-link>
     <TablePager :loading="loading" :data="data" :columns="columns" :pagination="{
       currentPage: searchParam.pageNo,
@@ -322,5 +322,8 @@ export default {
 }
 .text-error {
   color: #f56c6c;
+}
+.releaseCourse {
+  margin-bottom: 15px;
 }
 </style>

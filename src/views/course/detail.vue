@@ -1,6 +1,7 @@
 <template>
   <div class="app-container">
-    <el-form ref="editForm" label-suffix="：" label-width="150px" :model="course" :rules="rules" :inline-message="true">
+    <!-- :model="course" -->
+    <el-form ref="editForm" label-suffix="：" label-width="150px" :rules="rules" :inline-message="true" :model="course">
       <el-form-item label="课程标题" prop="title">
         <el-input v-model.trim="course.title" class="short-input" :maxlength="40"></el-input>
       </el-form-item>
@@ -10,11 +11,11 @@
           <el-radio :label="1" :disabled="!!courseId">录播课</el-radio>
         </el-radio-group>
       </el-form-item>
-      <!-- :rules="[{required: true,message: '请选择课程类目！'}]" -->
+      <!-- :rules="[{required: true,message: '请选择课程类目！'}]"  v-if="cate.isDel" -->
       <el-form-item label="课程类目" prop="categoryId">
         <el-radio-group v-model="course.categoryId">
           <template v-for="cate in categoryList">
-            <el-radio v-if="cate.isDel" :key="cate.categoryId" :label="cate.categoryId">{{cate.categoryName}}</el-radio>
+            <el-radio :key="cate.categoryId" :label="cate.categoryId">{{cate.categoryName}}</el-radio>
           </template>
         </el-radio-group>
         <span class="form-tips" v-if="categoryList.length === 0">暂无类目，请先去添加相应类目吧！</span>
@@ -43,22 +44,33 @@
         <span class="form-tips">要求：价格精确到小数点后两位，填写0.00即为免费课程</span>
       </el-form-item>
       <el-form-item label="课程介绍" prop="descContent">
-        <el-input type="textarea" v-model.trim="course.descContent" class="textareatHeight" :maxlength="200"></el-input>
-      </el-form-item>
-      <el-form-item label="适用人群" prop="suit">
-        <el-input type="textarea" v-model.trim="course.suit" :maxlength="100" class="short-input"></el-input>
-      </el-form-item>
-      <el-form-item label="你将收获" prop="reward ">
-        <el-input type="textarea" v-model.trim="course.reward" :maxlength="100" class="short-input"></el-input>
+        <el-input type="textarea" v-model.trim="course.descContent" class="short-textarea " :maxlength="200"></el-input>
       </el-form-item>
       <!-- <el-form-item label="客服微信" prop="customerWx" :rules="[{required: true, message: '请填写客服微信！'}]">
         <el-input v-model.trim="course.customerWx" :maxlength="20"></el-input>
       </el-form-item> -->
+
+      <el-form-item :label="'适用人群'" prop="suit">
+        <div v-for="(item,index) in course.suit" :key="index">
+          <el-input type="textarea" v-model="item.rew" :maxlength="100" class="textareatHeight"></el-input>
+          <el-button type="text" icon="el-icon-circle-plus" class="op-btn" @click="addDomain()"></el-button>
+          <el-button type="text" icon="el-icon-remove" class="op-btn" @click="removeDomain(item)" v-if="course.suit.length !== 1"></el-button>
+        </div>
+      </el-form-item>
+
+      <el-form-item label="你将收获" prop="reward ">
+        <div v-for="(rewD,index) in course.reward" :key="index">
+          <el-input type="textarea" v-model.trim="rewD.rew" :maxlength="100" class="textareatHeight"></el-input>
+          <el-button type="text" icon="el-icon-circle-plus" class="op-btn" @click="addReward()"></el-button>
+          <el-button type="text" icon="el-icon-remove" class="op-btn" @click="removeReward(rewD)" v-if="course.reward.length !== 1"></el-button>
+        </div>
+      </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="submit" :loading="loading">保存</el-button>
         <router-link :to="{name: 'courseList'}" tag="el-button">返回</router-link>
       </el-form-item>
     </el-form>
+
   </div>
 </template>
 
@@ -72,6 +84,14 @@ export default {
   data() {
     let self = this;
     return {
+      // 适用人群
+      // dynamicValidateForm: {
+      //   domains: [
+      //     {
+      //       value: ''
+      //     }
+      //   ]
+      // },
       commonParam: {
         pageNo: 1,
         pageSize: 100
@@ -89,11 +109,16 @@ export default {
         courseCover: '',
         // courseDesc: '',
         coursePrice: 0.0,
-        reward: '',
-        suit: '',
-        descContent: ''
+        descContent: '',
+        reward: [{ rew: '' }],
+        suit: [{ rew: '' }],
+        chapter: []
         // customerWx: ''
       },
+      // form: {
+      //   chapterNum: this.$route.query.num,
+      //   chapter: []
+      // },
       num: this.$route.query.num,
       rules: {
         title: [
@@ -123,9 +148,46 @@ export default {
   },
   components: { UploadImage },
   methods: {
+    // 新增适用人群  减
+    removeDomain(removeItem) {
+      var index = this.course.suit.indexOf(removeItem);
+      if (index !== -1) {
+        this.course.suit.splice(index, 1);
+      }
+    },
+    //加
+    addDomain() {
+      this.course.suit.push({
+        rew: ''
+      });
+    },
+    // 你将收获 减
+    removeReward(rew) {
+      var index = this.course.reward.indexOf(rew);
+      if (index !== -1) {
+        this.course.reward.splice(index, 1);
+      }
+    },
+    //加
+    addReward() {
+      this.course.reward.push({
+        rew: ''
+      });
+    },
     async getCourseDetailById() {
       let res = await getCourseDetail(this.courseId);
+
+      let suitObj = JSON.parse(res.data.suit);
+      res.data.suit = suitObj.concat();
+
+      let rewObj = JSON.parse(res.data.reward);
+      res.data.reward = rewObj.concat();
       this.course = res.data;
+      console.log(this.course);
+
+      // let courseobj = new JSONArray(this.course);
+      // this.course.suit = JSONArray(courseobj.suit);
+      // this.course.reward = JSON(courseobj.reward);
     },
     async getTeacher() {
       let res = await teacherList(this.commonParam);
@@ -152,6 +214,7 @@ export default {
       this.$refs.editForm.validateField('tzCourseId');
     },
     async submit() {
+      console.log(this.course.suit);
       let form = this.$refs.editForm;
       let res = await form
         .validate()
@@ -171,13 +234,20 @@ export default {
             });
             // console.log(this.num);
           } else if (this.num && this.num == 2) {
+            let courseobj = Object.assign({}, this.course);
+            courseobj.suit = JSON.stringify(courseobj.suit);
+            courseobj.reward = JSON.stringify(courseobj.reward);
             return updateCourse({
               id: this.courseId,
-              ...this.course
+              ...courseobj
             });
+
             // console.log(this.num);
           } else {
-            return addCourse(this.course);
+            let courseobj = Object.assign({}, this.course);
+            courseobj.suit = JSON.stringify(courseobj.suit);
+            courseobj.reward = JSON.stringify(courseobj.reward);
+            return addCourse(courseobj);
             // console.log('kec');
           }
         })
@@ -212,7 +282,9 @@ export default {
 .el-select {
   width: 20%;
 }
-.el-input.short-input {
+.el-input.short-input,
+.short-textarea,
+.textareatHeight {
   width: 40%;
 }
 .form-tips {
@@ -223,22 +295,25 @@ export default {
   display: inline-block;
 }
 
-.short-input {
-  width: 40%;
+.op-btn {
+  font-size: 25px;
+  position: relative;
+  top: -8px;
 }
-/* .textareatHeight {
-  width: 40%;
-} */
-/* .el-textarea__inner {
-} */
 </style>
 <style>
-.el-textarea__inner {
-  padding: 11px 5px 0;
+.short-textarea textarea {
+  height: 95px;
+}
+.textareatHeight textarea {
+  min-height: 50px;
   height: auto;
-  line-height: 0.9;
-  /* height: ; */
-  /* line-height: 1.5; */
+
+  /* height: auto; */
+}
+.el-textarea__inner {
+  margin-bottom: 10px;
+  padding: 4px 5px 5px;
   resize: none;
 }
 </style>
