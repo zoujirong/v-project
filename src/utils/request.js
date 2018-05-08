@@ -10,8 +10,8 @@ axios.defaults.headers.post['Content-Type'] =
   'application/x-www-form-urlencoded';
 // create an axios instance
 const service = axios.create({
-  // baseURL: process.env.BASE_API + '/api/manager', // api的base_url ///api/minApp
-  baseURL: 'http://172.16.156.107:8080/api/manager',
+  baseURL: process.env.BASE_API + '/api/manager', // api的base_url ///api/minApp
+  // baseURL: 'http://172.16.156.107:8080/api/manager',
   // baseURL: 'http://127.0.0.1:9999/api/manager',
   timeout: 30e3 // request timeout
 });
