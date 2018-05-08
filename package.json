@@ -1,14 +1,18 @@
 {
   "name": "vue-element-admin",
   "version": "3.6.2",
-  "description": "A magical vue admin. Typical templates for enterprise applications. Newest development stack of vue. Lots of awesome features",
+  "description":
+    "A magical vue admin. Typical templates for enterprise applications. Newest development stack of vue. Lots of awesome features",
   "author": "Pan <panfree23@gmail.com>",
   "license": "MIT",
   "private": true,
   "scripts": {
-    "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
-    "build:prod": "cross-env NODE_ENV=production env_config=prod node build/build.js",
-    "build:test": "cross-env NODE_ENV=production env_config=test node build/build.js",
+    "dev":
+      "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
+    "build:prod":
+      "cross-env NODE_ENV=production env_config=prod node build/build.js",
+    "build:test":
+      "cross-env NODE_ENV=production env_config=test node build/build.js",
     "lint": "eslint --ext .js,.vue src",
     "test": "npm run lint"
   },
@@ -96,9 +100,5 @@
     "node": ">= 4.0.0",
     "npm": ">= 3.0.0"
   },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not ie <= 8"
-  ]
+  "browserslist": ["> 1%", "last 2 versions", "not ie <= 8"]
 }

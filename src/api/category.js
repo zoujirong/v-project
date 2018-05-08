@@ -6,7 +6,8 @@ const {
   reviseCategory,
   delCategory,
   getCategoryCourse,
-  categoryCourseSort
+  categoryCourseSort,
+  getCategoryRecommend
 } = api;
 
 //获取类目列表
@@ -56,6 +57,15 @@ export function categoryCourse(params) {
 export function sortCategoryCourse(param) {
   return request({
     url: categoryCourseSort,
+    method: 'POST',
+    data: param
+  });
+}
+
+// 设为推荐类目 getCategoryRecommend
+export function recommendCategory(param) {
+  return request({
+    url: getCategoryRecommend,
     method: 'POST',
     data: param
   });

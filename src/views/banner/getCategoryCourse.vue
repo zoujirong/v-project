@@ -19,9 +19,9 @@
       <template slot="sort" slot-scope="{row}" ref='sortPart'>
         <svg-icon class='drag-handler' icon-class="drag" style="color:#409EFF"></svg-icon>
       </template>
-      <template slot="handle" slot-scope="{row,index}">
+      <!-- <template slot="handle" slot-scope="{row,index}">
         <el-button type="text" @click="delCourse(row.courseId, index)"> 取消推荐</el-button>
-      </template>
+      </template> -->
     </TablePager>
   </div>
 </template>
@@ -42,13 +42,14 @@ export default {
       searchParam: {
         categoryId: '',
         courseParam: '',
-        pageSize: 100
+        pageSize: 100,
+        isRecommend: true
       },
       columns2: [
         { title: '位置', slot: 'position' },
         { title: '课程id', key: 'courseId' },
-        { title: '课程名称', key: 'courseName' },
-        { title: '操作', slot: 'handle' }
+        { title: '课程名称', key: 'title' },
+        { title: '主讲老师', key: 'mainTeacher' }
       ],
       courses: [],
       // 拖拽
@@ -81,17 +82,19 @@ export default {
     console.log(this);
   },
   computed: {
-    CategoryId() {
-      return this.$route.query.categoryId;
-    }
+    // CategoryId() {
+    //   return this.$route.query.categoryId;
+    // }
   },
   methods: {
     //获取推荐课程列表
     async getList() {
       this.listLoading = true;
       let res = await categoryCourse({
-        categoryId: this.CategoryId,
+        //
+        // categoryId: this.CategoryId,
         courseParam: this.searchParam.courseParam,
+        isRecommend: this.searchParam.isRecommend,
         pageSize: this.searchParam.pageSize
       });
       this.listLoading = false;
@@ -112,6 +115,7 @@ export default {
     },
     //保存排序
     async saveEditSort() {
+      console.log(this.SortList);
       this.sortable.option('disabled', true);
       this.columns2.splice(3, 1);
       let sort = Object.keys(this.SortList)
@@ -124,7 +128,7 @@ export default {
         });
       this.listLoading = true;
       await sortCategoryCourse({
-        categoryId: this.CategoryId,
+        // categoryId: this.CategoryId,
         courseSort: JSON.stringify(sort)
       }).finally(res => {
         this.listLoading = false;
@@ -164,6 +168,7 @@ export default {
             let key = this.courses[this.newIndex].courseId;
             let weight = calcuWeight(this.courses, this.newIndex);
             this.SortList[key] = weight;
+            // console.log(1, this.SortList);
             this.courses[this.newIndex].weight = weight;
           }
         }
