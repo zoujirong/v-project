@@ -52,7 +52,7 @@
 
       <el-form-item :label="'适用人群'" prop="suit">
         <div v-for="(item,index) in course.suit" :key="index">
-          <el-input type="textarea" v-model="item.rew" :maxlength="100" class="textareatHeight"></el-input>
+          <el-input type="textarea" v-model="item.rew" :maxlength="100" autosize class="textareatHeight"></el-input>
           <el-button type="text" icon="el-icon-circle-plus" class="op-btn" @click="addDomain()"></el-button>
           <el-button type="text" icon="el-icon-remove" class="op-btn" @click="removeDomain(item)" v-if="course.suit.length !== 1"></el-button>
         </div>
@@ -60,7 +60,7 @@
 
       <el-form-item label="你将收获" prop="reward ">
         <div v-for="(rewD,index) in course.reward" :key="index">
-          <el-input type="textarea" v-model.trim="rewD.rew" :maxlength="100" class="textareatHeight"></el-input>
+          <el-input type="textarea" v-model.trim="rewD.rew" autosize :maxlength="100" class="textareatHeight"></el-input>
           <el-button type="text" icon="el-icon-circle-plus" class="op-btn" @click="addReward()"></el-button>
           <el-button type="text" icon="el-icon-remove" class="op-btn" @click="removeReward(rewD)" v-if="course.reward.length !== 1"></el-button>
         </div>
@@ -176,18 +176,12 @@ export default {
     },
     async getCourseDetailById() {
       let res = await getCourseDetail(this.courseId);
-
-      let suitObj = JSON.parse(res.data.suit);
+      let suitObj = JSON.parse(res.data.suit) || [];
       res.data.suit = suitObj.concat();
-
-      let rewObj = JSON.parse(res.data.reward);
+      let rewObj = JSON.parse(res.data.reward) || [];
       res.data.reward = rewObj.concat();
       this.course = res.data;
-      console.log(this.course);
-
-      // let courseobj = new JSONArray(this.course);
-      // this.course.suit = JSONArray(courseobj.suit);
-      // this.course.reward = JSON(courseobj.reward);
+      // console.log(this.course);
     },
     async getTeacher() {
       let res = await teacherList(this.commonParam);
@@ -198,23 +192,23 @@ export default {
       this.categoryList = res.data.data;
     },
     onUploadCover(urls) {
-      console.log('上传封面', urls);
+      // console.log('上传封面', urls);
       this.course.courseCover = urls[0] || '';
       this.$refs.editForm.validateField('courseCover');
     },
     onUploadDetail(urls) {
       this.course.courseDesc = urls[0] || '';
-      console.log('上传详情', urls);
+      // console.log('上传详情', urls);
       this.$refs.editForm.validateField('courseDesc');
     },
-    success(response, file, fileList) {
-      console.log(response, file, fileList);
-    },
+    // success(response, file, fileList) {
+    //   console.log(response, file, fileList);
+    // },
     changeMethod(a) {
       this.$refs.editForm.validateField('tzCourseId');
     },
     async submit() {
-      console.log(this.course.suit);
+      // console.log(this.course.suit);
       let form = this.$refs.editForm;
       let res = await form
         .validate()

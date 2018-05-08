@@ -9,8 +9,8 @@
       <template slot="number" slot-scope="{row,index}">
         <span>{{index + 1}}</span>
       </template>
-      <template slot="cover" slot-scope="{row}">
-        <img :src="row.cover" alt="" />
+      <template slot="cover" slot-scope="{row,index}">
+        <img :src="list[index].cover" alt="" />
       </template>
       <template slot="recommendTime" slot-scope="{row}">
         <span>{{row.recommendTime | parseTime(formatTime)}}</span>
@@ -18,7 +18,6 @@
       <template slot="isRecommend" slot-scope="{row,index}">
         <el-button type="text" @click="clearRecomend(row)">取消推荐</el-button>
         <!-- <el-button type="text" @click="clearRecomend(row)" v-else>设为推荐</el-button> -->
-
       </template>
     </TablePager>
     <!-- 新增推荐类目 -->
@@ -36,7 +35,7 @@
           </upload-image>
         </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer ">
+      <div slot="footer" class="dialog-footer">
         <el-button type="primary " @click="addCategoryHold()">保存</el-button>
         <el-button @click="addDialog=false ">返回</el-button>
       </div>
@@ -55,11 +54,12 @@ export default {
     return {
       formatTime: '{y}-{m}-{d} {h}:{m}:{s}',
       loading: false,
+      picDialog: false,
       addDialog: false,
       requestData: {
-        isRecommend: true,
-        pageSize: 10,
-        pageNo: 1
+        isRecommend: true
+        // pageSize: 10,
+        // pageNo: 1
       },
       total: 0,
       column: [
@@ -78,6 +78,7 @@ export default {
         cover: ''
       },
       list: [],
+      picture: 0,
       rules: {
         categoryId: [{ required: true, message: '请选择类目名称' }],
         cover: [{ required: true, message: '请上传图片' }]
@@ -104,7 +105,7 @@ export default {
       let { data, total } = res.data;
       this.list = data;
       this.total = total;
-      console.log(this.total);
+      // console.log(this.total);
       // this.list.map(response => {
       //   if (response.isRecommend == true) {
       //     return this.recommendNum++;
@@ -158,19 +159,19 @@ export default {
     onUploadCategory(urls) {
       this.addRecomParam.cover = urls[0];
       this.$refs.addRecomParam.validateField('cover');
-    },
-    //分页
-    onChange({ pagination }) {
-      let {
-        page = this.requestData.pageNo,
-        pageSize = this.requestData.pageSize
-      } = pagination;
-      Object.assign(this.requestData, {
-        pageNo: page,
-        pageSize
-      });
-      this.categoryData();
     }
+    //分页
+    // onChange({ pagination }) {
+    //   let {
+    //     page = this.requestData.pageNo,
+    //     pageSize = this.requestData.pageSize
+    //   } = pagination;
+    //   Object.assign(this.requestData, {
+    //     pageNo: page,
+    //     pageSize
+    //   });
+    //   this.categoryData();
+    // }
   },
   components: {
     TablePager,

@@ -188,9 +188,9 @@ export const constantRouterMap = [
         meta: { title: 'banner推荐位' }
       },
       {
-        path: 'categoryBanner',
-        name: 'categoryBannerList',
-        component: _import('banner/categoryBanner'),
+        path: 'categoryRecomend',
+        name: 'categoryRecomendList',
+        component: _import('banner/categoryRecomend'),
         meta: { title: '类目推荐设置' }
       },
       {
