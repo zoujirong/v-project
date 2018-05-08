@@ -30,7 +30,7 @@
           <el-input :maxlength='10' placeholder="输入讲师名" v-model.trim="teacher.teacherName"></el-input>
         </el-form-item>
         <el-form-item label="讲师简介：" prop="teacherIntro">
-          <el-input type="textarea" :maxlength='50' placeholder="讲师简介" v-model.trim="teacher.teacherIntro"></el-input>
+          <el-input type="textarea" :maxlength='300' :minlength='10' placeholder="讲师简介" v-model.trim="teacher.teacherIntro"></el-input>
         </el-form-item>
         <el-form-item size="small" label="讲师照片：" prop="teacherIcon">
           <upload-image :limit=1 :fileList="teacher.teacherIcon ? [{url:teacher.teacherIcon}]: []" @onSuccess="onUploadCover"></upload-image>

@@ -135,20 +135,20 @@ export const constantRouterMap = [
       }
     ]
   },
-  {
-    path: '/category',
-    redirect: '/category/getCategoryCourse',
-    component: Layout,
-    children: [
-      {
-        path: 'getCategoryCourse',
-        name: 'getCategoryList',
-        component: _import('category/getCategoryCourse'),
-        meta: { title: '编辑课程', icon: 'dashboard', noCache: true }
-      }
-    ],
-    hidden: true
-  },
+  // {
+  //   path: '/category',
+  //   redirect: '/category/getCategoryCourse',
+  //   component: Layout,
+  //   children: [
+  //     {
+  //       path: 'getCategoryCourse',
+  //       name: 'getCategoryList',
+  //       component: _import('category/getCategoryCourse'),
+  //       meta: { title: '编辑课程', icon: 'dashboard', noCache: true }
+  //     }
+  //   ],
+  //   hidden: true
+  // },
   {
     path: '/order',
     redirect: '/order/index',
@@ -177,14 +177,27 @@ export const constantRouterMap = [
   },
   {
     path: '/banner',
-    redirct: '/banner/index',
+    redirct: '/banner',
     component: Layout,
+    meta: { title: '推荐位管理', icon: 'star', noCache: true },
     children: [
       {
-        path: 'index',
+        path: 'banner',
         name: 'bannerlist',
-        component: _import('banner/index'),
-        meta: { title: '推荐位管理', icon: 'star', noCache: true }
+        component: _import('banner/banner'),
+        meta: { title: 'banner推荐位' }
+      },
+      {
+        path: 'categoryRecomend',
+        name: 'categoryRecomendList',
+        component: _import('banner/categoryRecomend'),
+        meta: { title: '类目推荐设置' }
+      },
+      {
+        path: 'getCategoryCourse',
+        name: 'getCategoryCourseList',
+        component: _import('banner/getCategoryCourse'),
+        meta: { title: '首页课程推荐' }
       }
     ]
   },
